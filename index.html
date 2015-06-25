@@ -59,6 +59,8 @@
 			var geometry = new THREE.BoxGeometry( 30, 30, 30 );
 			var material = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
 			var player = new THREE.Mesh( geometry, material );
+			var geometry = new THREE.SphereGeometry( 30 );
+			var testObj = new THREE.Mesh( geometry, material );
 			var speed=1;
 
 			init();
@@ -84,6 +86,9 @@
 				// player
 				scene.add( player );
 				player.position.set(0,0,0);
+
+				scene.add( testObj );
+				testObj.position.set(0,0,0);
 
 				document.addEventListener( 'mousemove', onDocumentMouseMove, false );
 				document.addEventListener( 'touchstart', onDocumentTouchStart, false );
@@ -145,25 +150,25 @@
 			}
 
 			function render() {
-				camera.position.x =0;
-				camera.position.y =0;
-				camera.lookAt( scene.position );
+				camera.lookAt( player.position );
 				//var time = Date.now() * 0.0015;
-				if(!(player.position.x===mouseX&&player.position.y===-mouseY)){
-					var speedX=speed*(mouseX-player.position.x)/Math.sqrt(Math.pow(mouseX-player.position.x,2)+Math.pow(-mouseY-player.position.y,2));
-					var speedY=speed*(-mouseY-player.position.y)/Math.sqrt(Math.pow(mouseX-player.position.x,2)+Math.pow(-mouseY-player.position.y,2));
+				if(!(0===mouseX&&0===-mouseY)){
+					var speedX=speed*(mouseX-0)/Math.sqrt(Math.pow(mouseX-0,2)+Math.pow(-mouseY-0,2));
+					var speedY=speed*(-mouseY-0)/Math.sqrt(Math.pow(mouseX-0,2)+Math.pow(-mouseY-0,2));
 					//var speedY=Math.sqrt(Math.pow(speed,2)-Math.pow(speedX,2));
 					player.position.x=player.position.x+speedX;
 					player.position.y=player.position.y+speedY;
 				}
-				if(player.position.y>=-mouseY){
-					player.rotation.z = Math.PI/2-Math.acos((mouseX-player.position.x)/Math.sqrt(Math.pow(mouseX-player.position.x,2)+Math.pow(-mouseY-player.position.y,2)));
+				if(0>=-mouseY){
+					player.rotation.z = Math.PI/2-Math.acos((mouseX-0)/Math.sqrt(Math.pow(mouseX-0,2)+Math.pow(-mouseY-0,2)));
 				}
 				else{
-					player.rotation.z = Math.PI/2+Math.acos((mouseX-player.position.x)/Math.sqrt(Math.pow(mouseX-player.position.x,2)+Math.pow(-mouseY-player.position.y,2)));
+					player.rotation.z = Math.PI/2+Math.acos((mouseX-0)/Math.sqrt(Math.pow(mouseX-0,2)+Math.pow(-mouseY-0,2)));
 				}
-				console.log((mouseX-player.position.x)/Math.sqrt(Math.pow(mouseX-player.position.x,2)+Math.pow(-mouseY-player.position.y,2)));
+				console.log(mouseX);
 				renderer.render( scene, camera );
+				camera.position.x =player.position.x;
+				camera.position.y =player.position.y;
 			}
 
 		</script>
