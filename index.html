@@ -87,9 +87,6 @@
 				container = document.createElement( 'div' );
 				document.body.appendChild( container );
 
-				camera = new THREE.PerspectiveCamera( 33, window.innerWidth / window.innerHeight, 1, 10000 );
-				camera.position.z = 700;
-
 				scene = new THREE.Scene();
 
 				renderer = new THREE.WebGLRenderer();
@@ -104,6 +101,55 @@
 
 				scene.add( testObj );
 				testObj.position.set(0,0,0);
+				//trying to load the mesh
+				var onProgress = function ( xhr ) {
+					if ( xhr.lengthComputable ) {
+						var percentComplete = xhr.loaded / xhr.total * 100;
+						console.log( Math.round(percentComplete, 2) + '% downloaded' );
+					}
+				};
+				var onError = function ( xhr ) {
+				};
+
+				var texture = new THREE.Texture();
+
+				var manager = new THREE.LoadingManager();
+				manager.onProgress = function ( item, loaded, total ) {
+
+					console.log( item, loaded, total );
+
+				};
+
+				var loader = new THREE.OBJLoader( manager );
+				loader.load( 'public/models/spaceship.obj', function ( object ) {
+
+					/*object.traverse( function ( child ) {
+
+						if ( child instanceof THREE.Mesh ) {
+							
+							child.material.map = texture;
+
+						}
+
+					} );*/
+					object.material = lambertMaterial;
+					//object.rotateX(1.5);
+					object.position = (0,0,0);
+					object.scale.set(2,2,2);
+					object.name = "mainSpaceship";
+					console.log(object);
+					playerRotationWrapper.add( object );
+				}, onProgress, onError );
+
+				var directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
+				directionalLight.position.set( 0.5, 1, 0 );
+				scene.add( directionalLight );
+
+				var ambientLight = new THREE.AmbientLight (0x000000);
+				scene.add(ambientLight);
+
+				camera = new THREE.PerspectiveCamera( 33, window.innerWidth / window.innerHeight, 1, 10000 );
+				camera.position.z = 700;
 
 				// key events
 				var onKeyDown = function ( event ) {
@@ -173,63 +219,8 @@
 				document.addEventListener( 'touchstart', onDocumentTouchStart, false );
 				document.addEventListener( 'touchmove', onDocumentTouchMove, false );
 
-				//
-
 				window.addEventListener( 'resize', onWindowResize, false );
-				
-
-				//trying to load the mesh
-				var onProgress = function ( xhr ) {
-					if ( xhr.lengthComputable ) {
-						var percentComplete = xhr.loaded / xhr.total * 100;
-						console.log( Math.round(percentComplete, 2) + '% downloaded' );
-					}
-				};
-
-				var onError = function ( xhr ) {
-				};
-
-				var texture = new THREE.Texture();
-
-				var manager = new THREE.LoadingManager();
-				manager.onProgress = function ( item, loaded, total ) {
-
-					console.log( item, loaded, total );
-
-				};
-
-				var loader = new THREE.OBJLoader( manager );
-				loader.load( 'public/models/spaceship.obj', function ( object ) {
-
-					/*object.traverse( function ( child ) {
-
-						if ( child instanceof THREE.Mesh ) {
-							
-							child.material.map = texture;
-
-						}
-
-					} );*/
-					object.material = lambertMaterial;
-					//object.rotateX(1.5);
-					object.position = (0,0,0);
-					object.scale.set(2,2,2);
-					object.name = "mainSpaceship";
-					console.log(object);
-					scene.add(object);
-
-					}, onProgress, onError );
-
-				}
-
-				var directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
-				directionalLight.position.set( 0.5, 1, 0 );
-				scene.add( directionalLight );
-
-				var ambientLight = new THREE.AmbientLight (0x000000);
-				scene.add(ambientLight);
-
-
+			}
 			function onWindowResize() {
 
 				windowHalfX = window.innerWidth / 2;
@@ -315,16 +306,26 @@
 					x++;
 					tiltSpeed=topTiltSpeed*Math.sin((x-Math.PI/(2*time))*time)+topTiltSpeed;
 					console.log(tiltSpeed);
-					player.position.x = player.position.x - tiltSpeed;
-					player.rotation.y = player.rotation.y - time/4;
+					mainSpaceship.position.x = mainSpaceship.position.x - tiltSpeed;
+					mainSpaceship.rotation.y = mainSpaceship.rotation.y + time/4;
 					//tiltSpeed=-Math.pow(tiltAcceleration*x,2)+distance*x;
 					if(tiltSpeed<=0.01){
 						console.log("reset");
 						maxTiltRight=true;
 					}
 				}
-				if( !moveRight ){
-					x=0;
+				if( !moveRight && x!=0 ){
+					x--;
+					tiltSpeed=topTiltSpeed*Math.sin((x-Math.PI/(2*time))*time)+topTiltSpeed;
+					console.log(tiltSpeed);
+					mainSpaceship.position.x = mainSpaceship.position.x + tiltSpeed;
+					mainSpaceship.rotation.y = mainSpaceship.rotation.y - time/4;
+					//tiltSpeed=-Math.pow(tiltAcceleration*x,2)+distance*x;
+					if(tiltSpeed<=0.01){
+						console.log("reset");
+						maxTiltRight=false;
+						x=0;
+					}
 				}
 				//rotate
 				if(0>=-mouseY){
@@ -335,8 +336,8 @@
 					playerRotationWrapper.rotation.z = Math.PI/2+Math.acos((mouseX-0)/Math.sqrt(Math.pow(mouseX-0,2)+Math.pow(-mouseY-0,2)));
 					//mainSpaceship.rotation.z = Math.PI/2+Math.acos((mouseX-0)/Math.sqrt(Math.pow(mouseX-0,2)+Math.pow(-mouseY-0,2)));
 				}
-				mainSpaceship.position.x = player.position.x+speedX;
-				mainSpaceship.position.y = player.position.y+speedY;
+				//mainSpaceship.position.x = player.position.x+speedX;
+				//mainSpaceship.position.y = player.position.y+speedY;
 				//camera
 				var camOffsetModifier = 50;
 				var maxCamOffset;
