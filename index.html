@@ -44,6 +44,7 @@
 
 		<script src="libs/Detector.js"></script>
 		<script src="libs/stats.min.js"></script>
+		<script src="libs/OBJLoader.js"></script>
 
 		<script>
 
@@ -58,6 +59,7 @@
 
 			var geometry = new THREE.BoxGeometry( 30, 30, 30 );
 			var material = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
+			var lambertMaterial = new THREE.MeshLambertMaterial({shading: THREE.SmoothShading});
 			var player = new THREE.Mesh( geometry, material );
 			var geometry = new THREE.SphereGeometry( 30 );
 			var testObj = new THREE.Mesh( geometry, material );
@@ -97,8 +99,59 @@
 				//
 
 				window.addEventListener( 'resize', onWindowResize, false );
+				
 
-			}
+				//trying to load the mesh
+				var onProgress = function ( xhr ) {
+					if ( xhr.lengthComputable ) {
+						var percentComplete = xhr.loaded / xhr.total * 100;
+						console.log( Math.round(percentComplete, 2) + '% downloaded' );
+					}
+				};
+
+				var onError = function ( xhr ) {
+				};
+
+				var texture = new THREE.Texture();
+
+				var manager = new THREE.LoadingManager();
+				manager.onProgress = function ( item, loaded, total ) {
+
+					console.log( item, loaded, total );
+
+				};
+
+				var loader = new THREE.OBJLoader( manager );
+				loader.load( 'public/models/spaceship.obj', function ( object ) {
+
+					/*object.traverse( function ( child ) {
+
+						if ( child instanceof THREE.Mesh ) {
+							
+							child.material.map = texture;
+
+						}
+
+					} );*/
+					object.material = lambertMaterial;
+					//object.rotateX(1.5);
+					object.position = (0,0,0);
+					object.scale.set(2,2,2);
+					object.name = "mainSpaceship";
+					console.log(object);
+					scene.add(object);
+
+					}, onProgress, onError );
+
+				}
+
+				var directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
+				directionalLight.position.set( 0.5, 1, 0 );
+				scene.add( directionalLight );
+
+				var ambientLight = new THREE.AmbientLight (0x000000);
+				scene.add(ambientLight);
+
 
 			function onWindowResize() {
 
@@ -158,14 +211,20 @@
 					//var speedY=Math.sqrt(Math.pow(speed,2)-Math.pow(speedX,2));
 					player.position.x=player.position.x+speedX;
 					player.position.y=player.position.y+speedY;
+					var mainSpaceship = scene.getObjectByName( "mainSpaceship" );
+					
+					mainSpaceship.position.x = player.position.x+speedX;
+					mainSpaceship.position.y = player.position.y+speedY;
 				}
 				if(0>=-mouseY){
 					player.rotation.z = Math.PI/2-Math.acos((mouseX-0)/Math.sqrt(Math.pow(mouseX-0,2)+Math.pow(-mouseY-0,2)));
+					//mainSpaceship.rotation.z = Math.PI/2-Math.acos((mouseX-0)/Math.sqrt(Math.pow(mouseX-0,2)+Math.pow(-mouseY-0,2)));
 				}
 				else{
 					player.rotation.z = Math.PI/2+Math.acos((mouseX-0)/Math.sqrt(Math.pow(mouseX-0,2)+Math.pow(-mouseY-0,2)));
+					//mainSpaceship.rotation.z = Math.PI/2+Math.acos((mouseX-0)/Math.sqrt(Math.pow(mouseX-0,2)+Math.pow(-mouseY-0,2)));
 				}
-				console.log(mouseX);
+				//console.log(mouseX);
 				renderer.render( scene, camera );
 				camera.position.x =player.position.x;
 				camera.position.y =player.position.y;
