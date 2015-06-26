@@ -61,7 +61,19 @@
 			var player = new THREE.Mesh( geometry, material );
 			var geometry = new THREE.SphereGeometry( 30 );
 			var testObj = new THREE.Mesh( geometry, material );
-			var speed=1;
+			var playerRotationWrapper = new THREE.Object3D();
+			//settings
+			var acceleration = 0.05;
+			var speedBreak = 0.05;
+			var topspeed = 3;
+			//namespace variables
+			var moveForward = false;
+			var moveBackward = false;
+			var moveRight = false;
+			var moveLeft = false;
+			var speed = 0;
+			var x=0;
+			var maxTiltRight = false;
 
 			init();
 			animate();
@@ -84,11 +96,76 @@
 				container.appendChild( renderer.domElement );
 
 				// player
-				scene.add( player );
+				scene.add( playerRotationWrapper );
+				playerRotationWrapper.add( player );
 				player.position.set(0,0,0);
 
 				scene.add( testObj );
 				testObj.position.set(0,0,0);
+
+				// key events
+				var onKeyDown = function ( event ) {
+
+					switch ( event.keyCode ) {
+
+						case 38: // up
+						case 87: // w
+							moveForward = true;
+							break;
+
+						case 37: // left
+						case 65: // a
+							moveLeft = true; break;
+
+						case 40: // down
+						case 83: // s
+							moveBackward = true;
+							break;
+
+						case 39: // right
+						case 68: // d
+							moveRight = true;
+							break;
+
+						case 32: // space
+							if ( canJump === true ) velocity.y += 350;
+							canJump = false;
+							break;
+
+					}
+
+				};
+
+				var onKeyUp = function ( event ) {
+
+					switch( event.keyCode ) {
+
+						case 38: // up
+						case 87: // w
+							moveForward = false;
+							break;
+
+						case 37: // left
+						case 65: // a
+							moveLeft = false;
+							break;
+
+						case 40: // down
+						case 83: // s
+							moveBackward = false;
+							break;
+
+						case 39: // right
+						case 68: // d
+							moveRight = false;
+							break;
+
+					}
+
+				};
+
+				document.addEventListener( 'keydown', onKeyDown, false );
+				document.addEventListener( 'keyup', onKeyUp, false );
 
 				document.addEventListener( 'mousemove', onDocumentMouseMove, false );
 				document.addEventListener( 'touchstart', onDocumentTouchStart, false );
@@ -150,25 +227,65 @@
 			}
 
 			function render() {
-				camera.lookAt( player.position );
 				//var time = Date.now() * 0.0015;
+				//move
 				if(!(0===mouseX&&0===-mouseY)){
 					var speedX=speed*(mouseX-0)/Math.sqrt(Math.pow(mouseX-0,2)+Math.pow(-mouseY-0,2));
 					var speedY=speed*(-mouseY-0)/Math.sqrt(Math.pow(mouseX-0,2)+Math.pow(-mouseY-0,2));
-					//var speedY=Math.sqrt(Math.pow(speed,2)-Math.pow(speedX,2));
-					player.position.x=player.position.x+speedX;
-					player.position.y=player.position.y+speedY;
+					playerRotationWrapper.position.x=playerRotationWrapper.position.x+speedX;
+					playerRotationWrapper.position.y=playerRotationWrapper.position.y+speedY;
+					if( moveForward ){
+						speed = speed + acceleration;
+						if( speed > topspeed ) speed=topspeed;
+					}
+					if( moveBackward ){
+						speed = speed - acceleration;
+						if( speed < -topspeed ) speed=-topspeed;
+					}
+					if ( !(moveBackward||moveForward)&&!(speed==0) ){
+						if(speed>0) {
+							speed = speed - speedBreak;
+							if(speed<0) speed = 0;
+						}
+						if(speed<0) {
+							speed = speed + speedBreak;
+							if(speed>0) speed = 0;
+						}
+					}
 				}
+				//tilt
+				var tiltSpeed;
+				var time = 0.35;
+				var topTiltSpeed=5;
+				if( moveRight&&!maxTiltRight ){
+					x++;
+					tiltSpeed=topTiltSpeed*Math.sin((x-Math.PI/(2*time))*time)+topTiltSpeed;
+					console.log(tiltSpeed);
+					player.position.x = player.position.x - tiltSpeed;
+					player.rotation.y = player.rotation.y - time/4;
+					//tiltSpeed=-Math.pow(tiltAcceleration*x,2)+distance*x;
+					if(tiltSpeed<=0.01){
+						console.log("reset");
+						maxTiltRight=true;
+					}
+				}
+				if( !moveRight ){
+					x=0;
+				}
+				//rotate
 				if(0>=-mouseY){
-					player.rotation.z = Math.PI/2-Math.acos((mouseX-0)/Math.sqrt(Math.pow(mouseX-0,2)+Math.pow(-mouseY-0,2)));
+					playerRotationWrapper.rotation.z = Math.PI/2-Math.acos((mouseX-0)/Math.sqrt(Math.pow(mouseX-0,2)+Math.pow(-mouseY-0,2)));
 				}
 				else{
-					player.rotation.z = Math.PI/2+Math.acos((mouseX-0)/Math.sqrt(Math.pow(mouseX-0,2)+Math.pow(-mouseY-0,2)));
+					playerRotationWrapper.rotation.z = Math.PI/2+Math.acos((mouseX-0)/Math.sqrt(Math.pow(mouseX-0,2)+Math.pow(-mouseY-0,2)));
 				}
-				console.log(mouseX);
+				//camera
+				var camOffsetModifier = 50;
+				var maxCamOffset;
 				renderer.render( scene, camera );
-				camera.position.x =player.position.x;
-				camera.position.y =player.position.y;
+				camera.position.x =playerRotationWrapper.position.x - camOffsetModifier*speedX;
+				camera.position.y =playerRotationWrapper.position.y - camOffsetModifier*speedY;
+				camera.lookAt( playerRotationWrapper.position );
 			}
 
 		</script>
