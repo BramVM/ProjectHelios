@@ -66,14 +66,18 @@
 			var playerRotationWrapper = new THREE.Object3D();
 			//settings
 			var acceleration = 0.05;
+			var sideAcceleration = 0.05;
 			var speedBreak = 0.05;
+			var sideSpeedBreak = 0.05;
 			var topspeed = 3;
+			var topSideSpeed = 3;
 			//namespace variables
 			var moveForward = false;
 			var moveBackward = false;
 			var moveRight = false;
 			var moveLeft = false;
 			var speed = 0;
+			var sideSpeed = 0;
 			var x=0;
 			var maxTiltRight = false;
 
@@ -132,7 +136,7 @@
 						}
 
 					} );*/
-					object.material = lambertMaterial;
+					object.material = material;
 					//object.rotateX(1.5);
 					object.position = (0,0,0);
 					object.scale.set(2,2,2);
@@ -275,10 +279,17 @@
 				//move
 				var mainSpaceship = scene.getObjectByName( "mainSpaceship" );
 				if(!(0===mouseX&&0===-mouseY)){
+					//main engine
 					var speedX=speed*(mouseX-0)/Math.sqrt(Math.pow(mouseX-0,2)+Math.pow(-mouseY-0,2));
 					var speedY=speed*(-mouseY-0)/Math.sqrt(Math.pow(mouseX-0,2)+Math.pow(-mouseY-0,2));
 					playerRotationWrapper.position.x=playerRotationWrapper.position.x+speedX;
 					playerRotationWrapper.position.y=playerRotationWrapper.position.y+speedY;
+					//side engine
+					var sideSpeedY=sideSpeed*(mouseX-0)/Math.sqrt(Math.pow(mouseX-0,2)+Math.pow(mouseY-0,2));
+					var sideSpeedX=sideSpeed*(mouseY-0)/Math.sqrt(Math.pow(mouseX-0,2)+Math.pow(mouseY-0,2));
+					playerRotationWrapper.position.x=playerRotationWrapper.position.x+sideSpeedX;
+					playerRotationWrapper.position.y=playerRotationWrapper.position.y+sideSpeedY;
+
 					if( moveForward ){
 						speed = speed + acceleration;
 						if( speed > topspeed ) speed=topspeed;
@@ -297,6 +308,24 @@
 							if(speed>0) speed = 0;
 						}
 					}
+					if( moveLeft ){
+						sideSpeed = sideSpeed + sideAcceleration;
+						if( sideSpeed > topSideSpeed ) sideSpeed=topSideSpeed;
+					}
+					if( moveRight ){
+						sideSpeed = sideSpeed - sideAcceleration;
+						if( sideSpeed < -topSideSpeed ) sideSpeed=-topSideSpeed;
+					}
+					if ( !(moveLeft||moveRight)&&!(sideSpeed==0) ){
+						if(sideSpeed>0) {
+							sideSpeed = sideSpeed - sideSpeedBreak;
+							if(sideSpeed<0) sideSpeed = 0;
+						}
+						if(sideSpeed<0) {
+							sideSpeed = sideSpeed + sideSpeedBreak;
+							if(sideSpeed>0) sideSpeed = 0;
+						}
+					}
 				}
 				//tilt
 				var tiltSpeed;
@@ -308,7 +337,6 @@
 					console.log(tiltSpeed);
 					mainSpaceship.position.x = mainSpaceship.position.x - tiltSpeed;
 					mainSpaceship.rotation.y = mainSpaceship.rotation.y + time/4;
-					//tiltSpeed=-Math.pow(tiltAcceleration*x,2)+distance*x;
 					if(tiltSpeed<=0.01){
 						console.log("reset");
 						maxTiltRight=true;
@@ -320,7 +348,6 @@
 					console.log(tiltSpeed);
 					mainSpaceship.position.x = mainSpaceship.position.x + tiltSpeed;
 					mainSpaceship.rotation.y = mainSpaceship.rotation.y - time/4;
-					//tiltSpeed=-Math.pow(tiltAcceleration*x,2)+distance*x;
 					if(tiltSpeed<=0.01){
 						console.log("reset");
 						maxTiltRight=false;
@@ -330,14 +357,10 @@
 				//rotate
 				if(0>=-mouseY){
 					playerRotationWrapper.rotation.z = Math.PI/2-Math.acos((mouseX-0)/Math.sqrt(Math.pow(mouseX-0,2)+Math.pow(-mouseY-0,2)));
-					//mainSpaceship.rotation.z = Math.PI/2-Math.acos((mouseX-0)/Math.sqrt(Math.pow(mouseX-0,2)+Math.pow(-mouseY-0,2)));
 				}
 				else{
 					playerRotationWrapper.rotation.z = Math.PI/2+Math.acos((mouseX-0)/Math.sqrt(Math.pow(mouseX-0,2)+Math.pow(-mouseY-0,2)));
-					//mainSpaceship.rotation.z = Math.PI/2+Math.acos((mouseX-0)/Math.sqrt(Math.pow(mouseX-0,2)+Math.pow(-mouseY-0,2)));
 				}
-				//mainSpaceship.position.x = player.position.x+speedX;
-				//mainSpaceship.position.y = player.position.y+speedY;
 				//camera
 				var camOffsetModifier = 50;
 				var maxCamOffset;
