@@ -46,6 +46,8 @@
 		<script src="libs/stats.min.js"></script>
 		<script src="libs/OBJLoader.js"></script>
 
+		<script src="generateWorld.js"></script>
+
 		<script>
 
 			if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
@@ -97,14 +99,18 @@
 				renderer.setPixelRatio( window.devicePixelRatio );
 				renderer.setSize( window.innerWidth, window.innerHeight );
 				container.appendChild( renderer.domElement );
+				
 
 				// player
 				scene.add( playerRotationWrapper );
 				playerRotationWrapper.add( player );
 				player.position.set(0,0,0);
-
-				scene.add( testObj );
-				testObj.position.set(0,0,0);
+				var origin={
+					x : 0,
+					y : 0,
+					z : 0,
+				}
+				generateWorld(origin);
 				//trying to load the mesh
 				var onProgress = function ( xhr ) {
 					if ( xhr.lengthComputable ) {
