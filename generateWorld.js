@@ -38,7 +38,13 @@ var generateWorld = function(origin){
 		for( indexY ; indexY < origin.y + rangeY ; indexY = indexY + densety ) {
 			var radius = seed(indexX,indexY)*100000 ;
 			if (radius!=0){
-				console.log(radius);
+
+
+		for( indexX ; indexX < origin.x + rangeX ; indexX = indexX  + densety ) {
+			for( indexY ; indexY < origin.y + rangeY ; indexY = indexY + densety ) {
+				var radius = seed(indexX,indexY)*100000 ;
+				if (radius!=0){
+					//console.log(radius);
 				var position = {
 					x : indexX,
 					y : indexY,

@@ -48,6 +48,8 @@
 
 		<script src="generateWorld.js"></script>
 		<script src="controleShip.js"></script>
+		<script src="enemySpawner.js"></script>
+
 
 		<script>
 
@@ -70,7 +72,7 @@
 			//settings
 			var acceleration = 0.07;
 			var sideAcceleration = 0.05;
-			var topSpeed = 4;
+			var topSpeed = 10;
 			var topSideSpeed = 3;
 			var attackSpeed = 10;
 			//namespace variables
@@ -215,6 +217,8 @@
 					shooting = false;
 				};
 
+				setInterval(function(){ spawnEnemies(playerRotationWrapper, windowHalfX, windowHalfY) }, 3000);
+
 				document.addEventListener( 'keydown', onKeyDown, false );
 				document.addEventListener( 'keyup', onKeyUp, false );
 
@@ -275,6 +279,9 @@
 				requestAnimationFrame( animate );
 				render();
 			}
+
+
+			//timer checktospawnenemies every few seconds spawnEnemies()
 
 			function render() {
 				//var time = Date.now() * 0.0015;
@@ -387,6 +394,7 @@
 				camera.position.x =playerRotationWrapper.position.x /*- camOffsetModifier*speedX*/;
 				camera.position.y =playerRotationWrapper.position.y /*- camOffsetModifier*speedY*/;
 				camera.lookAt( playerRotationWrapper.position );
+
 			}
 
 		</script>
