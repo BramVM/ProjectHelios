@@ -34,22 +34,20 @@ var generateWorld = function(origin){
 	var indexX = origin.x - rangeX;
 	var indexY = origin.y - rangeY;
 	var densety = 20;
-
-
-		for( indexX ; indexX < origin.x + rangeX ; indexX = indexX  + densety ) {
-			for( indexY ; indexY < origin.y + rangeY ; indexY = indexY + densety ) {
-				var radius = seed(indexX,indexY)*100000 ;
-				if (radius!=0){
-					console.log(radius);
-					var position = {
-						x : indexX,
-						y : indexY,
-						z : -50
-					}
-					createStar (radius,position);
+	for( indexX ; indexX < origin.x + rangeX ; indexX = indexX  + densety ) {
+		for( indexY ; indexY < origin.y + rangeY ; indexY = indexY + densety ) {
+			var radius = seed(indexX,indexY)*100000 ;
+			if (radius!=0){
+				console.log(radius);
+				var position = {
+					x : indexX,
+					y : indexY,
+					z : -50
 				}
+				createStar (radius,position);
 			}
-			indexY = origin.y - rangeY;
 		}
+		indexY = origin.y - rangeY;
+	}
 }
 	

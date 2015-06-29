@@ -72,6 +72,7 @@
 			var sideAcceleration = 0.05;
 			var topSpeed = 4;
 			var topSideSpeed = 3;
+			var attackSpeed = 10;
 			//namespace variables
 			var moveForward = false;
 			var moveBackward = false;
@@ -80,8 +81,8 @@
 			var shooting = false;
 			var speed = 0;
 			var sideSpeed = 0;
-			var x=0;
-			var maxTiltRight = false;
+			var attackDelay = attackSpeed;
+			var bullets = [];
 
 			init();
 			animate();
@@ -145,19 +146,18 @@
 					object.position = (0,0,0);
 					object.scale.set(2,2,2);
 					object.name = "mainSpaceship";
-					console.log(object);
 					playerRotationWrapper.add( object );
 				}, onProgress, onError );
 
 				var directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
-				directionalLight.position.set( 0, 0, 1 );
+				directionalLight.position.set( 0, 0, -1 );
 				scene.add( directionalLight );
 
 				var ambientLight = new THREE.AmbientLight (0x202020);
 				scene.add(ambientLight);
 
 				camera = new THREE.PerspectiveCamera( 33, window.innerWidth / window.innerHeight, 1, 10000 );
-				camera.position.z = 700;
+				camera.position.z = 1400;
 
 				// key events
 				var onKeyDown = function ( event ) {
@@ -165,7 +165,6 @@
 						case 38: // up
 						case 87: // w
 							moveForward = true;
-							console.log("forward");
 							break;
 						case 37: // left
 						case 65: // a
@@ -328,9 +327,59 @@
 					mainSpaceship.rotation.y = sideRoll;
 				}
 				//shoot
-				if (shooting){
-					console.log("shooting");
+				var createBullet = function ( position, directionX, directionY, speed ){
+					
+					var bulletShape = new THREE.Shape();
+					var bulletSizeX = 2;
+					var bulletSizeY = 16;
+					bulletShape.moveTo(bulletSizeX/2, bulletSizeY/2);
+					bulletShape.lineTo(-bulletSizeX/2, bulletSizeY/2);
+					bulletShape.lineTo(-bulletSizeX/2, -bulletSizeY/2);
+					bulletShape.lineTo(bulletSizeX/2, -bulletSizeY/2);
+					bulletShape.lineTo(bulletSizeX/2, bulletSizeY/2);
+					var geometry = bulletShape.makeGeometry();
+					var material = new THREE.MeshBasicMaterial({ color: 0x3333ff });
+					var bullet = new THREE.Mesh(geometry, material);
+					scene.add( bullet );
+					var innerBulletShape = new THREE.Shape();
+					var innerBulletSizeX = 1
+					var innerBulletSizeY = 14;
+					innerBulletShape.moveTo(innerBulletSizeX/2, innerBulletSizeY/2);
+					innerBulletShape.lineTo(-innerBulletSizeX/2, innerBulletSizeY/2);
+					innerBulletShape.lineTo(-innerBulletSizeX/2, -innerBulletSizeY/2);
+					innerBulletShape.lineTo(innerBulletSizeX/2, -innerBulletSizeY/2);
+					innerBulletShape.lineTo(innerBulletSizeX/2, innerBulletSizeY/2);
+					var geometry = innerBulletShape.makeGeometry();
+					var material = new THREE.MeshBasicMaterial({ color: 0x6666ff });
+					var innerBullet = new THREE.Mesh(geometry, material);
+					bullet.add( innerBullet );
+					bullet.position.set(position.x,position.y,position.z);
+					if(0>=directionY){
+						bullet.rotation.z = Math.PI/2-Math.acos((directionX-0)/Math.sqrt(Math.pow(directionX-0,2)+Math.pow(directionY-0,2)));
+					}
+					else{
+						bullet.rotation.z = Math.PI/2+Math.acos((directionX-0)/Math.sqrt(Math.pow(directionX-0,2)+Math.pow(directionY-0,2)));
+					}
+					bullet.speedX=speed*(directionX-0)/Math.sqrt(Math.pow(directionX-0,2)+Math.pow(directionY-0,2));
+					bullet.speedY=speed*(directionY-0)/Math.sqrt(Math.pow(directionX-0,2)+Math.pow(directionY-0,2));
+					bullets.push(bullet);
 				}
+				var moveBullet = function ( bullets ) {
+					for (i=0;i<bullets.length;i++){
+						bullets[i].position.x=bullets[i].position.x+bullets[i].speedX;
+						bullets[i].position.y=bullets[i].position.y+bullets[i].speedY;
+					}
+				}
+				if (shooting){
+					if (attackDelay<attackSpeed) attackDelay++;
+					if (attackDelay>=attackSpeed){
+						attackDelay=0;
+						createBullet(playerRotationWrapper.position,mouseX,-mouseY,10);
+					}
+					//shoot(playerRotationWrapper.position);
+					//console.log("shooting");
+				}
+				moveBullet(bullets);
 				//camera follow
 				var camOffsetModifier = 50;
 				var maxCamOffset;
