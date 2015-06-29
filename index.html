@@ -47,6 +47,7 @@
 		<script src="libs/OBJLoader.js"></script>
 
 		<script src="generateWorld.js"></script>
+		<script src="controleShip.js"></script>
 
 		<script>
 
@@ -67,17 +68,16 @@
 			var testObj = new THREE.Mesh( geometry, material );
 			var playerRotationWrapper = new THREE.Object3D();
 			//settings
-			var acceleration = 0.05;
+			var acceleration = 0.07;
 			var sideAcceleration = 0.05;
-			var speedBreak = 0.05;
-			var sideSpeedBreak = 0.05;
-			var topspeed = 3;
+			var topSpeed = 4;
 			var topSideSpeed = 3;
 			//namespace variables
 			var moveForward = false;
 			var moveBackward = false;
 			var moveRight = false;
 			var moveLeft = false;
+			var shooting = false;
 			var speed = 0;
 			var sideSpeed = 0;
 			var x=0;
@@ -103,8 +103,6 @@
 
 				// player
 				scene.add( playerRotationWrapper );
-				playerRotationWrapper.add( player );
-				player.position.set(0,0,0);
 				var origin={
 					x : 0,
 					y : 0,
@@ -131,7 +129,7 @@
 				};
 
 				var loader = new THREE.OBJLoader( manager );
-				loader.load( 'public/models/spaceship.obj', function ( object ) {
+				loader.load( 'public/models/spaceship3.obj', function ( object ) {
 
 					/*object.traverse( function ( child ) {
 
@@ -142,7 +140,7 @@
 						}
 
 					} );*/
-					object.material = material;
+					object.material = lambertMaterial;
 					//object.rotateX(1.5);
 					object.position = (0,0,0);
 					object.scale.set(2,2,2);
@@ -152,10 +150,10 @@
 				}, onProgress, onError );
 
 				var directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
-				directionalLight.position.set( 0.5, 1, 0 );
+				directionalLight.position.set( 0, 0, 1 );
 				scene.add( directionalLight );
 
-				var ambientLight = new THREE.AmbientLight (0x000000);
+				var ambientLight = new THREE.AmbientLight (0x202020);
 				scene.add(ambientLight);
 
 				camera = new THREE.PerspectiveCamera( 33, window.innerWidth / window.innerHeight, 1, 10000 );
@@ -163,69 +161,68 @@
 
 				// key events
 				var onKeyDown = function ( event ) {
-
 					switch ( event.keyCode ) {
-
 						case 38: // up
 						case 87: // w
 							moveForward = true;
+							console.log("forward");
 							break;
-
 						case 37: // left
 						case 65: // a
 							moveLeft = true; break;
-
 						case 40: // down
 						case 83: // s
 							moveBackward = true;
 							break;
-
 						case 39: // right
 						case 68: // d
 							moveRight = true;
 							break;
-
 						case 32: // space
 							if ( canJump === true ) velocity.y += 350;
 							canJump = false;
 							break;
-
 					}
 
 				};
 
 				var onKeyUp = function ( event ) {
-
 					switch( event.keyCode ) {
-
 						case 38: // up
 						case 87: // w
 							moveForward = false;
 							break;
-
 						case 37: // left
 						case 65: // a
 							moveLeft = false;
 							break;
-
 						case 40: // down
 						case 83: // s
 							moveBackward = false;
 							break;
-
 						case 39: // right
 						case 68: // d
 							moveRight = false;
 							break;
-
 					}
+				};
 
+				var onDocumentMouseDown = function ( event ) {
+					//event.preventDefault();
+					shooting = true;
+				};
+
+				var onDocumentMouseUp = function ( event ) {
+					shooting = false;
 				};
 
 				document.addEventListener( 'keydown', onKeyDown, false );
 				document.addEventListener( 'keyup', onKeyUp, false );
 
 				document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+				document.addEventListener( 'mousedown', onDocumentMouseDown, false );
+				document.addEventListener( 'mouseup', onDocumentMouseUp, false );
+
 				document.addEventListener( 'touchstart', onDocumentTouchStart, false );
 				document.addEventListener( 'touchmove', onDocumentTouchMove, false );
 
@@ -285,79 +282,34 @@
 				//move
 				var mainSpaceship = scene.getObjectByName( "mainSpaceship" );
 				if(!(0===mouseX&&0===-mouseY)){
-					//main engine
+					//main engine direction
 					var speedX=speed*(mouseX-0)/Math.sqrt(Math.pow(mouseX-0,2)+Math.pow(-mouseY-0,2));
 					var speedY=speed*(-mouseY-0)/Math.sqrt(Math.pow(mouseX-0,2)+Math.pow(-mouseY-0,2));
 					playerRotationWrapper.position.x=playerRotationWrapper.position.x+speedX;
 					playerRotationWrapper.position.y=playerRotationWrapper.position.y+speedY;
-					//side engine
+					//side engine direction
 					var sideSpeedY=sideSpeed*(mouseX-0)/Math.sqrt(Math.pow(mouseX-0,2)+Math.pow(mouseY-0,2));
 					var sideSpeedX=sideSpeed*(mouseY-0)/Math.sqrt(Math.pow(mouseX-0,2)+Math.pow(mouseY-0,2));
 					playerRotationWrapper.position.x=playerRotationWrapper.position.x+sideSpeedX;
 					playerRotationWrapper.position.y=playerRotationWrapper.position.y+sideSpeedY;
-
+					//modify speed on controles
 					if( moveForward ){
-						speed = speed + acceleration;
-						if( speed > topspeed ) speed=topspeed;
+						speed = speed+(topSpeed-speed)*acceleration;
 					}
 					if( moveBackward ){
-						speed = speed - acceleration;
-						if( speed < -topspeed ) speed=-topspeed;
+						speed = speed+(-topSpeed-speed)*acceleration;
 					}
 					if ( !(moveBackward||moveForward)&&!(speed==0) ){
-						if(speed>0) {
-							speed = speed - speedBreak;
-							if(speed<0) speed = 0;
-						}
-						if(speed<0) {
-							speed = speed + speedBreak;
-							if(speed>0) speed = 0;
-						}
+						speed = speed+(0-speed)*acceleration;
 					}
 					if( moveLeft ){
-						sideSpeed = sideSpeed + sideAcceleration;
-						if( sideSpeed > topSideSpeed ) sideSpeed=topSideSpeed;
+						sideSpeed = sideSpeed+(topSideSpeed-sideSpeed)*sideAcceleration;
 					}
 					if( moveRight ){
-						sideSpeed = sideSpeed - sideAcceleration;
-						if( sideSpeed < -topSideSpeed ) sideSpeed=-topSideSpeed;
+						sideSpeed =  sideSpeed+(-topSideSpeed-sideSpeed)*sideAcceleration;
 					}
 					if ( !(moveLeft||moveRight)&&!(sideSpeed==0) ){
-						if(sideSpeed>0) {
-							sideSpeed = sideSpeed - sideSpeedBreak;
-							if(sideSpeed<0) sideSpeed = 0;
-						}
-						if(sideSpeed<0) {
-							sideSpeed = sideSpeed + sideSpeedBreak;
-							if(sideSpeed>0) sideSpeed = 0;
-						}
-					}
-				}
-				//tilt
-				var tiltSpeed;
-				var time = 0.35;
-				var topTiltSpeed=5;
-				if( moveRight&&!maxTiltRight ){
-					x++;
-					tiltSpeed=topTiltSpeed*Math.sin((x-Math.PI/(2*time))*time)+topTiltSpeed;
-					console.log(tiltSpeed);
-					mainSpaceship.position.x = mainSpaceship.position.x - tiltSpeed;
-					mainSpaceship.rotation.y = mainSpaceship.rotation.y + time/4;
-					if(tiltSpeed<=0.01){
-						console.log("reset");
-						maxTiltRight=true;
-					}
-				}
-				if( !moveRight && x!=0 ){
-					x--;
-					tiltSpeed=topTiltSpeed*Math.sin((x-Math.PI/(2*time))*time)+topTiltSpeed;
-					console.log(tiltSpeed);
-					mainSpaceship.position.x = mainSpaceship.position.x + tiltSpeed;
-					mainSpaceship.rotation.y = mainSpaceship.rotation.y - time/4;
-					if(tiltSpeed<=0.01){
-						console.log("reset");
-						maxTiltRight=false;
-						x=0;
+						sideSpeed = sideSpeed+(0-sideSpeed)*sideAcceleration;
 					}
 				}
 				//rotate
@@ -367,12 +319,24 @@
 				else{
 					playerRotationWrapper.rotation.z = Math.PI/2+Math.acos((mouseX-0)/Math.sqrt(Math.pow(mouseX-0,2)+Math.pow(-mouseY-0,2)));
 				}
-				//camera
+				//roll animation
+				var maxRollRotation = Math.PI/6;
+				var sideRoll = sideSpeed*maxRollRotation/topSideSpeed;
+				if ( sideRoll > maxRollRotation ) sideRoll = maxRollRotation;
+				if ( sideRoll < -maxRollRotation ) sideRoll = -maxRollRotation;
+				if(mainSpaceship){
+					mainSpaceship.rotation.y = sideRoll;
+				}
+				//shoot
+				if (shooting){
+					console.log("shooting");
+				}
+				//camera follow
 				var camOffsetModifier = 50;
 				var maxCamOffset;
 				renderer.render( scene, camera );
-				camera.position.x =playerRotationWrapper.position.x - camOffsetModifier*speedX;
-				camera.position.y =playerRotationWrapper.position.y - camOffsetModifier*speedY;
+				camera.position.x =playerRotationWrapper.position.x /*- camOffsetModifier*speedX*/;
+				camera.position.y =playerRotationWrapper.position.y /*- camOffsetModifier*speedY*/;
 				camera.lookAt( playerRotationWrapper.position );
 			}
 
