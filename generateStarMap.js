@@ -1,4 +1,4 @@
-var createStar = function(radius,position){
+var createStar = function(radius,position,color){
 	var circle = new THREE.Shape();
 	for (var i = 0; i < 16; i++) {
 	  var pct = (i + 1) / 16;
@@ -12,7 +12,7 @@ var createStar = function(radius,position){
 	  }
 	}
 	var geometry = circle.makeGeometry();
-	var material = new THREE.MeshBasicMaterial({ color: 0xffffff });
+	var material = new THREE.MeshBasicMaterial({ color: color });
 	var star = new THREE.Mesh(geometry, material);
 
 	scene.add( star );
@@ -21,19 +21,12 @@ var createStar = function(radius,position){
 function seed(x,y){
 	var i=x+y;
 	var k=x-y;
-	var frequency=0.006;
-	var amplitude=0.00001;
+	var frequency=20;
+	var amplitude=1;
 	var result=0;
 	result=amplitude*Math.sin(i*frequency);
 	result=result+amplitude*Math.sin(k*frequency);
-
-	m_w = x;    /* must not be zero, nor 0x464fffff */
-	m_z = y;    /* must not be zero, nor 0x9068ffff */
-
-	 m_z = 36969 * (m_z & 65535) + (m_z >> 16);
-    m_w = 18000 * (m_w & 65535) + (m_w >> 16);
-    return ((m_z << 16) + m_w);  /* 32-bit result */
-	//return result;
+	return result;
 }
 var generateWorld = function(origin){
 	var rangeX = 1000;
@@ -41,28 +34,33 @@ var generateWorld = function(origin){
 	var indexX = origin.x - rangeX;
 	var indexY = origin.y - rangeY;
 	var density =100;
-	var radiusGenerator;
-	var densityGenerator;
-	var seededDensity;
-	densityGenerator = SeedRandom(Math.abs(indexX));
-	seededDensity = Math.abs(seed(indexX,indexY)/100000000*(10+densityGenerator(40))); //between 100 & 500
-	for( indexX ; indexX < origin.x + rangeX ; indexX = indexX  + seededDensity ) {
-		for( indexY ; indexY < origin.y + rangeY ; indexY = indexY + seededDensity ) {
-			seededDensity = Math.abs(seed(indexX,indexY)/100000000*(10+densityGenerator(40))); //between 100 & 500
-			console.log(seededDensity);
+	for( indexX ; indexX < origin.x + rangeX ; indexX = indexX  + Math.abs(seed(indexX,0))*100+75 ) {
+		for( indexY ; indexY < origin.y + rangeY ; indexY = indexY + Math.abs(seed(indexY,0)*100)+75 ) {
 			var radius=0;
 			if(indexX+indexY!=0){
-				radiusGenerator = SeedRandom(Math.pow(seed(indexX,indexY),2));
+				var radiusGenerator = SeedRandom(Math.pow(seed(indexX,indexY),2));
 				radius = radiusGenerator(6);
 			}
-			//console.log(radius);
 			if (radius!=0){
+				var rngPositionX = SeedRandom(Math.abs(indexX+indexY));
+				var rngPositionY = SeedRandom(Math.abs(indexY-indexX));
+				var rngColor = SeedRandom(Math.abs(indexX-indexY));
 				var position = {
-					x : indexX,
-					y : indexY,
+					x : indexX + rngPositionX(1000),
+					y : indexY + rngPositionY(1000),
 					z : -50
 				}
-				createStar (radius,position);
+				var red = 255;
+				var green = 255;
+				var blue = 220;
+				if(rngColor(100)>80){
+					var red = Math.round(255-rngPositionX(100));
+					var green =Math.round( 250-rngPositionX(100)-rngPositionY(100));
+					var blue = Math.round( 255-rngPositionY(100));
+				}
+				var color ="rgb("+red+","+green+","+blue+")";
+				console.log(color);
+				createStar (radius,position,color);
 			}
 		}
 		indexY = origin.y - rangeY;
