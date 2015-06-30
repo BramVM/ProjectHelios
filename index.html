@@ -292,7 +292,7 @@
 						z : 0
 					}
 					//main engine direction
-					var direction=cord.direction(midscreen,mouse);
+					/*var direction=cord.direction(midscreen,mouse);
 					cord.moveIndirection( playerRotationWrapper.position , direction , speed );
 					//side engine direction
 					var manipulatedMouse = {
@@ -300,9 +300,17 @@
 						y : -mouse.x
 					};
 					var sidewardsDirection=cord.direction(midscreen,manipulatedMouse);
-					cord.moveIndirection( playerRotationWrapper.position , sidewardsDirection , sideSpeed );
+					cord.moveIndirection( playerRotationWrapper.position , sidewardsDirection , sideSpeed );*/
 					
-		
+					var speedX=speed*(mouse.x-0)/Math.sqrt(Math.pow(mouse.x-0,2)+Math.pow(-mouse.y-0,2));
+					var speedY=speed*(-mouse.y-0)/Math.sqrt(Math.pow(mouse.x-0,2)+Math.pow(-mouse.y-0,2));
+					playerRotationWrapper.position.x=playerRotationWrapper.position.x+speedX;
+					playerRotationWrapper.position.y=playerRotationWrapper.position.y+speedY;
+					
+					var sideSpeedY=sideSpeed*(mouse.x-0)/Math.sqrt(Math.pow(mouse.x-0,2)+Math.pow(mouse.y-0,2));
+					var sideSpeedX=sideSpeed*(mouse.y-0)/Math.sqrt(Math.pow(mouse.x-0,2)+Math.pow(mouse.y-0,2));
+					playerRotationWrapper.position.x=playerRotationWrapper.position.x+sideSpeedX;
+					playerRotationWrapper.position.y=playerRotationWrapper.position.y+sideSpeedY;
 
 					//modify speed on controles
 					if( moveForward ){
