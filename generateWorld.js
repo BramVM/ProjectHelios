@@ -29,17 +29,11 @@ function seed(x,y){
 	return result;
 }
 var generateWorld = function(origin){
-	var rangeX = 500;
-	var rangeY = 500;
+	var rangeX = 1000;
+	var rangeY = 1000;
 	var indexX = origin.x - rangeX;
 	var indexY = origin.y - rangeY;
-	var densety = 20;
-	for( indexX ; indexX < origin.x + rangeX ; indexX = indexX  + densety ) {
-		for( indexY ; indexY < origin.y + rangeY ; indexY = indexY + densety ) {
-			var radius = seed(indexX,indexY)*100000 ;
-			if (radius!=0){
-
-
+	var densety = 200;
 		for( indexX ; indexX < origin.x + rangeX ; indexX = indexX  + densety ) {
 			for( indexY ; indexY < origin.y + rangeY ; indexY = indexY + densety ) {
 				var radius = seed(indexX,indexY)*100000 ;
