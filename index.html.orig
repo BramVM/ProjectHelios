@@ -38,26 +38,23 @@
 		</style>
 	</head>
 	<body>
-		<script src="node_modules/three/three.min.js"></script>
+		<script src="libs/three.min.js"></script>
 
-		<script src="libs/hilbert3D.js"></script>s
+		<script src="libs/hilbert3D.js"></script>
 
 		<script src="libs/Detector.js"></script>
 		<script src="libs/stats.min.js"></script>
 		<script src="libs/OBJLoader.js"></script>
-		<script src="controleShip.js"></script>
+
 		<script src="generateStarMap.js"></script>
 		<script src="enemySpawner.js"></script>
-		<script src="cord.js"></script>
+
 
 		<script>
 
 			if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
 
-			var mouse = {
-				x : 0,
-				y : 0
-			},
+			var mouseX = 0, mouseY = 0,
 
 			windowHalfX = window.innerWidth / 2,
 			windowHalfY = window.innerHeight / 2,
@@ -76,6 +73,10 @@
 			var sideAcceleration = 0.05;
 			var topSpeed = 4;
 			var topSideSpeed = 3;
+<<<<<<< HEAD
+=======
+			var attackSpeed = 4;
+>>>>>>> 8bbc4ab7038c4c622a500a29fe733f1c3956522a
 			//namespace variables
 			var moveForward = false;
 			var moveBackward = false;
@@ -89,6 +90,7 @@
 			animate();
 
 			function init() {
+
 				var i, container;
 
 				container = document.createElement( 'div' );
@@ -157,7 +159,7 @@
 				scene.add(ambientLight);
 
 				camera = new THREE.PerspectiveCamera( 33, window.innerWidth / window.innerHeight, 1, 10000 );
-				camera.position.z = 1400;
+				camera.position.z = 10000;
 
 				// key events
 				var onKeyDown = function ( event ) {
@@ -245,8 +247,8 @@
 
 			function onDocumentMouseMove(event) {
 
-				mouse.x = event.clientX - windowHalfX;
-				mouse.y = event.clientY - windowHalfY;
+				mouseX = event.clientX - windowHalfX;
+				mouseY = event.clientY - windowHalfY;
 			}
 
 			function onDocumentTouchStart( event ) {
@@ -255,8 +257,8 @@
 
 					event.preventDefault();
 
-					mouse.x = event.touches[ 0 ].pageX - windowHalfX;
-					mouse.y = event.touches[ 0 ].pageY - windowHalfY;
+					mouseX = event.touches[ 0 ].pageX - windowHalfX;
+					mouseY = event.touches[ 0 ].pageY - windowHalfY;
 
 				}
 
@@ -265,8 +267,8 @@
 			function onDocumentTouchMove( event ) {
 				if ( event.touches.length == 1 ) {
 					event.preventDefault();
-					mouse.x = event.touches[ 0 ].pageX - windowHalfX;
-					mouse.y = event.touches[ 0 ].pageY - windowHalfY;
+					mouseX = event.touches[ 0 ].pageX - windowHalfX;
+					mouseY = event.touches[ 0 ].pageY - windowHalfY;
 				}
 
 			}
@@ -285,25 +287,17 @@
 				//var time = Date.now() * 0.0015;
 				//move
 				var mainSpaceship = scene.getObjectByName( "mainSpaceship" );
-				if(!(0===mouse.x&&0===-mouse.y)){
-					var midscreen = {
-						x : 0,
-						y : 0,
-						z : 0
-					}
+				if(!(0===mouseX&&0===-mouseY)){
 					//main engine direction
-					var direction=cord.direction(midscreen,mouse);
-					cord.moveIndirection( playerRotationWrapper.position , direction , speed );
+					var speedX=speed*(mouseX-0)/Math.sqrt(Math.pow(mouseX-0,2)+Math.pow(-mouseY-0,2));
+					var speedY=speed*(-mouseY-0)/Math.sqrt(Math.pow(mouseX-0,2)+Math.pow(-mouseY-0,2));
+					playerRotationWrapper.position.x=playerRotationWrapper.position.x+speedX;
+					playerRotationWrapper.position.y=playerRotationWrapper.position.y+speedY;
 					//side engine direction
-					var manipulatedMouse = {
-						x : mouse.y,
-						y : -mouse.x
-					};
-					var sidewardsDirection=cord.direction(midscreen,manipulatedMouse);
-					cord.moveIndirection( playerRotationWrapper.position , sidewardsDirection , sideSpeed );
-					
-		
-
+					var sideSpeedY=sideSpeed*(mouseX-0)/Math.sqrt(Math.pow(mouseX-0,2)+Math.pow(mouseY-0,2));
+					var sideSpeedX=sideSpeed*(mouseY-0)/Math.sqrt(Math.pow(mouseX-0,2)+Math.pow(mouseY-0,2));
+					playerRotationWrapper.position.x=playerRotationWrapper.position.x+sideSpeedX;
+					playerRotationWrapper.position.y=playerRotationWrapper.position.y+sideSpeedY;
 					//modify speed on controles
 					if( moveForward ){
 						speed = speed+(topSpeed-speed)*acceleration;
@@ -325,11 +319,11 @@
 					}
 				}
 				//rotate
-				if(0>=-mouse.y){
-					playerRotationWrapper.rotation.z = Math.PI/2-Math.acos((mouse.x-0)/Math.sqrt(Math.pow(mouse.x-0,2)+Math.pow(-mouse.y-0,2)));
+				if(0>=-mouseY){
+					playerRotationWrapper.rotation.z = Math.PI/2-Math.acos((mouseX-0)/Math.sqrt(Math.pow(mouseX-0,2)+Math.pow(-mouseY-0,2)));
 				}
 				else{
-					playerRotationWrapper.rotation.z = Math.PI/2+Math.acos((mouse.x-0)/Math.sqrt(Math.pow(mouse.x-0,2)+Math.pow(-mouse.y-0,2)));
+					playerRotationWrapper.rotation.z = Math.PI/2+Math.acos((mouseX-0)/Math.sqrt(Math.pow(mouseX-0,2)+Math.pow(-mouseY-0,2)));
 				}
 				//roll animation
 				var maxRollRotation = Math.PI/6;
@@ -349,9 +343,9 @@
 				camera.position.y =playerRotationWrapper.position.y /*- camOffsetModifier*speedY*/;
 				camera.lookAt( playerRotationWrapper.position );
 
-				//var delta = clock.getDelta(); // Global
-			    //var moveDistance = 125 * delta; // 200 pixels per second
-			    //scene.getObjectByName("enemy" + 1).position.x += moveDistance;
+				var delta = clock.getDelta(); // Global
+			    var moveDistance = 125 * delta; // 200 pixels per second
+			    scene.getObjectByName("enemy" + 1).position.x += moveDistance;
 
 			}
 

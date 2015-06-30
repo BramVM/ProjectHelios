@@ -62,7 +62,7 @@ var shoot = function(){
 		if (attackDelay<attackSpeed) attackDelay++;
 		if (attackDelay>=attackSpeed){
 			attackDelay=0;
-			createBullet(playerRotationWrapper.position,mouseX,-mouseY,10);
+			createBullet(playerRotationWrapper.position,mouse.x,-mouse.y,10);
 		}
 		//shoot(playerRotationWrapper.position);
 		//console.log("shooting");
