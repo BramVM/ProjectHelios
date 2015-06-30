@@ -6,7 +6,7 @@
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 		<style>
 			body {
-				background-color: #000000;
+				background-color: #000022;
 				margin: 0px;
 				overflow: hidden;
 			}
@@ -46,8 +46,7 @@
 		<script src="libs/stats.min.js"></script>
 		<script src="libs/OBJLoader.js"></script>
 
-		<script src="generateWorld.js"></script>
-		<script src="controleShip.js"></script>
+		<script src="generateStarMap.js"></script>
 		<script src="enemySpawner.js"></script>
 
 
@@ -156,7 +155,7 @@
 				scene.add(ambientLight);
 
 				camera = new THREE.PerspectiveCamera( 33, window.innerWidth / window.innerHeight, 1, 10000 );
-				camera.position.z = 1400;
+				camera.position.z = 10000;
 
 				// key events
 				var onKeyDown = function ( event ) {
@@ -214,7 +213,7 @@
 					shooting = false;
 				};
 
-				setInterval(function(){ spawnEnemies(playerRotationWrapper, windowHalfX, windowHalfY) }, 3000);
+				spawnEnemies(playerRotationWrapper, windowHalfX, windowHalfY);
 
 				document.addEventListener( 'keydown', onKeyDown, false );
 				document.addEventListener( 'keyup', onKeyUp, false );
@@ -339,6 +338,10 @@
 				camera.position.x =playerRotationWrapper.position.x /*- camOffsetModifier*speedX*/;
 				camera.position.y =playerRotationWrapper.position.y /*- camOffsetModifier*speedY*/;
 				camera.lookAt( playerRotationWrapper.position );
+
+				var delta = clock.getDelta(); // Global
+			    var moveDistance = 125 * delta; // 200 pixels per second
+			    scene.getObjectByName("enemy" + 1).position.x += moveDistance;
 
 			}
 
