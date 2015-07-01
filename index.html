@@ -57,9 +57,20 @@
 
 			var mouse = {
 				x : 0,
-				y : 0
+				y : 0,
+				down : false
 			},
-
+			keys = {
+				moveForward : false,
+				moveBackward : false,
+				moveRight : false,
+				moveLeft : false
+			},
+			origin={
+					x : 0,
+					y : 0,
+					z : 0,
+			},
 			windowHalfX = window.innerWidth / 2,
 			windowHalfY = window.innerHeight / 2,
 
@@ -78,11 +89,6 @@
 			var topspeed = 4;
 			var topSideSpeed = 3;
 			//namespace variables
-			var moveForward = false;
-			var moveBackward = false;
-			var moveRight = false;
-			var moveLeft = false;
-			var shooting = false;
 			var speed = 0;
 			var sideSpeed = 0;
 
@@ -105,11 +111,7 @@
 
 				// player
 				scene.add( playerRotationWrapper );
-				var origin={
-					x : 0,
-					y : 0,
-					z : 0,
-				}
+				
 				generateWorld(origin);
 				//trying to load the mesh
 				var onProgress = function ( xhr ) {
@@ -168,22 +170,21 @@
 					switch ( event.keyCode ) {
 						case 38: // up
 						case 87: // w
-							moveForward = true;
+							keys.moveForward = true;
 							break;
 						case 37: // left
 						case 65: // a
-							moveLeft = true; break;
+							keys.moveLeft = true; break;
 						case 40: // down
 						case 83: // s
-							moveBackward = true;
+							keys.moveBackward = true;
 							break;
 						case 39: // right
 						case 68: // d
-							moveRight = true;
+							keys.moveRight = true;
 							break;
 						case 32: // space
-							if ( canJump === true ) velocity.y += 350;
-							canJump = false;
+							
 							break;
 					}
 
@@ -193,30 +194,30 @@
 					switch( event.keyCode ) {
 						case 38: // up
 						case 87: // w
-							moveForward = false;
+							keys.moveForward = false;
 							break;
 						case 37: // left
 						case 65: // a
-							moveLeft = false;
+							keys.moveLeft = false;
 							break;
 						case 40: // down
 						case 83: // s
-							moveBackward = false;
+							keys.moveBackward = false;
 							break;
 						case 39: // right
 						case 68: // d
-							moveRight = false;
+							keys.moveRight = false;
 							break;
 					}
 				};
 
 				var onDocumentMouseDown = function ( event ) {
 					//event.preventDefault();
-					shooting = true;
+					mouse.down = true;
 				};
 
 				var onDocumentMouseUp = function ( event ) {
-					shooting = false;
+					mouse.down = false;
 				};
 
 				spawnEnemies(playerRotationWrapper, windowHalfX, windowHalfY);
@@ -275,66 +276,13 @@
 
 			}
 
-			//
-
 			function animate() {
 				requestAnimationFrame( animate );
 				render();
 			}
 
-
-			//timer checktospawnenemies every few seconds spawnEnemies()
-
 			function render() {
-				//var time = Date.now() * 0.0015;
-				//move
-				var mainSpaceship = scene.getObjectByName( "mainSpaceship" );
-				if(!(0===mouse.x&&0===-mouse.y)){
-					var midscreen = {
-						x : 0,
-						y : 0,
-						z : 0
-					}
-					//main engine direction
-					var direction = cord.direction(midscreen,mouse);
-					cord.moveIndirection( playerRotationWrapper.position , direction , speed );
-					//side engine direction
-					var sidewardsDirection = cord.direction(midscreen,mouse);
-					sidewardsDirection.angle = sidewardsDirection.angle + Math.PI/2
-					cord.moveIndirection( playerRotationWrapper.position , sidewardsDirection , sideSpeed );
-
-					//modify speed on controles
-					if( moveForward ){
-						speed = physic.exponentialAcceleration(speed, topspeed ,acceleration);
-					}
-					if( moveBackward ){
-						speed = physic.exponentialAcceleration(speed, -topspeed ,acceleration);
-					}
-					if ( !(moveBackward||moveForward)&&!(speed==0) ){
-						speed = physic.exponentialAcceleration(speed, 0 ,acceleration);
-					}
-					if( moveLeft ){
-						sideSpeed = sideSpeed+(topSideSpeed-sideSpeed)*sideAcceleration;
-					}
-					if( moveRight ){
-						sideSpeed =  sideSpeed+(-topSideSpeed-sideSpeed)*sideAcceleration;
-					}
-					if ( !(moveLeft||moveRight)&&!(sideSpeed==0) ){
-						sideSpeed = sideSpeed+(0-sideSpeed)*sideAcceleration;
-					}
-				}
-				//rotate
-				playerRotationWrapper.rotation.z = Math.PI/2+direction.angle;
-				//roll animation
-				var maxRollRotation = Math.PI/6;
-				var sideRoll = sideSpeed*maxRollRotation/topSideSpeed;
-				if ( sideRoll > maxRollRotation ) sideRoll = maxRollRotation;
-				if ( sideRoll < -maxRollRotation ) sideRoll = -maxRollRotation;
-				if(mainSpaceship){
-					mainSpaceship.rotation.y = sideRoll;
-				}
-				//shoot
-				shoot(direction);
+				controleShip();
 				//camera follow
 				var camOffsetModifier = 50;
 				var maxCamOffset;
@@ -342,11 +290,6 @@
 				camera.position.x =playerRotationWrapper.position.x /*- camOffsetModifier*speedX*/;
 				camera.position.y =playerRotationWrapper.position.y /*- camOffsetModifier*speedY*/;
 				camera.lookAt( playerRotationWrapper.position );
-
-				//var delta = clock.getDelta(); // Global
-			    //var moveDistance = 125 * delta; // 200 pixels per second
-			    //scene.getObjectByName("enemy" + 1).position.x += moveDistance;
-
 			}
 
 		</script>
