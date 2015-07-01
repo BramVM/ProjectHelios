@@ -1,11 +1,41 @@
 function spawnEnemies(playerRotationWrapper, windowHalfX, windowHalfY){
 	var maxEnemies = 3;
-	var geometry = new THREE.BoxGeometry( 100, 100, 100 );
-	var material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
+	var pixelTexture=THREE.ImageUtils.loadTexture('http://localhost:3000/textures/pixel.png');
+	var geometry = new THREE.BoxGeometry( 29, 29, 29 );
+	/*var lines = new THREE.MeshBasicMaterial({
+        color: 0xff0000,
+        wireframe: true
+    });
+	var material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );*/
+	var material = new THREE.MeshBasicMaterial({
+        //map: THREE.ImageUtils.loadTexture('http://localhost:3000/textures/pixel.png'),
+        transparent: true,
+        color: 0x00ff00
+      });
+	var geometry2 = new THREE.BoxGeometry( 30, 30, 30 );
+	var material2 = new THREE.MeshBasicMaterial({
+        map: pixelTexture,
+        transparent: true,
+      });
+	var enemy= new THREE.Mesh( geometry,  material );
+	var outer = new THREE.Mesh( geometry2,  material2 );
+	enemy.position.set(0,0,0);
+	var enemy2 = new THREE.Mesh( geometry,  material );
+	var material2 = new THREE.MeshBasicMaterial({
+        map: pixelTexture,
+        transparent: true,
+      });
+	var outer2 = new THREE.Mesh( geometry2,  material2 );
+	enemy.position.set(30,0,0);
+	scene.add(enemy);
+	enemy.add(outer);
+	scene.add(enemy2);
+	enemy.add(outer2);
+
 	var enemies = [];
 
 	for(var currentEnemies = 0; currentEnemies<maxEnemies; currentEnemies++){
-		enemies[currentEnemies] = new THREE.Mesh( geometry, material );
+		enemies[currentEnemies] = new THREE.Mesh( geometry,  material );
 		scene.add(enemies[currentEnemies]);
 		enemies[currentEnemies].name = "enemy" + currentEnemies; 
 

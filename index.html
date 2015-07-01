@@ -49,6 +49,7 @@
 		<script src="generateStarMap.js"></script>
 		<script src="enemySpawner.js"></script>
 		<script src="cord.js"></script>
+		<script src="physic.js"></script>
 
 		<script>
 
@@ -74,7 +75,7 @@
 			//settings
 			var acceleration = 0.07;
 			var sideAcceleration = 0.05;
-			var topSpeed = 4;
+			var topspeed = 4;
 			var topSideSpeed = 3;
 			//namespace variables
 			var moveForward = false;
@@ -246,7 +247,7 @@
 			function onDocumentMouseMove(event) {
 
 				mouse.x = event.clientX - windowHalfX;
-				mouse.y = event.clientY - windowHalfY;
+				mouse.y = -event.clientY + windowHalfY;
 			}
 
 			function onDocumentTouchStart( event ) {
@@ -256,7 +257,7 @@
 					event.preventDefault();
 
 					mouse.x = event.touches[ 0 ].pageX - windowHalfX;
-					mouse.y = event.touches[ 0 ].pageY - windowHalfY;
+					mouse.y = -event.touches[ 0 ].pageY + windowHalfY;
 
 				}
 
@@ -266,7 +267,7 @@
 				if ( event.touches.length == 1 ) {
 					event.preventDefault();
 					mouse.x = event.touches[ 0 ].pageX - windowHalfX;
-					mouse.y = event.touches[ 0 ].pageY - windowHalfY;
+					mouse.y = -event.touches[ 0 ].pageY + windowHalfY;
 				}
 
 			}
@@ -292,32 +293,19 @@
 						z : 0
 					}
 					//main engine direction
-					/*var direction=cord.direction(midscreen,mouse);
+					var direction = cord.direction(midscreen,mouse);
 					cord.moveIndirection( playerRotationWrapper.position , direction , speed );
 					//side engine direction
-					var manipulatedMouse = {
-						x : mouse.y,
-						y : -mouse.x
-					};
-					var sidewardsDirection=cord.direction(midscreen,manipulatedMouse);
-					cord.moveIndirection( playerRotationWrapper.position , sidewardsDirection , sideSpeed );*/
-					
-					var speedX=speed*(mouse.x-0)/Math.sqrt(Math.pow(mouse.x-0,2)+Math.pow(-mouse.y-0,2));
-					var speedY=speed*(-mouse.y-0)/Math.sqrt(Math.pow(mouse.x-0,2)+Math.pow(-mouse.y-0,2));
-					playerRotationWrapper.position.x=playerRotationWrapper.position.x+speedX;
-					playerRotationWrapper.position.y=playerRotationWrapper.position.y+speedY;
-					
-					var sideSpeedY=sideSpeed*(mouse.x-0)/Math.sqrt(Math.pow(mouse.x-0,2)+Math.pow(mouse.y-0,2));
-					var sideSpeedX=sideSpeed*(mouse.y-0)/Math.sqrt(Math.pow(mouse.x-0,2)+Math.pow(mouse.y-0,2));
-					playerRotationWrapper.position.x=playerRotationWrapper.position.x+sideSpeedX;
-					playerRotationWrapper.position.y=playerRotationWrapper.position.y+sideSpeedY;
+					var sidewardsDirection = cord.direction(midscreen,mouse);
+					sidewardsDirection.angle = sidewardsDirection.angle + Math.PI/2
+					cord.moveIndirection( playerRotationWrapper.position , sidewardsDirection , sideSpeed );
 
 					//modify speed on controles
 					if( moveForward ){
-						speed = speed+(topSpeed-speed)*acceleration;
+						speed = physic.exponentialAcceleration(speed, topspeed ,acceleration);
 					}
 					if( moveBackward ){
-						speed = speed+(-topSpeed-speed)*acceleration;
+						speed = speed+(-topspeed-speed)*acceleration;
 					}
 					if ( !(moveBackward||moveForward)&&!(speed==0) ){
 						speed = speed+(0-speed)*acceleration;
@@ -333,12 +321,7 @@
 					}
 				}
 				//rotate
-				if(0>=-mouse.y){
-					playerRotationWrapper.rotation.z = Math.PI/2-Math.acos((mouse.x-0)/Math.sqrt(Math.pow(mouse.x-0,2)+Math.pow(-mouse.y-0,2)));
-				}
-				else{
-					playerRotationWrapper.rotation.z = Math.PI/2+Math.acos((mouse.x-0)/Math.sqrt(Math.pow(mouse.x-0,2)+Math.pow(-mouse.y-0,2)));
-				}
+				playerRotationWrapper.rotation.z = Math.PI/2+direction.angle;
 				//roll animation
 				var maxRollRotation = Math.PI/6;
 				var sideRoll = sideSpeed*maxRollRotation/topSideSpeed;
@@ -348,7 +331,7 @@
 					mainSpaceship.rotation.y = sideRoll;
 				}
 				//shoot
-				shoot();
+				shoot(direction);
 				//camera follow
 				var camOffsetModifier = 50;
 				var maxCamOffset;
