@@ -7,13 +7,13 @@ function spawnEnemies(playerRotationWrapper, windowHalfX, windowHalfY){
         wireframe: true
     });
 	var material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );*/
-	var material = new THREE.MeshBasicMaterial({
+	var material = new THREE.MeshLambertMaterial({
         //map: THREE.ImageUtils.loadTexture('http://localhost:3000/textures/pixel.png'),
         transparent: true,
-        color: 0x00ff00
+        color: 0x33ff33
       });
 	var geometry2 = new THREE.BoxGeometry( 30, 30, 30 );
-	var material2 = new THREE.MeshBasicMaterial({
+	var material2 = new THREE.MeshLambertMaterial({
         map: pixelTexture,
         transparent: true,
       });
@@ -21,16 +21,12 @@ function spawnEnemies(playerRotationWrapper, windowHalfX, windowHalfY){
 	var outer = new THREE.Mesh( geometry2,  material2 );
 	enemy.position.set(0,0,0);
 	var enemy2 = new THREE.Mesh( geometry,  material );
-	var material2 = new THREE.MeshBasicMaterial({
-        map: pixelTexture,
-        transparent: true,
-      });
 	var outer2 = new THREE.Mesh( geometry2,  material2 );
-	enemy.position.set(30,0,0);
+	enemy.position.set(29,0,0);
 	scene.add(enemy);
-	enemy.add(outer);
 	scene.add(enemy2);
-	enemy.add(outer2);
+	/*enemy.add(outer)
+	enemy2.add(outer2);*/
 
 	var enemies = [];
 

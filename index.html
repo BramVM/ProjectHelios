@@ -150,11 +150,14 @@
 					playerRotationWrapper.add( object );
 				}, onProgress, onError );
 
-				var directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
-				directionalLight.position.set( 0, 0, -1 );
+				var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.8 );
+				directionalLight.position.set( 1, -0.5, 1 );
+					var directionalLight2 = new THREE.DirectionalLight( 0xffffff, 0.8 );
+				directionalLight2.position.set( -1, 0.5, 1 );
 				scene.add( directionalLight );
+				scene.add( directionalLight2 );
 
-				var ambientLight = new THREE.AmbientLight (0x202020);
+				var ambientLight = new THREE.AmbientLight (0x404040);
 				scene.add(ambientLight);
 
 				camera = new THREE.PerspectiveCamera( 33, window.innerWidth / window.innerHeight, 1, 10000 );
@@ -305,10 +308,10 @@
 						speed = physic.exponentialAcceleration(speed, topspeed ,acceleration);
 					}
 					if( moveBackward ){
-						speed = speed+(-topspeed-speed)*acceleration;
+						speed = physic.exponentialAcceleration(speed, -topspeed ,acceleration);
 					}
 					if ( !(moveBackward||moveForward)&&!(speed==0) ){
-						speed = speed+(0-speed)*acceleration;
+						speed = physic.exponentialAcceleration(speed, 0 ,acceleration);
 					}
 					if( moveLeft ){
 						sideSpeed = sideSpeed+(topSideSpeed-sideSpeed)*sideAcceleration;
