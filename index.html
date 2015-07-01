@@ -114,8 +114,7 @@
 				renderer.setSize( window.innerWidth, window.innerHeight );
 				container.appendChild( renderer.domElement );
 				
-				var ship = spawnMesh(voxels);
-				scene.add(ship);
+				scene.add(spawnMesh(voxels));
 
 				// player
 				scene.add( playerRotationWrapper );
