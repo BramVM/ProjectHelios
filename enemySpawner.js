@@ -26,11 +26,11 @@ function spawnEnemies(playerRotationWrapper, windowHalfX, windowHalfY){
         transparent: true,
       });
 	var outer2 = new THREE.Mesh( geometry2,  material2 );
-	enemy.position.set(30,0,0);
+	enemy.position.set(29,0,0);
 	scene.add(enemy);
 	enemy.add(outer);
 	scene.add(enemy2);
-	enemy.add(outer2);
+	enemy2.add(outer2);
 
 	var enemies = [];
 
