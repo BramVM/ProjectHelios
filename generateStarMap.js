@@ -1,7 +1,7 @@
 var createStar = function(radius,position,color){
 	var circle = new THREE.Shape();
-	for (var i = 0; i < 16; i++) {
-	  var pct = (i + 1) / 16;
+	for (var i = 0; i < 4; i++) {
+	  var pct = (i + 1) / 4;
 	  var theta = pct * Math.PI * 2.0;
 	  var x = radius * Math.cos(theta);
 	  var y = radius * Math.sin(theta);
