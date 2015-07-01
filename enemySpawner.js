@@ -23,8 +23,8 @@ function spawnEnemies(playerRotationWrapper, windowHalfX, windowHalfY){
 	var enemy2 = new THREE.Mesh( geometry,  material );
 	var outer2 = new THREE.Mesh( geometry2,  material2 );
 	enemy.position.set(29,0,0);
-	scene.add(enemy);
-	scene.add(enemy2);
+	//scene.add(enemy);
+	//SSSscene.add(enemy2);
 	/*enemy.add(outer)
 	enemy2.add(outer2);*/
 

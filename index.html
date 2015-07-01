@@ -114,7 +114,8 @@
 				renderer.setSize( window.innerWidth, window.innerHeight );
 				container.appendChild( renderer.domElement );
 				
-				scene.add(spawnMesh(voxels));
+				var Ship = spawnMesh(mainShip);
+				scene.add(Ship);
 
 				// player
 				scene.add( playerRotationWrapper );
@@ -155,8 +156,8 @@
 					//object.rotateX(1.5);
 					object.position = (0,0,0);
 					object.scale.set(2,2,2);
-					object.name = "mainSpaceship";
-					playerRotationWrapper.add( object );
+					Ship.name = "mainSpaceship";
+					playerRotationWrapper.add( Ship );
 				}, onProgress, onError );
 
 				var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.8 );
