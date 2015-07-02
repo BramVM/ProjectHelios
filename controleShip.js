@@ -4,28 +4,7 @@ var bullets = [];
 var range = 100;
 
 var createBullet = function ( position, direction ){		
-	var bulletShape = new THREE.Shape();
-	var bulletSizeX = 2;
-	var bulletSizeY = 16;
-	bulletShape.moveTo(bulletSizeX/2, bulletSizeY/2);
-	bulletShape.lineTo(-bulletSizeX/2, bulletSizeY/2);
-	bulletShape.lineTo(-bulletSizeX/2, -bulletSizeY/2);
-	bulletShape.lineTo(bulletSizeX/2, -bulletSizeY/2);
-	bulletShape.lineTo(bulletSizeX/2, bulletSizeY/2);
-	var geometry = bulletShape.makeGeometry();
-	var material = new THREE.MeshBasicMaterial({ color: 0x3333ff });
-	var bullet = new THREE.Mesh(geometry, material);
-	var innerBulletShape = new THREE.Shape();
-	var innerBulletSizeX = 1
-	var innerBulletSizeY = 14;
-	innerBulletShape.moveTo(innerBulletSizeX/2, innerBulletSizeY/2);
-	innerBulletShape.lineTo(-innerBulletSizeX/2, innerBulletSizeY/2);
-	innerBulletShape.lineTo(-innerBulletSizeX/2, -innerBulletSizeY/2);
-	innerBulletShape.lineTo(innerBulletSizeX/2, -innerBulletSizeY/2);
-	innerBulletShape.lineTo(innerBulletSizeX/2, innerBulletSizeY/2);
-	var geometry = innerBulletShape.makeGeometry();
-	var material = new THREE.MeshBasicMaterial({ color: 0x6666ff });
-	var innerBullet = new THREE.Mesh(geometry, material);
+	var bullet = spawnMesh(bulletVoxels);
 	bullet.rotation.z = Math.PI/2+direction.angle
 	bullet.range = range;
 	var offset = 10;
@@ -33,7 +12,6 @@ var createBullet = function ( position, direction ){
 	bullet.direction = direction;
 	bullet.speed = 10;
 	bullets.push(bullet);
-	bullet.add( innerBullet );
 	scene.add( bullet );
 }
 
@@ -87,6 +65,7 @@ var shipMovement = function(direction){
 		if ( !(keys.moveLeft||keys.moveRight)&&!(sideSpeed==0) ){
 			sideSpeed = physic.exponentialAcceleration(sideSpeed, 0 ,sideAcceleration);
 		}
+
 		//rotate
 		playerRotationWrapper.rotation.z = Math.PI/2+direction.angle;
 	}

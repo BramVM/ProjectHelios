@@ -59,7 +59,6 @@ var generateWorld = function(origin){
 					var blue = Math.round( 255-rngPositionY(100));
 				}
 				var color ="rgb("+red+","+green+","+blue+")";
-				console.log(color);
 				createStar (radius,position,color);
 			}
 		}

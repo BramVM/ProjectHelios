@@ -10,9 +10,9 @@ _direction = function ( startPosition , directionPosition ){
 	}
 	return result;
 }
-_moveIndirection = function ( position , direction , speed ){
-	position.x = position.x + Math.cos(direction.angle)*speed;
-	position.y = position.y + Math.sin(direction.angle)*speed;
+_moveIndirection = function ( position , direction , distance ){
+	position.x = position.x + Math.cos(direction.angle)*distance;
+	position.y = position.y + Math.sin(direction.angle)*distance;
 	return position;
 }
 var cord = {
