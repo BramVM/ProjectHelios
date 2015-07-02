@@ -49,6 +49,7 @@
 		<script src="generateStarMap.js"></script>
 		<script src="enemySpawner.js"></script>
 		<script src="cord.js"></script>
+		<script src="greedy.js"></script>
 		<script src="physic.js"></script>
 		<script src="public/models/mainShip.js"></script>
 		<script src="public/models/bullet.js"></script>
@@ -101,61 +102,87 @@
 
 				scene = new THREE.Scene();
 
+				if( Detector.webgl ){
+					renderer = new THREE.WebGLRenderer({
+						antialias		: true,	// to get smoother output
+						preserveDrawingBuffer	: true	// to allow screenshot
+					});
+				}else{
+					renderer = new THREE.CanvasRenderer();
+				}
+				//renderer.setClearColorHex( 0xBBBBBB, 1 );
 				renderer = new THREE.WebGLRenderer();
 				renderer.setPixelRatio( window.devicePixelRatio );
 				renderer.setSize( window.innerWidth, window.innerHeight );
 				container.appendChild( renderer.domElement );
-				// circle
-				var distance = 100;
-				var circle = [];
-				var pointPosition = {
-					x:distance,
-					y:0,
-					z:0
-				}
-				var pixelsize = 7;
-				var destiny = {};
-				var range=Math.PI/2
 
-				destiny.x=pointPosition.x;
-				destiny.y=pointPosition.y+pixelsize;
-				destiny.z=pointPosition.z;
-				corner1=cord.direction(pointPosition,destiny).angle;
-
-				destiny.x=pointPosition.x-pixelsize;
-				destiny.y=pointPosition.y;
-				destiny.z=pointPosition.z;
-				corner2=cord.direction(pointPosition,destiny).angle;
-				//console.log(corner1+corner2);
-				while(range>0){
-					//console.log(range);
-					//range = range - corner1 - corner2;
-					var pixel1=pixelMesh(7,'ffffff');
-					pixel1.position = {
-						x:1,
-						y:1,
-						z:1
-					}
-					cord.moveIndirection( pixel1.position , range-corner1 , distance );
-					console.log(distance);
-					scene.add(pixel1);
-					var pixel2=pixelMesh(7,'ffffff');
-					pixel2.position = {
-						x:1,
-						y:1,
-						z:1
-					}
-					cord.moveIndirection( pixel2.position , range-corner2 , distance );
-					scene.add(pixel2);
-					range = range-Math.PI/100;
+				function makeVoxels(l, h, f) {
+				    var d = [ h[0]-l[0], h[1]-l[1], h[2]-l[2] ]
+				    	, v = new Int32Array(d[0]*d[1]*d[2])
+				    	, n = 0;
+				    for(var k=l[2]; k<h[2]; ++k)
+				    for(var j=l[1]; j<h[1]; ++j)
+				    for(var i=l[0]; i<h[0]; ++i, ++n) {
+				    	v[n] = f(i,j,k);
+				    }
+					return {voxels:v, dims:d};
 				}
+
+				data = makeVoxels([-15,-15,-15], [16,16,16], function(i,j,k) {
+				    return i*i+j*j+k*k <= 16*16 ? 0x113344 : 0;
+				});
+
+				var result = GreedyMesh (data.voxels, data.dims);
+				var geometry = new THREE.Geometry();
+
+				for(var i=0; i<result.vertices.length; ++i) {
+					var q = result.vertices[i];
+					geometry.vertices.push(new THREE.Vector3(q[0], q[1], q[2]));
+				}
+
+				for(var i=0; i<result.faces.length; ++i) {
+					var q = result.faces[i];
+					if(q.length === 5) {
+						var f = new THREE.Face3(q[0], q[1], q[2]);
+						f.color = new THREE.Color(q[4]);
+						f.vertexColors = [f.color,f.color,f.color,f.color];
+						geometry.faces.push(f);
+						f = new THREE.Face3(q[0], q[2], q[3]);
+						geometry.faces.push(f);
+					} else if(q.length == 4) {
+						var f = new THREE.Face3(q[0], q[1], q[2]);
+						f.color = new THREE.Color(q[3]);
+						f.vertexColors = [f.color,f.color,f.color];
+						geometry.faces.push(f);
+					}
+				}
+
+				geometry.computeFaceNormals();
+      
+      geometry.verticesNeedUpdate = true;
+      geometry.elementsNeedUpdate = true;
+      geometry.normalsNeedUpdate = true;
+      
+      geometry.computeBoundingBox();
+      geometry.computeBoundingSphere();
+
+      var bb = geometry.boundingBox;
+
+				var material = new THREE.MeshLambertMaterial({ color: 0xffffff });
+				surfacemesh	= new THREE.Mesh( geometry, material );
+				surfacemesh.doubleSided = false;
+				surfacemesh.scale.set(7,7,7);
+				surfacemesh.position.set(0,0,-7*16*4);
+			
+				scene.add(surfacemesh);
+				//scene.add( wiremesh );
 				// player
 				scene.add( playerRotationWrapper );
 				var object = new THREE.Object3D();
 				object.name = "mainSpaceship";
 				object.add(spawnMesh(ship));
 				playerRotationWrapper.add( object );
-				//generateWorld(origin);
+				generateWorld(origin);
 
 				//lights
 				var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.4 );
