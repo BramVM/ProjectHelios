@@ -1,10 +1,207 @@
-var mainShip = [
-	{position:[0,0,0], color: "ff0000"},
-	{position: [1,0,0], color: "ffffff"},
-	{position: [2,0,0], color: "ee0000"},
-	{position: [1,-2,1], color: "ff0000"},
-	{position: [1,-3,0], color: "ff0000"},
-	{position: [1,1,1], color: "ff0000"},
-	{position: [1,-1,0], color: "dd0000"},
-	{position: [1,-1,0], color: "aa0000"}
+var voxels = [
+
+	//base
+	{position: [-7,-6,0], color: "eeeeee"},
+	{position: [0,-6,0], color: "eeeeee"},
+	{position: [7,-6,0], color: "eeeeee"},
+
+	{position: [-7,-5,0], color: "eeeeee"},
+	{position: [-6,-5,0], color: "eeeeee"},
+	{position: [-3,-5,0], color: "ee4444"},
+	{position: [-2,-5,0], color: "ee4444"},
+	{position: [0,-5,0], color: "eeeeee"},
+	{position: [2,-5,0], color: "ee4444"},
+	{position: [7,-5,0], color: "eeeeee"},
+	{position: [6,-5,0], color: "eeeeee"},
+	{position: [3,-5,0], color: "ee4444"},
+
+	{position: [-7,-4,0], color: "eeeeee"},
+	{position: [-6,-4,0], color: "eeeeee"},
+	{position: [-5,-4,0], color: "eeeeee"},
+	{position: [-3,-4,0], color: "ee4444"},
+	{position: [-2,-4,0], color: "ee4444"},
+	{position: [-1,-4,0], color: "eeeeee"},
+	{position: [0,-4,0], color: "eeeeee"},
+	{position: [1,-4,0], color: "eeeeee"},
+	{position: [2,-4,0], color: "ee4444"},
+	{position: [3,-4,0], color: "ee4444"},
+	{position: [5,-4,0], color: "eeeeee"},
+	{position: [6,-4,0], color: "eeeeee"},
+	{position: [7,-4,0], color: "eeeeee"},
+
+	{position: [-7,-3,0], color: "eeeeee"},
+	{position: [-6,-3,0], color: "eeeeee"},
+	{position: [-5,-3,0], color: "eeeeee"},
+	{position: [-3,-3,0], color: "ee4444"},
+	{position: [-2,-3,0], color: "ee4444"},
+	{position: [-1,-3,0], color: "eeeeee"},
+	{position: [0,-3,0], color: "eeeeee"},
+	{position: [1,-3,0], color: "eeeeee"},
+	{position: [2,-3,0], color: "ee4444"},
+	{position: [3,-3,0], color: "ee4444"},
+	{position: [4,-3,0], color: "eeeeee"},
+	{position: [5,-3,0], color: "eeeeee"},
+	{position: [6,-3,0], color: "eeeeee"},
+	{position: [7,-3,0], color: "eeeeee"},
+
+	{position: [-5,-2,0], color: "eeeeee"},
+	{position: [-4,-2,0], color: "eeeeee"},
+	{position: [-3,-2,0], color: "eeeeee"},
+	{position: [-2,-2,0], color: "ee4444"},
+	{position: [-1,-2,0], color: "eeeeee"},
+	{position: [0,-2,0], color: "eeeeee"},
+	{position: [1,-2,0], color: "eeeeee"},
+	{position: [2,-2,0], color: "ee4444"},
+	{position: [3,-2,0], color: "eeeeee"},
+	{position: [4,-2,0], color: "eeeeee"},
+	{position: [5,-2,0], color: "eeeeee"},
+
+	{position: [-4,-1,0], color: "eeeeee"},
+	{position: [-3,-1,0], color: "eeeeee"},
+	{position: [-2,-1,0], color: "eeeeee"},
+	{position: [-1,-1,0], color: "eeeeee"},
+	{position: [0,-1,0], color: "eeeeee"},
+	{position: [1,-1,0], color: "eeeeee"},
+	{position: [2,-1,0], color: "eeeeee"},
+	{position: [3,-1,0], color: "eeeeee"},
+	{position: [4,-1,0], color: "eeeeee"},
+
+	{position: [-4,0,0], color: "eeeeee"},
+	{position: [-3,0,0], color: "eeeeee"},
+	{position: [-2,0,0], color: "eeeeee"},
+	{position: [-1,0,0], color: "eeeeee"},
+	{position: [0,0,0], color: "eeeeee"},
+	{position: [1,0,0], color: "eeeeee"},
+	{position: [2,0,0], color: "eeeeee"},
+	{position: [3,0,0], color: "eeeeee"},
+	{position: [4,0,0], color: "eeeeee"},
+
+	{position: [-3,1,0], color: "eeeeee"},
+	{position: [-2,1,0], color: "eeeeee"},
+	{position: [-1,1,0], color: "eeeeee"},
+	{position: [0,1,0], color: "eeeeee"},
+	{position: [1,1,0], color: "eeeeee"},
+	{position: [2,1,0], color: "eeeeee"},
+	{position: [3,1,0], color: "eeeeee"},
+
+	{position: [-2,2,0], color: "eeeeee"},
+	{position: [-1,2,0], color: "eeeeee"},
+	{position: [0,2,0], color: "eeeeee"},
+	{position: [1,2,0], color: "eeeeee"},
+	{position: [2,2,0], color: "eeeeee"},
+
+	{position: [-1,3,0], color: "eeeeee"},
+	{position: [0,3,0], color: "eeeeee"},
+	{position: [1,3,0], color: "eeeeee"},
+
+	{position: [-1,4,0], color: "eeeeee"},
+	{position: [0,4,0], color: "eeeeee"},
+	{position: [1,4,0], color: "eeeeee"},
+
+	{position: [-1,5,0], color: "eeeeee"},
+	{position: [0,5,0], color: "eeeeee"},
+	{position: [1,5,0], color: "eeeeee"},
+
+	{position: [0,6,0], color: "eeeeee"},
+
+	{position: [0,7,0], color: "eeeeee"},
+	
+	//lvl2
+	{position: [0,-6,1], color: "eeeeee"},
+
+	{position: [-2,-5,1], color: "ee4444"},
+	{position: [0,-5,1], color: "eeeeee"},
+	{position: [2,-5,1], color: "ee4444"},
+
+	{position: [-2,-4,1], color: "ee4444"},
+	{position: [0,-4,1], color: "eeeeee"},
+	{position: [2,-4,1], color: "ee4444"},
+
+	{position: [-6,-3,1], color: "eeeeee"},
+	{position: [-5,-3,1], color: "eeeeee"},
+	{position: [-4,-3,1], color: "eeeeee"},
+	{position: [-3,-3,1], color: "eeeeee"},
+	{position: [-2,-3,1], color: "ee4444"},
+	{position: [-1,-3,1], color: "eeeeee"},
+	{position: [0,-3,1], color: "eeeeee"},
+	{position: [1,-3,1], color: "eeeeee"},
+	{position: [2,-3,1], color: "ee4444"},
+	{position: [3,-3,1], color: "eeeeee"},
+	{position: [4,-3,1], color: "eeeeee"},
+	{position: [5,-3,1], color: "eeeeee"},
+	{position: [6,-3,1], color: "eeeeee"},
+
+	{position: [-5,-2,1], color: "eeeeee"},
+	{position: [-4,-2,1], color: "eeeeee"},
+	{position: [-3,-2,1], color: "eeeeee"},
+	{position: [-2,-2,1], color: "eeeeee"},
+	{position: [-1,-2,1], color: "eeeeee"},
+	{position: [0,-2,1], color: "eeeeee"},
+	{position: [1,-2,1], color: "eeeeee"},
+	{position: [2,-2,1], color: "eeeeee"},
+	{position: [3,-2,1], color: "eeeeee"},
+	{position: [4,-2,1], color: "eeeeee"},
+	{position: [5,-2,1], color: "eeeeee"},
+
+	{position: [-4,-1,1], color: "eeeeee"},
+	{position: [-3,-1,1], color: "eeeeee"},
+	{position: [-2,-1,1], color: "eeeeee"},
+	{position: [-1,-1,1], color: "eeeeee"},
+	{position: [0,-1,1], color: "eeeeee"},
+	{position: [1,-1,1], color: "eeeeee"},
+	{position: [2,-1,1], color: "eeeeee"},
+	{position: [3,-1,1], color: "eeeeee"},
+	{position: [4,-1,1], color: "eeeeee"},
+
+	{position: [-4,0,1], color: "4444ee"},
+	{position: [-3,0,1], color: "eeeeee"},
+	{position: [-2,0,1], color: "eeeeee"},
+	{position: [-1,0,1], color: "eeeeee"},
+	{position: [0,0,1], color: "eeeeee"},
+	{position: [1,0,1], color: "eeeeee"},
+	{position: [2,0,1], color: "eeeeee"},
+	{position: [3,0,1], color: "eeeeee"},
+	{position: [4,0,1], color: "4444ee"},
+
+	{position: [-3,1,1], color: "4444ee"},
+	{position: [-2,1,1], color: "eeeeee"},
+	{position: [-1,1,1], color: "eeeeee"},
+	{position: [0,1,1], color: "eeeeee"},
+	{position: [1,1,1], color: "eeeeee"},
+	{position: [2,1,1], color: "eeeeee"},
+	{position: [3,1,1], color: "4444ee"},
+
+	{position: [-2,2,1], color: "eeeeee"},
+	{position: [-1,2,1], color: "eeeeee"},
+	{position: [0,2,1], color: "eeeeee"},
+	{position: [1,2,1], color: "eeeeee"},
+	{position: [2,2,1], color: "eeeeee"},
+
+	{position: [-1,3,1], color: "eeeeee"},
+	{position: [0,3,1], color: "eeeeee"},
+	{position: [1,3,1], color: "eeeeee"},
+
+	{position: [0,4,1], color: "eeeeee"},
+
+	{position: [0,5,1], color: "eeeeee"},
+
+	{position: [0,6,1], color: "eeeeee"},
+
+	//lvl3
+	{position: [0,-5,2], color: "eeeeee"},
+
+	{position: [0,-6,2], color: "eeeeee"},
+
+	{position: [-1,-1,2], color: "ee4444"},
+	{position: [1,-1,2], color: "ee4444"},
+
+	{position: [-1,0,2], color: "ee4444"},
+	{position: [0,0,2], color: "ee4444"},
+	{position: [1,0,2], color: "ee4444"},
+
+	{position: [0,1,2], color: "ee4444"},
+
+	//lv4
+	{position: [0,-6,3], color: "eeeeee"},
+
 ];

@@ -12,7 +12,7 @@ var spawnMesh = function(mainShip){
 		materialArray[i] = new THREE.MeshLambertMaterial({ color: curColor });
 
 		voxelArray[i] = new THREE.Mesh(geometry, materialArray[i]);
-		voxelArray[i].position.set(mainShip[i].position[0]*voxelScale , mainShip[i].position[1]*voxelScale , 0);
+		voxelArray[i].position.set(voxels[i].position[0]*voxelScale , voxels[i].position[1]*voxelScale , voxels[i].position[2]*voxelScale );
 
 		combined.add(voxelArray[i]);
 	}

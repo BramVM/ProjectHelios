@@ -98,9 +98,6 @@
 			animate();
 
 			function init() {
-				//get object first in stead of loading it by default into rootscope
-				//then call importMesh(object)
-
 
 				var i, container;
 
@@ -113,63 +110,26 @@
 				renderer.setPixelRatio( window.devicePixelRatio );
 				renderer.setSize( window.innerWidth, window.innerHeight );
 				container.appendChild( renderer.domElement );
-				
-				var Ship = spawnMesh(mainShip);
-				scene.add(Ship);
 
 				// player
 				scene.add( playerRotationWrapper );
-				
+				var object = new THREE.Object3D();
+				object.name = "mainSpaceship";
+				object.add(spawnMesh(voxels));
+				playerRotationWrapper.add( object );
 				generateWorld(origin);
-				//trying to load the mesh
-				var onProgress = function ( xhr ) {
-					if ( xhr.lengthComputable ) {
-						var percentComplete = xhr.loaded / xhr.total * 100;
-						console.log( Math.round(percentComplete, 2) + '% downloaded' );
-					}
-				};
-				var onError = function ( xhr ) {
-				};
 
-				var texture = new THREE.Texture();
-
-				var manager = new THREE.LoadingManager();
-				manager.onProgress = function ( item, loaded, total ) {
-
-					console.log( item, loaded, total );
-
-				};
-
-				var loader = new THREE.OBJLoader( manager );
-				loader.load( 'public/models/spaceship3.obj', function ( object ) {
-
-					/*object.traverse( function ( child ) {
-
-						if ( child instanceof THREE.Mesh ) {
-							
-							child.material.map = texture;
-
-						}
-
-					} );*/
-					object.material = lambertMaterial;
-					//object.rotateX(1.5);
-					object.position = (0,0,0);
-					object.scale.set(2,2,2);
-					Ship.name = "mainSpaceship";
-					playerRotationWrapper.add( Ship );
-				}, onProgress, onError );
-
+				//lights
 				var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.8 );
 				directionalLight.position.set( 1, -0.5, 1 );
-					var directionalLight2 = new THREE.DirectionalLight( 0xffffff, 0.8 );
+				var directionalLight2 = new THREE.DirectionalLight( 0xffffff, 0.8 );
 				directionalLight2.position.set( -1, 0.5, 1 );
 				scene.add( directionalLight );
 				scene.add( directionalLight2 );
-
 				var ambientLight = new THREE.AmbientLight (0x404040);
 				scene.add(ambientLight);
 
+				//cam
 				camera = new THREE.PerspectiveCamera( 33, window.innerWidth / window.innerHeight, 1, 10000 );
 				camera.position.z = 2000;
 
