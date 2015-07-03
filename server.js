@@ -3,4 +3,4 @@ var app = express();
 
 app.use('/', express.static(__dirname));
 
-app.listen(80, function() { console.log('listening')});
+app.listen(1337, function() { console.log('listening')});
