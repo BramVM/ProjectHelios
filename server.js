@@ -14,17 +14,3 @@ var server = http.createServer(function(request, response) {
 server.listen( port, ipaddress, function() {
     console.log((new DATE()) + ' Server is listening on port 8080');
 });
-
-wss = new WebSocketServer({
-    server: server,
-    autoAcceptConnections: false
-});
-wss.on('connection', function(ws) {
-  console.log("New connection");
-  ws.on('message', function(message) {
-    ws.send("Received: " + message);
-  });
-  ws.send('Welcome!');
-});
-
-console.log("Listening to " + ipaddress + ":" + port + "...");
