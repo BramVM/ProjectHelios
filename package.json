@@ -1,9 +1,11 @@
+
 {
   "name": "helios",
   "version": "0.0.1",
   "scripts":{
-    "start":"echo\"open localhost:3000/\" -d"
+    "start": "supervisor server.js" 
   },
+  "main": "server.js",
   "dependencies": {
     "express": "^4.13.0",
     "path": "^0.11.14",
