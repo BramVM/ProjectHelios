@@ -11,10 +11,9 @@ var server = http.createServer(function(request, response) {
       response.end("Thanks for visiting us! \n");
 });
 
-var express = require('express');
 var app = express();
 
-app.use(express.static(__dirname + '/app'));
+server.use('/static', express.static(__dirname + '/'));
 server.listen( port, ipaddress, function() {
     console.log((new Date()) + ' Server is listening on port 8080');
 });
