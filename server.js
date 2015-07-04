@@ -1,31 +1,18 @@
-var ipaddress = process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1";
-var port      = process.env.OPENSHIFT_NODEJS_PORT || 8080;
+var express = require('express');
+var app = express();
+var path = require('path');
 
-var WebSocketServer = require('ws').Server
-var http = require('http');
-var fs = require('fs');
-var index = fs.readFileSync('index.html');
+app.use(express.static(__dirname + '/'));
 
-var server = http.createServer(function(request, response) {
-    console.log((new Date()) + ' Received request for ' + request.url);
-    res.writeHead(200, {'Content-Type': 'text/html'});
-    res.end(index);
+require('./server-stripe.js')(app);
+
+app.get('*', function(req, res) {
+    res.sendFile(path.resolve(__dirname + 'index.html'));
 });
 
-server.listen( port, ipaddress, function() {
-    console.log((new Date()) + ' Server is listening on port 8080');
-});
+var server_port = process.env.OPENSHIFT_NODEJS_PORT || 8080
+var server_ip_address = process.env.OPENSHIFT_NODEJS_IP || process.env.OPENSHIFT_INTERNAL_IP ||'127.0.0.1'
 
-wss = new WebSocketServer({
-    server: server,
-    autoAcceptConnections: false
+app.listen(server_port, server_ip_address, function () {
+  console.log( "Listening on " + server_ip_address + ", server_port " + server_port )
 });
-wss.on('connection', function(ws) {
-  console.log("New connection");
-  ws.on('message', function(message) {
-    ws.send("Received: " + message);
-  });
-  ws.send('Welcome!');
-});
-
-console.log("Listening to " + ipaddress + ":" + port + "...");
