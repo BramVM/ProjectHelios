@@ -4,8 +4,6 @@ var path = require('path');
 
 app.use(express.static(__dirname + '/'));
 
-require('./server-stripe.js')(app);
-
 app.get('*', function(req, res) {
     res.sendFile(path.resolve(__dirname + 'index.html'));
 });
