@@ -1,3 +1,4 @@
+// to surve localy use http://localhost:8080/
 var express = require('express');
 var app = express();
 var path = require('path');

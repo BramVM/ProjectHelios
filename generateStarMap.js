@@ -15,8 +15,8 @@ var createStar = function(radius,position,color){
 	var material = new THREE.MeshBasicMaterial({ color: color });
 	var star = new THREE.Mesh(geometry, material);
 
-	scene.add( star );
 	star.position.set(position.x,position.y,position.z);
+	return star;
 }
 function seed(x,y){
 	var i=x+y;
@@ -28,41 +28,125 @@ function seed(x,y){
 	result=result+amplitude*Math.sin(k*frequency);
 	return result;
 }
-var generateWorld = function(origin){
-	var rangeX = 1000;
-	var rangeY = 1000;
-	var indexX = origin.x - rangeX;
-	var indexY = origin.y - rangeY;
-	var density =100;
-	for( indexX ; indexX < origin.x + rangeX ; indexX = indexX  + Math.abs(seed(indexX,0))*100+75 ) {
-		for( indexY ; indexY < origin.y + rangeY ; indexY = indexY + Math.abs(seed(indexY,0)*100)+75 ) {
-			var radius=0;
-			if(indexX+indexY!=0){
-				var radiusGenerator = SeedRandom(Math.pow(seed(indexX,indexY),2));
-				radius = radiusGenerator(6);
-			}
-			if (radius!=0){
-				var rngPositionX = SeedRandom(Math.abs(indexX+indexY));
-				var rngPositionY = SeedRandom(Math.abs(indexY-indexX));
-				var rngColor = SeedRandom(Math.abs(indexX-indexY));
-				var position = {
-					x : indexX + rngPositionX(1000),
-					y : indexY + rngPositionY(1000),
-					z : -50
+var gridSize = {
+	x:1500,
+	y:1500
+} ;
+var gridMatrixSize = 1;
+var tiles = [];
+var prevTilePos;
+
+var setGridSize = function (gridMatrixSize,gridSize) {
+
+}
+
+var checkNearestTile = function (position){
+	var nearestTilePosition = {};
+	nearestTilePosition.x = gridSize.x * Math.round(position.x/gridSize.x);
+	nearestTilePosition.y = gridSize.y * Math.round(position.y/gridSize.y);
+	return nearestTilePosition;
+}
+var initWorld = function (position){
+	prevTilePos = checkNearestTile(position);
+	generateWorld (prevTilePos,true);
+}
+var updateWorldOnMove = function (position){
+	if (checkNearestTile(position).x!=prevTilePos.x||checkNearestTile(position).y!=prevTilePos.y){
+		prevTilePos = checkNearestTile(position);
+		generateWorld (prevTilePos,false);
+	}
+}
+var generateWorld = function (nearestTilePosition,init){
+	for ( l = 0 ; l < tiles.length ; l++ ) {
+		tiles[l].stay = false;
+	}
+	var pseudoPosition = {};
+	for(j=-gridMatrixSize;j<=gridMatrixSize;j++){
+		pseudoPosition.y = nearestTilePosition.y-j*gridSize.y;
+		for(i=-gridMatrixSize;i<=gridMatrixSize;i++){
+			pseudoPosition.x = nearestTilePosition.x-i*gridSize.x;
+			//check if already in tiles
+			var inArray=false;
+			for ( l = 0 ; l < tiles.length ; l++ ){
+				if(tiles[l].gridPosX===pseudoPosition.x/gridSize.x && tiles[l].gridPosY===pseudoPosition.y/gridSize.y){
+					tiles[l].stay=true;
+					inArray=true;
 				}
-				var red = 255;
-				var green = 255;
-				var blue = 220;
-				if(rngColor(100)>80){
-					var red = Math.round(255-rngPositionX(100));
-					var green =Math.round( 250-rngPositionX(100)-rngPositionY(100));
-					var blue = Math.round( 255-rngPositionY(100));
-				}
-				var color ="rgb("+red+","+green+","+blue+")";
-				createStar (radius,position,color);
 			}
+			if (!inArray){
+				generateTile(pseudoPosition);
+			} 
 		}
-		indexY = origin.y - rangeY;
+	}
+	for ( l = 0 ; l < tiles.length ; l++ ){	
+		if (!tiles[l].stay){
+			scene.remove(tiles[l]);
+			tiles.splice(l, 1);
+		}
+	}
+}
+
+var generateTile = function(position){
+	var tileIndex = tiles.length;
+	tiles[ tileIndex] = new THREE.Object3D();
+	tiles[ tileIndex].stay=true;
+	tiles[ tileIndex].stars = [];
+	tiles[ tileIndex].gridPosX = position.x/gridSize.x;
+	tiles[ tileIndex].gridPosY = position.y/gridSize.y;
+
+	// var square = new THREE.Shape();
+ //    square.moveTo(-gridSize.x/2+5, -gridSize.y/2+5);
+ //    square.lineTo(-gridSize.x/2+5, gridSize.y/2-5);
+ //    square.lineTo(gridSize.x/2-5, gridSize.y/2-5);
+ //    square.lineTo(gridSize.x/2-5, -gridSize.y/2+5);
+ //    square.lineTo(-gridSize.x/2+5, -gridSize.y/2+5);
+
+	// var geometry = square.makeGeometry();
+	// var material = new THREE.MeshLambertMaterial({ color: 0xffffff, transparent: true, opacity: 0.3});
+	// var square = new THREE.Mesh(geometry, material);
+	// square.position.set(position.x,position.y,-500);
+	// var wireframe = new THREE.WireframeHelper( square, 0xffffff );
+	
+	// tiles[ tileIndex ].stars.push(square);
+	// tiles[ tileIndex ].stars.push(wireframe);
+
+	var indexX = position.x - gridSize.x/2;
+	var indexY = position.y - gridSize.y/2;
+	var density =100;
+	for( indexX ; indexX < position.x + gridSize.x/2 ; indexX = indexX  + Math.abs(seed(indexX,0))*100+75 ) {
+		for( indexY ; indexY < position.y + gridSize.y/2 ; indexY = indexY + Math.abs(seed(indexY,0)*100)+75 ) {
+	 		var radius=0;
+	 		if(indexX+indexY!=0){
+	 			var radiusGenerator = SeedRandom(Math.pow(seed(indexX,indexY),2));
+	 			radius = radiusGenerator(6);
+	 		}
+	 		if (radius!=0){
+	 			var rngPositionX = SeedRandom(Math.abs(indexX+indexY));
+	 			var rngPositionY = SeedRandom(Math.abs(indexY-indexX));
+	 			var rngColor = SeedRandom(Math.abs(indexX-indexY));
+	 			var starPosition = {
+	 				x : indexX + rngPositionX(500) - 250,
+	 				y : indexY + rngPositionY(500) - 250,
+	 				z : -500
+	 			}
+	 			var red = 255;
+	 			var green = 255;
+	 			var blue = 220;
+	 			if(rngColor(100)>80){
+	 				var red = Math.round(255-rngPositionX(100));
+	 				var green =Math.round( 250-rngPositionX(100)-rngPositionY(100));
+	 				var blue = Math.round( 255-rngPositionY(100));
+	 			}
+	 			var color ="rgb("+red+","+green+","+blue+")";
+	 			tiles[ tileIndex ].stars.push(createStar (radius,starPosition,color));
+	 		}
+	 	}
+		indexY = position.y - gridSize.y/2;
+	}
+	//add all stars to scene
+	scene.add(tiles[tileIndex]);
+	for ( k = 0 ; k < tiles[tileIndex].stars.length ; k++ ){
+		tiles[tileIndex].add(tiles[tileIndex].stars[k]);
 	}
 }
 

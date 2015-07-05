@@ -84,12 +84,11 @@
 			//settings
 			var acceleration = 0.07;
 			var sideAcceleration = 0.05;
-			var topspeed = 4;
+			var topspeed = 7;
 			var topSideSpeed = 3;
 			//namespace variables
 			var speed = 0;
 			var sideSpeed = 0;
-
 			init();
 			animate();
 
@@ -168,21 +167,21 @@
 
       var bb = geometry.boundingBox;
 
-				var material = new THREE.MeshLambertMaterial({ color: 0xffffff });
+				var material = new THREE.MeshLambertMaterial({ color: 0x186B8F });
 				surfacemesh	= new THREE.Mesh( geometry, material );
 				surfacemesh.doubleSided = false;
 				surfacemesh.scale.set(7,7,7);
 				surfacemesh.position.set(0,0,-7*16*4);
-			
+				
 				scene.add(surfacemesh);
-				//scene.add( wiremesh );
+
 				// player
 				scene.add( playerRotationWrapper );
 				var object = new THREE.Object3D();
 				object.name = "mainSpaceship";
 				object.add(spawnMesh(ship));
 				playerRotationWrapper.add( object );
-				generateWorld(origin);
+				initWorld(origin);
 
 				//lights
 				var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.4 );
@@ -316,6 +315,8 @@
 
 			function render() {
 				controleShip();
+				//assync
+				updateWorldOnMove(playerRotationWrapper.position);
 				//camera follow
 				var camOffsetModifier = 50;
 				var maxCamOffset;
