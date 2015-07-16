@@ -1,7 +1,7 @@
 var attackSpeed = 10;
 var attackDelay = attackSpeed;
 var bullets = [];
-var range = 100;
+var range = 2500;
 
 var createBullet = function ( position, direction ){		
 	var bullet = spawnMesh(bulletVoxels);
@@ -10,7 +10,7 @@ var createBullet = function ( position, direction ){
 	var offset = 10;
 	bullet.position.set(position.x,position.y,position.z);
 	bullet.direction = direction;
-	bullet.speed = 10;
+	bullet.speed = 15;
 	bullets.push(bullet);
 	scene.add( bullet );
 }
@@ -18,6 +18,11 @@ var createBullet = function ( position, direction ){
 var moveBullet = function ( bullets ) {
 	for (i=0;i<bullets.length;i++){
 		cord.moveIndirection( bullets[i].position , bullets[i].direction , bullets[i].speed );
+		bullets[i].range = bullets[i].range-bullets[i].speed
+		if (bullets[i].range<=0) {
+			scene.remove(bullets[i]);
+			bullets.splice(i, 1);
+		}
 	}
 }
 

@@ -1,3 +1,55 @@
+function makeVoxels(l, h, f) {
+    var d = [ h[0]-l[0], h[1]-l[1], h[2]-l[2] ]
+    	, v = new Int32Array(d[0]*d[1]*d[2])
+    	, n = 0;
+    for(var k=l[2]; k<h[2]; ++k)
+    for(var j=l[1]; j<h[1]; ++j)
+    for(var i=l[0]; i<h[0]; ++i, ++n) {
+    	v[n] = f(i,j,k);
+    }
+	return {voxels:v, dims:d};
+}
+
+function createPlanet(radius, position, color) { 
+	data = makeVoxels([-(radius-1),-(radius-1),-(radius-1)], [radius,radius,radius], function(i,j,k) {
+	    return i*i+j*j+k*k <= radius*radius ? 0x113344 : 0;
+	});
+
+	var result = GreedyMesh (data.voxels, data.dims);
+	var geometry = new THREE.Geometry();
+
+	for(var i=0; i<result.vertices.length; ++i) {
+		var q = result.vertices[i];
+		geometry.vertices.push(new THREE.Vector3(q[0], q[1], q[2]));
+	}
+
+	for(var i=0; i<result.faces.length; ++i) {
+		var q = result.faces[i];
+		if(q.length === 5) {
+			var f = new THREE.Face3(q[0], q[1], q[2]);
+			f.color = new THREE.Color(q[4]);
+			f.vertexColors = [f.color,f.color,f.color,f.color];
+			geometry.faces.push(f);
+			f = new THREE.Face3(q[0], q[2], q[3]);
+			geometry.faces.push(f);
+		} else if(q.length == 4) {
+			var f = new THREE.Face3(q[0], q[1], q[2]);
+			f.color = new THREE.Color(q[3]);
+			f.vertexColors = [f.color,f.color,f.color];
+			geometry.faces.push(f);
+		}
+	}
+
+	geometry.computeFaceNormals();
+
+	var material = new THREE.MeshLambertMaterial({ color: color });
+	surfacemesh	= new THREE.Mesh( geometry, material );
+	surfacemesh.doubleSided = false;
+	surfacemesh.scale.set(7,7,7);
+	surfacemesh.position.set(position.x,position.y,-7*radius*4);
+	return surfacemesh;
+}
+
 var createStar = function(radius,position,color){
 	var circle = new THREE.Shape();
 	for (var i = 0; i < 4; i++) {
@@ -91,6 +143,7 @@ var generateTile = function(position){
 	tiles[ tileIndex] = new THREE.Object3D();
 	tiles[ tileIndex].stay=true;
 	tiles[ tileIndex].stars = [];
+	tiles[ tileIndex].planets = [];
 	tiles[ tileIndex].gridPosX = position.x/gridSize.x;
 	tiles[ tileIndex].gridPosY = position.y/gridSize.y;
 
@@ -112,7 +165,8 @@ var generateTile = function(position){
 
 	var indexX = position.x - gridSize.x/2;
 	var indexY = position.y - gridSize.y/2;
-	var density =100;
+
+	//stars
 	for( indexX ; indexX < position.x + gridSize.x/2 ; indexX = indexX  + Math.abs(seed(indexX,0))*100+75 ) {
 		for( indexY ; indexY < position.y + gridSize.y/2 ; indexY = indexY + Math.abs(seed(indexY,0)*100)+75 ) {
 	 		var radius=0;
@@ -120,7 +174,7 @@ var generateTile = function(position){
 	 			var radiusGenerator = SeedRandom(Math.pow(seed(indexX,indexY),2));
 	 			radius = radiusGenerator(6);
 	 		}
-	 		if (radius!=0){
+	 		if (radius && radius!=0){
 	 			var rngPositionX = SeedRandom(Math.abs(indexX+indexY));
 	 			var rngPositionY = SeedRandom(Math.abs(indexY-indexX));
 	 			var rngColor = SeedRandom(Math.abs(indexX-indexY));
@@ -143,10 +197,47 @@ var generateTile = function(position){
 	 	}
 		indexY = position.y - gridSize.y/2;
 	}
-	//add all stars to scene
+	//planets
+
+	indexX = position.x - gridSize.x/2;
+	indexY = position.y - gridSize.y/2;
+
+	for( indexX ; indexX < position.x + gridSize.x/2 ; indexX = indexX  + Math.abs(seed(indexX,0))*2000+1500 ) {
+		for( indexY ; indexY < position.y + gridSize.y/2 ; indexY = indexY + Math.abs(seed(indexY,0)*2000)+1500 ) {
+	 		var radius=0;
+	 		if(indexX+indexY!=0){
+	 			var radiusGenerator = SeedRandom(Math.pow(seed(indexX,indexY),2));
+	 			radius = 5 + Math.round(radiusGenerator(15));
+	 		}
+	 		if (radius && radius!=0){
+	 			var rngPositionX = SeedRandom(Math.abs(indexX+indexY));
+	 			var rngPositionY = SeedRandom(Math.abs(indexY-indexX));
+	 			var rngColor = SeedRandom(Math.abs(indexX-indexY));
+	 			var planetPosition = {
+	 				x : indexX + rngPositionX(500) - 250,
+	 				y : indexY + rngPositionY(500) - 250,
+	 				z : -500
+	 			}
+	 			var red = 255;
+	 			var green = 255;
+	 			var blue = 220;
+	 			var red = Math.round(rngPositionX(255));
+	 			var green =Math.round( rngColor(255));
+	 			var blue = Math.round( rngPositionY(255));
+	 			var color ="rgb("+red+","+green+","+blue+")";
+	 			tiles[ tileIndex ].planets.push(createPlanet (radius,planetPosition,color));
+	 			console.log(color)
+	 		}
+	 	}
+		indexY = position.y - gridSize.y/2;
+	}
+	//add all objects to the scene
 	scene.add(tiles[tileIndex]);
 	for ( k = 0 ; k < tiles[tileIndex].stars.length ; k++ ){
 		tiles[tileIndex].add(tiles[tileIndex].stars[k]);
+	}
+	for ( k = 0 ; k < tiles[tileIndex].planets.length ; k++ ){
+		tiles[tileIndex].add(tiles[tileIndex].planets[k]);
 	}
 }
 
