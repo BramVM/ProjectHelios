@@ -1,13 +1,9 @@
-var attackSpeed = 10;
-var attackDelay = attackSpeed;
 var bullets = [];
-var range = 2500;
 
-var createBullet = function ( position, direction ){		
+var _createBullet = function ( position, direction ){		
 	var bullet = spawnMesh(bulletVoxels);
 	bullet.rotation.z = Math.PI/2+direction.angle
-	bullet.range = range;
-	var offset = 10;
+	bullet.range = ship.range;
 	bullet.position.set(position.x,position.y,position.z);
 	bullet.direction = direction;
 	bullet.speed = 15;
@@ -15,7 +11,7 @@ var createBullet = function ( position, direction ){
 	scene.add( bullet );
 }
 
-var moveBullet = function ( bullets ) {
+var _moveBullets = function () {
 	for (i=0;i<bullets.length;i++){
 		cord.moveIndirection( bullets[i].position , bullets[i].direction , bullets[i].speed );
 		bullets[i].range = bullets[i].range-bullets[i].speed
@@ -26,65 +22,77 @@ var moveBullet = function ( bullets ) {
 	}
 }
 
-var shoot = function(direction){
-	if (mouse.down){
-		if (attackDelay<attackSpeed) attackDelay++;
-		if (attackDelay>=attackSpeed){
-			attackDelay=0;
-			createBullet(playerRotationWrapper.position,direction);
+var _shoot = function(ship,direction){
+	if (ship.shoot){
+		if (ship.attackDelay<ship.attackSpeed) ship.attackDelay++;
+		if (ship.attackDelay>=ship.attackSpeed){
+			ship.attackDelay=0;
+			_createBullet(ship.position,direction);
 		}
 	}
-	moveBullet(bullets);
 }
-var shipMovement = function(direction){
-	var mainSpaceship = scene.getObjectByName( "mainSpaceship" );
-	if(!(0===mouse.x&&0===-mouse.y)){
-		var midscreen = {
-			x : 0,
-			y : 0,
-			z : 0
-		}
+var _shipMovement = function(ship,direction){
+	//if(!(0===mouse.x&&0===-mouse.y)){
+
 		// move
-		cord.moveIndirection( playerRotationWrapper.position , direction , speed );
+		cord.moveIndirection( ship.position , direction , ship.speed );
 		var sidewardsDirection = {
 			angle : direction.angle + Math.PI/2
 		}
-		cord.moveIndirection( playerRotationWrapper.position , sidewardsDirection , sideSpeed );
+		cord.moveIndirection( ship.position , sidewardsDirection , ship.sideSpeed );
 
 		//modify speed on controles
-		if( keys.moveForward ){
-			speed = physic.exponentialAcceleration(speed, topspeed ,acceleration);
+		if( ship.moveForward ){
+			ship.speed = physic.exponentialAcceleration(ship.speed, ship.topspeed ,ship.acceleration);
 		}
-		if( keys.moveBackward ){
-			speed = physic.exponentialAcceleration(speed, -topspeed ,acceleration);
+		if( ship.moveBackward ){
+			ship.speed = physic.exponentialAcceleration(ship.speed, -ship.topspeed ,ship.acceleration);
 		}
-		if ( !(keys.moveBackward||keys.moveForward)&&!(speed==0) ){
-			speed = physic.exponentialAcceleration(speed, 0 ,acceleration);
+		if ( !(ship.moveBackward||ship.moveForward)&&!(ship.speed==0) ){
+			ship.speed = physic.exponentialAcceleration(ship.speed, 0 ,ship.acceleration);
 		}
-		if( keys.moveLeft ){
-			sideSpeed = physic.exponentialAcceleration(sideSpeed, topSideSpeed ,sideAcceleration);
+		if( ship.moveLeft ){
+			ship.sideSpeed = physic.exponentialAcceleration(ship.sideSpeed, ship.topSideSpeed ,ship.sideAcceleration);
 		}
-		if( keys.moveRight ){
-			sideSpeed = physic.exponentialAcceleration(sideSpeed, -topSideSpeed ,sideAcceleration);
+		if( ship.moveRight ){
+			ship.sideSpeed = physic.exponentialAcceleration(ship.sideSpeed, -ship.topSideSpeed ,ship.sideAcceleration);
 		}
-		if ( !(keys.moveLeft||keys.moveRight)&&!(sideSpeed==0) ){
-			sideSpeed = physic.exponentialAcceleration(sideSpeed, 0 ,sideAcceleration);
+		if ( !(ship.moveLeft||ship.moveRight)&&!(ship.sideSpeed==0) ){
+			ship.sideSpeed = physic.exponentialAcceleration(ship.sideSpeed, 0 ,ship.sideAcceleration);
 		}
 
 		//rotate
-		playerRotationWrapper.rotation.z = Math.PI/2+direction.angle;
-	}
+		ship.rotation.z = Math.PI/2+direction.angle;
+	//}
 	//roll animation
 	var maxRollRotation = Math.PI/6;
-	var sideRoll = sideSpeed*maxRollRotation/topSideSpeed;
+	var sideRoll = ship.sideSpeed*maxRollRotation/ship.topSideSpeed;
 	if ( sideRoll > maxRollRotation ) sideRoll = maxRollRotation;
 	if ( sideRoll < -maxRollRotation ) sideRoll = -maxRollRotation;
-	if(mainSpaceship){
-		mainSpaceship.rotation.y = sideRoll;
+	if(ship.shipModel){
+		if(!isNaN(sideRoll)) ship.shipModel.rotation.y = sideRoll;
 	}
 }
-var controleShip = function(){
-	var direction = cord.direction( origin , mouse );
-	shipMovement(direction);
-	shoot(direction);
+
+var _playerBehavior = function( mouse , player ){
+	var origin={
+			x : 0,
+			y : 0,
+			z : 0,
+	},
+	direction = cord.direction( origin , mouse );
+	_shipMovement(player,direction);
+	_shoot(player,direction);
+}
+
+var _aiBehavior = function ( body , target ){
+	var direction = cord.direction( body.position , target.position );
+	_shipMovement(body,direction);
+	_shoot(body,direction);
+}
+
+var shipBehavior = {
+	playerBehavior : _playerBehavior,
+	aiBehavior : _aiBehavior,
+	moveBullets : _moveBullets
 }

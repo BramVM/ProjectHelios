@@ -1,3 +1,41 @@
+var enemies = [];
+function spawnEnemy(location){
+	var enemyIndex = enemies.length			
+	enemies[enemyIndex] = new THREE.Object3D();
+	enemies[enemyIndex].shipModel = new THREE.Object3D();
+	enemies[enemyIndex].shipModel.add(spawnMesh(ship));
+	enemies[enemyIndex].add( enemies[enemyIndex].shipModel );
+	scene.add( enemies[enemyIndex] );
+
+	enemies[enemyIndex].acceleration = 0.05;
+	enemies[enemyIndex].sideAcceleration = 0.05;
+	enemies[enemyIndex].topspeed = 6;
+	enemies[enemyIndex].topSideSpeed = 3;
+	enemies[enemyIndex].attackSpeed = 20;
+	enemies[enemyIndex].bulletRange = 2500;
+
+	enemies[enemyIndex].attackDelay = enemies[enemyIndex].attackSpeed;
+	enemies[enemyIndex].speed = 0;
+	enemies[enemyIndex].sideSpeed = 0;
+}
+
+function enemyAi(player){
+	for(i = 0; i<enemies.length; i++){
+		var detectionRange = 1000;
+		var approachRange = 500;
+		var backOffRange = 300;
+		var shootingRange = 750;
+		var range = cord.distance(enemies[i].position,player.position);
+		enemies[i].moveForward = false;
+		enemies[i].moveBackward = false;
+		enemies[i].shoot = false;
+		if (range<detectionRange && range>approachRange) enemies[i].moveForward = true;
+		if (range<backOffRange) enemies[i].moveBackward = true;
+		if (range<shootingRange) enemies[i].shoot = true;
+		shipBehavior.aiBehavior ( enemies[i] , player );
+	}
+}
+
 function spawnEnemies(playerRotationWrapper, windowHalfX, windowHalfY){
 	var maxEnemies = 3;
 	var pixelTexture=THREE.ImageUtils.loadTexture('http://localhost:3000/textures/pixel.png');

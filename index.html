@@ -45,14 +45,14 @@
 		<script src="libs/Detector.js"></script>
 		<script src="libs/stats.min.js"></script>
 		<script src="libs/OBJLoader.js"></script>
-		<script src="enemySpawner.js"></script>
 		<script src="cord.js"></script>
-		<script src="greedy.js"></script>
 		<script src="physic.js"></script>
+		<script src="controleShip.js"></script>
+		<script src="enemySpawner.js"></script>
+		<script src="greedy.js"></script>
 		<script src="public/models/mainShip.js"></script>
 		<script src="public/models/bullet.js"></script>
 		<script src="spawnMesh.js"></script>
-		<script src="controleShip.js"></script>
 		<script src="generateStarMap.js"></script>
 
 		<script>
@@ -64,12 +64,6 @@
 				y : 0,
 				down : false
 			},
-			keys = {
-				moveForward : false,
-				moveBackward : false,
-				moveRight : false,
-				moveLeft : false
-			},
 			origin={
 					x : 0,
 					y : 0,
@@ -77,18 +71,25 @@
 			},
 			windowHalfX = window.innerWidth / 2,
 			windowHalfY = window.innerHeight / 2,
-
+			player = new THREE.Object3D(),
 			camera, scene, renderer;
+			player.moveForward = false;
+			player.moveBackward = false;
+			player.moveRight = false;
+			player.moveLeft = false;
 
-			var playerRotationWrapper = new THREE.Object3D();
 			//settings
-			var acceleration = 0.07;
-			var sideAcceleration = 0.05;
-			var topspeed = 7;
-			var topSideSpeed = 3;
+			player.acceleration = 0.07;
+			player.sideAcceleration = 0.05;
+			player.topspeed = 7;
+			player.topSideSpeed = 3;
+			player.attackSpeed = 10;
+			player.bulletRange = 2500;
+
 			//namespace variables
-			var speed = 0;
-			var sideSpeed = 0;
+			player.attackDelay = player.attackSpeed;
+			player.speed = 0;
+			player.sideSpeed = 0;
 			init();
 			animate();
 
@@ -115,13 +116,14 @@
 				renderer.setSize( window.innerWidth, window.innerHeight );
 				container.appendChild( renderer.domElement );
 
+				spawnEnemy();
+			
 				// player
-				scene.add( playerRotationWrapper );
-				var object = new THREE.Object3D();
-				object.name = "mainSpaceship";
-				object.add(spawnMesh(ship));
-				playerRotationWrapper.add( object );
-				
+				player.shipModel = new THREE.Object3D();
+				player.shipModel.add(spawnMesh(ship));
+				player.add( player.shipModel );
+				scene.add( player );
+
 				initWorld(origin);
 
 				//lights
@@ -143,18 +145,18 @@
 					switch ( event.keyCode ) {
 						case 38: // up
 						case 87: // w
-							keys.moveForward = true;
+							player.moveForward = true;
 							break;
 						case 37: // left
 						case 65: // a
-							keys.moveLeft = true; break;
+							player.moveLeft = true; break;
 						case 40: // down
 						case 83: // s
-							keys.moveBackward = true;
+							player.moveBackward = true;
 							break;
 						case 39: // right
 						case 68: // d
-							keys.moveRight = true;
+							player.moveRight = true;
 							break;
 						case 32: // space
 							
@@ -167,33 +169,31 @@
 					switch( event.keyCode ) {
 						case 38: // up
 						case 87: // w
-							keys.moveForward = false;
+							player.moveForward = false;
 							break;
 						case 37: // left
 						case 65: // a
-							keys.moveLeft = false;
+							player.moveLeft = false;
 							break;
 						case 40: // down
 						case 83: // s
-							keys.moveBackward = false;
+							player.moveBackward = false;
 							break;
 						case 39: // right
 						case 68: // d
-							keys.moveRight = false;
+							player.moveRight = false;
 							break;
 					}
 				};
 
 				var onDocumentMouseDown = function ( event ) {
 					//event.preventDefault();
-					mouse.down = true;
+					player.shoot = true;
 				};
 
 				var onDocumentMouseUp = function ( event ) {
-					mouse.down = false;
+					player.shoot = false;
 				};
-
-				spawnEnemies(playerRotationWrapper, windowHalfX, windowHalfY);
 
 				document.addEventListener( 'keydown', onKeyDown, false );
 				document.addEventListener( 'keyup', onKeyUp, false );
@@ -255,16 +255,18 @@
 			}
 
 			function render() {
-				controleShip();
+				shipBehavior.playerBehavior( mouse , player );
+				enemyAi( player );
+				shipBehavior.moveBullets();
 				//assync
-				updateWorldOnMove(playerRotationWrapper.position);
+				updateWorldOnMove(player.position);
 				//camera follow
 				var camOffsetModifier = 50;
 				var maxCamOffset;
 				renderer.render( scene, camera );
-				camera.position.x =playerRotationWrapper.position.x /*- camOffsetModifier*speedX*/;
-				camera.position.y =playerRotationWrapper.position.y-500;
-				camera.lookAt( playerRotationWrapper.position );
+				camera.position.x =player.position.x /*- camOffsetModifier*speedX*/;
+				camera.position.y =player.position.y-500;
+				camera.lookAt( player.position );
 			}
 
 		</script>

@@ -11,11 +11,15 @@ _direction = function ( startPosition , directionPosition ){
 	return result;
 }
 _moveIndirection = function ( position , direction , distance ){
-	position.x = position.x + Math.cos(direction.angle)*distance;
-	position.y = position.y + Math.sin(direction.angle)*distance;
+	if(!isNaN(Math.cos(direction.angle)*distance)) position.x = position.x + Math.cos(direction.angle)*distance;
+	if(!isNaN(Math.sin(direction.angle)*distance)) position.y = position.y + Math.sin(direction.angle)*distance;
 	return position;
+}
+_distance = function ( position1 , position2 ){
+	return Math.sqrt(Math.pow(position2.x-position1.x,2)+Math.pow(position2.y-position1.y,2));
 }
 var cord = {
 	direction : _direction,
-	moveIndirection :_moveIndirection
+	moveIndirection : _moveIndirection,
+	distance : _distance
 }

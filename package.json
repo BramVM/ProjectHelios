@@ -1,16 +1,16 @@
-
 {
   "name": "helios",
   "version": "0.0.1",
-  "scripts":{
-    "start": "supervisor server.js" 
+  "scripts": {
+    "start": "supervisor server.js"
   },
   "dependencies": {
-    "socket.io" : "0.9.16",
-    "ws" : "0.4.31",
     "express": "^4.13.0",
+    "node-minify": "^1.2.0",
     "path": "^0.11.14",
-    "three": "^0.71.0"
+    "socket.io": "0.9.16",
+    "three": "^0.71.0",
+    "ws": "0.4.31"
   },
   "description": "helios game project",
   "engines": {
