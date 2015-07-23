@@ -105,7 +105,10 @@ var initWorld = function (position){
 var updateWorldOnMove = function (position){
 	if (checkNearestTile(position).x!=prevTilePos.x||checkNearestTile(position).y!=prevTilePos.y){
 		prevTilePos = checkNearestTile(position);
-		generateWorld (prevTilePos,false);
+		//assynchrone
+		console.log("call world update");
+		setTimeout(function(){generateWorld (prevTilePos,false)},0);
+		console.log("move on to next frame");
 	}
 }
 var generateWorld = function (nearestTilePosition,init){
@@ -133,9 +136,11 @@ var generateWorld = function (nearestTilePosition,init){
 	for ( l = 0 ; l < tiles.length ; l++ ){	
 		if (!tiles[l].stay){
 			scene.remove(tiles[l]);
+			doDispose(tiles[l]);
 			tiles.splice(l, 1);
 		}
 	}
+	console.log("world update complete");
 }
 
 var generateTile = function(position){
@@ -147,21 +152,21 @@ var generateTile = function(position){
 	tiles[ tileIndex].gridPosX = position.x/gridSize.x;
 	tiles[ tileIndex].gridPosY = position.y/gridSize.y;
 
-	// var square = new THREE.Shape();
- //    square.moveTo(-gridSize.x/2+5, -gridSize.y/2+5);
- //    square.lineTo(-gridSize.x/2+5, gridSize.y/2-5);
- //    square.lineTo(gridSize.x/2-5, gridSize.y/2-5);
- //    square.lineTo(gridSize.x/2-5, -gridSize.y/2+5);
- //    square.lineTo(-gridSize.x/2+5, -gridSize.y/2+5);
+	/*var square = new THREE.Shape();
+    square.moveTo(-gridSize.x/2+5, -gridSize.y/2+5);
+    square.lineTo(-gridSize.x/2+5, gridSize.y/2-5);
+    square.lineTo(gridSize.x/2-5, gridSize.y/2-5);
+    square.lineTo(gridSize.x/2-5, -gridSize.y/2+5);
+    square.lineTo(-gridSize.x/2+5, -gridSize.y/2+5);
 
-	// var geometry = square.makeGeometry();
-	// var material = new THREE.MeshLambertMaterial({ color: 0xffffff, transparent: true, opacity: 0.3});
-	// var square = new THREE.Mesh(geometry, material);
-	// square.position.set(position.x,position.y,-500);
-	// var wireframe = new THREE.WireframeHelper( square, 0xffffff );
+	var geometry = square.makeGeometry();
+	var material = new THREE.MeshLambertMaterial({ color: 0xffffff, transparent: true, opacity: 0.3});
+	var square = new THREE.Mesh(geometry, material);
+	square.position.set(position.x,position.y,-500);
+	var wireframe = new THREE.WireframeHelper( square, 0xffffff );
 	
-	// tiles[ tileIndex ].stars.push(square);
-	// tiles[ tileIndex ].stars.push(wireframe);
+	tiles[ tileIndex ].stars.push(square);
+	tiles[ tileIndex ].stars.push(wireframe);*/
 
 	var indexX = position.x - gridSize.x/2;
 	var indexY = position.y - gridSize.y/2;
@@ -226,7 +231,6 @@ var generateTile = function(position){
 	 			var blue = Math.round( rngPositionY(255));
 	 			var color ="rgb("+red+","+green+","+blue+")";
 	 			tiles[ tileIndex ].planets.push(createPlanet (radius,planetPosition,color));
-	 			console.log(color)
 	 		}
 	 	}
 		indexY = position.y - gridSize.y/2;

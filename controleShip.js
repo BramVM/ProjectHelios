@@ -1,22 +1,22 @@
 var bullets = [];
 
-var _createBullet = function ( position, direction ){		
+var _createBullet = function ( ship, direction ){		
 	var bullet = spawnMesh(bulletVoxels);
-	bullet.rotation.z = Math.PI/2+direction.angle
-	bullet.range = ship.range;
-	bullet.position.set(position.x,position.y,position.z);
+	bullet.rotation.z = Math.PI/2+direction.angle;
+	bullet.range = ship.bulletRange;
+	bullet.position.set(ship.position.x,ship.position.y,ship.position.z);
 	bullet.direction = direction;
 	bullet.speed = 15;
 	bullets.push(bullet);
 	scene.add( bullet );
 }
-
 var _moveBullets = function () {
 	for (i=0;i<bullets.length;i++){
 		cord.moveIndirection( bullets[i].position , bullets[i].direction , bullets[i].speed );
-		bullets[i].range = bullets[i].range-bullets[i].speed
+		bullets[i].range = bullets[i].range-bullets[i].speed;
 		if (bullets[i].range<=0) {
 			scene.remove(bullets[i]);
+			doDispose(bullets[i]);
 			bullets.splice(i, 1);
 		}
 	}
@@ -27,7 +27,7 @@ var _shoot = function(ship,direction){
 		if (ship.attackDelay<ship.attackSpeed) ship.attackDelay++;
 		if (ship.attackDelay>=ship.attackSpeed){
 			ship.attackDelay=0;
-			_createBullet(ship.position,direction);
+			_createBullet(ship,direction);
 		}
 	}
 }
