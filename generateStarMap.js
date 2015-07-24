@@ -106,9 +106,7 @@ var updateWorldOnMove = function (position){
 	if (checkNearestTile(position).x!=prevTilePos.x||checkNearestTile(position).y!=prevTilePos.y){
 		prevTilePos = checkNearestTile(position);
 		//assynchrone
-		console.log("call world update");
-		setTimeout(function(){generateWorld (prevTilePos,false)},0);
-		console.log("move on to next frame");
+		generateWorld (prevTilePos,false);
 	}
 }
 var generateWorld = function (nearestTilePosition,init){
@@ -140,7 +138,6 @@ var generateWorld = function (nearestTilePosition,init){
 			tiles.splice(l, 1);
 		}
 	}
-	console.log("world update complete");
 }
 
 var generateTile = function(position){

@@ -114,8 +114,6 @@
 				renderer.setPixelRatio( window.devicePixelRatio );
 				renderer.setSize( window.innerWidth, window.innerHeight );
 				container.appendChild( renderer.domElement );
-
-				spawnEnemy();
 			
 				// player
 				player.shipModel = new THREE.Object3D();
@@ -257,8 +255,10 @@
 				shipBehavior.playerBehavior( mouse , player );
 				enemyAi( player );
 				shipBehavior.moveBullets();
-				//assync
-				updateWorldOnMove(player.position);
+				setTimeout(function(){updateWorldOnMove(player.position)},0);
+				setTimeout(function(){enemiesSpawner(player.position,3200)},0);
+				eraseDistantEnemies(player.position, 3600);
+
 				//camera follow
 				var camOffsetModifier = 50;
 				var maxCamOffset;

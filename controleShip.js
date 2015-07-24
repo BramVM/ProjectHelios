@@ -2,7 +2,7 @@ var bullets = [];
 
 var _createBullet = function ( ship, direction ){		
 	var bullet = spawnMesh(bulletVoxels);
-	bullet.rotation.z = Math.PI/2+direction.angle;
+	bullet.rotation.z = Math.PI/2+direction;
 	bullet.range = ship.bulletRange;
 	bullet.position.set(ship.position.x,ship.position.y,ship.position.z);
 	bullet.direction = direction;
@@ -33,12 +33,9 @@ var _shoot = function(ship,direction){
 }
 var _shipMovement = function(ship,direction){
 	//if(!(0===mouse.x&&0===-mouse.y)){
-
 		// move
 		cord.moveIndirection( ship.position , direction , ship.speed );
-		var sidewardsDirection = {
-			angle : direction.angle + Math.PI/2
-		}
+		var sidewardsDirection =  direction + Math.PI/2;
 		cord.moveIndirection( ship.position , sidewardsDirection , ship.sideSpeed );
 
 		//modify speed on controles
@@ -62,7 +59,7 @@ var _shipMovement = function(ship,direction){
 		}
 
 		//rotate
-		ship.rotation.z = Math.PI/2+direction.angle;
+		ship.rotation.z = Math.PI/2+direction;
 	//}
 	//roll animation
 	var maxRollRotation = Math.PI/6;
@@ -85,8 +82,8 @@ var _playerBehavior = function( mouse , player ){
 	_shoot(player,direction);
 }
 
-var _aiBehavior = function ( body , target ){
-	var direction = cord.direction( body.position , target.position );
+var _aiBehavior = function ( body , targetPosition ){
+	var direction = cord.direction( body.position , targetPosition );
 	_shipMovement(body,direction);
 	_shoot(body,direction);
 }

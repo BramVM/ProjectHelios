@@ -1,10 +1,12 @@
 var enemies = [];
-function spawnEnemy(location){
+function createEnemy(location){
 	var enemyIndex = enemies.length			
 	enemies[enemyIndex] = new THREE.Object3D();
 	enemies[enemyIndex].shipModel = new THREE.Object3D();
 	enemies[enemyIndex].shipModel.add(spawnMesh(ship));
 	enemies[enemyIndex].add( enemies[enemyIndex].shipModel );
+	enemies[enemyIndex].position.set(location.x, location.y, location.z);
+	console.log(enemies[enemyIndex].position);
 	scene.add( enemies[enemyIndex] );
 
 	enemies[enemyIndex].acceleration = 0.05;
@@ -13,6 +15,8 @@ function spawnEnemy(location){
 	enemies[enemyIndex].topSideSpeed = 3;
 	enemies[enemyIndex].attackSpeed = 20;
 	enemies[enemyIndex].bulletRange = 2500;
+	enemies[enemyIndex].destination = location;
+	enemies[enemyIndex].trajectory=0;
 
 	enemies[enemyIndex].attackDelay = enemies[enemyIndex].attackSpeed;
 	enemies[enemyIndex].speed = 0;
@@ -26,62 +30,45 @@ function enemyAi(player){
 		var backOffRange = 300;
 		var shootingRange = 750;
 		var range = cord.distance(enemies[i].position,player.position);
-		enemies[i].moveForward = false;
+		enemies[i].moveForward = true;
 		enemies[i].moveBackward = false;
 		enemies[i].shoot = false;
-		if (range<detectionRange && range>approachRange) enemies[i].moveForward = true;
-		if (range<backOffRange) enemies[i].moveBackward = true;
-		if (range<shootingRange) enemies[i].shoot = true;
-		shipBehavior.aiBehavior ( enemies[i] , player );
+		if (range<detectionRange) enemies[i].detectedTarget = true;
+		else enemies[i].detectedTarget = false;
+		if (enemies[i].detectedTarget === true) {
+			if (range<approachRange) enemies[i].moveForward = false;
+			if (range<backOffRange) enemies[i].moveBackward = true;
+			if (range<shootingRange) enemies[i].shoot = true;
+			var direction = cord.direction ( enemies[i].destination, player.position )
+			enemies[i].destination = cord.moveIndirection( enemies[i].destination , direction , 7);
+		}
+		else{
+			enemies[i].trajectory = enemies[i].trajectory + Math.PI/32-(Math.random()*Math.PI/16)
+			enemies[i].destination = cord.moveIndirection( enemies[i].destination , enemies[i].trajectory , enemies[i].topspeed);
+		}
+		shipBehavior.aiBehavior ( enemies[i] , enemies[i].destination );
 	}
 }
 
-function spawnEnemies(playerRotationWrapper, windowHalfX, windowHalfY){
+function enemiesSpawner (playerPosition, range){
 	var maxEnemies = 3;
-	var pixelTexture=THREE.ImageUtils.loadTexture('http://localhost:3000/textures/pixel.png');
-	var geometry = new THREE.BoxGeometry( 29, 29, 29 );
-	var material = new THREE.MeshLambertMaterial({
-        transparent: true,
-        color: 0x33ff33
-      });
-	var geometry2 = new THREE.BoxGeometry( 30, 30, 30 );
-	var material2 = new THREE.MeshLambertMaterial({
-        map: pixelTexture,
-        transparent: true,
-      });
-	var enemy= new THREE.Mesh( geometry,  material );
-	var outer = new THREE.Mesh( geometry2,  material2 );
-	enemy.position.set(0,0,0);
-	var enemy2 = new THREE.Mesh( geometry,  material );
-	var outer2 = new THREE.Mesh( geometry2,  material2 );
-	enemy.position.set(29,0,0);
-
-	var enemies = [];
-
-	for(var currentEnemies = 0; currentEnemies<maxEnemies; currentEnemies++){
-		enemies[currentEnemies] = new THREE.Mesh( geometry,  material );
-		scene.add(enemies[currentEnemies]);
-		enemies[currentEnemies].name = "enemy" + currentEnemies; 
-
-		var xPos;
-		var yPos;
-		var xTemp = Math.random();
-		var yTemp = Math.random();
-		console.log("xTemp: " + xTemp);
-
-		if(xTemp < 0.5){
-			xPos = playerRotationWrapper.position.x - windowHalfX - 1000 + (xTemp*2000);
-		}
-		else{
-			xPos = playerRotationWrapper.position.x + windowHalfX + (xTemp*2000);
-		}
-		if(yTemp < 0.5){
-			yPos = playerRotationWrapper.position.y - windowHalfY - 1000 + (yTemp*2000);
-		}
-		else{
-			yPos = playerRotationWrapper.position.y + windowHalfY + (yTemp*2000);
-		}
-
-		enemies[currentEnemies].position.set(xPos, yPos, 0);
+	if (enemies.length	< maxEnemies){
+		var enemyLocation = {
+			x : playerPosition.x,
+			y : playerPosition.y,
+			z : playerPosition.z
+		} 
+		enemyLocation = cord.moveIndirection (enemyLocation, Math.random()*Math.PI*2, range);
+		createEnemy(enemyLocation);
 	}
 };
+
+function eraseDistantEnemies (playerPosition, range){
+	for (var i = 0; i <enemies.length; i++) {
+		if (cord.distance(playerPosition, enemies[i].position)>range) {
+			scene.remove(enemies[i]);
+			doDispose(enemies[i]);
+			enemies.splice(i, 1);
+		};
+	};
+}
