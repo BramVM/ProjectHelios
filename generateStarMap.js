@@ -209,25 +209,26 @@ var generateTile = function(position){
 	 		var radius=0;
 	 		if(indexX+indexY!=0){
 	 			var radiusGenerator = SeedRandom(Math.pow(seed(indexX,indexY),2));
+	 			var existanceGenerator = SeedRandom(Math.abs(indexX*indexY));
 	 			radius = 5 + Math.round(radiusGenerator(15));
-	 		}
-	 		if (radius && radius!=0){
-	 			var rngPositionX = SeedRandom(Math.abs(indexX+indexY));
-	 			var rngPositionY = SeedRandom(Math.abs(indexY-indexX));
-	 			var rngColor = SeedRandom(Math.abs(indexX-indexY));
-	 			var planetPosition = {
-	 				x : indexX + rngPositionX(500) - 250,
-	 				y : indexY + rngPositionY(500) - 250,
-	 				z : -500
+	 			if (radius && radius!=0 && existanceGenerator(100)>90){
+		 			var rngPositionX = SeedRandom(Math.abs(indexX+indexY));
+		 			var rngPositionY = SeedRandom(Math.abs(indexY-indexX));
+		 			var rngColor = SeedRandom(Math.abs(indexX-indexY));
+		 			var planetPosition = {
+		 				x : indexX + rngPositionX(500) - 250,
+		 				y : indexY + rngPositionY(500) - 250,
+		 				z : -500
+		 			}
+		 			var red = 255;
+		 			var green = 255;
+		 			var blue = 220;
+		 			var red = Math.round(rngPositionX(255));
+		 			var green =Math.round( rngColor(255));
+		 			var blue = Math.round( rngPositionY(255));
+		 			var color ="rgb("+red+","+green+","+blue+")";
+		 			tiles[ tileIndex ].planets.push(createPlanet (radius,planetPosition,color));
 	 			}
-	 			var red = 255;
-	 			var green = 255;
-	 			var blue = 220;
-	 			var red = Math.round(rngPositionX(255));
-	 			var green =Math.round( rngColor(255));
-	 			var blue = Math.round( rngPositionY(255));
-	 			var color ="rgb("+red+","+green+","+blue+")";
-	 			tiles[ tileIndex ].planets.push(createPlanet (radius,planetPosition,color));
 	 		}
 	 	}
 		indexY = position.y - gridSize.y/2;
