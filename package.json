@@ -2,11 +2,15 @@
   "name": "helios",
   "version": "0.0.1",
   "scripts": {
-    "start": "supervisor server.js"
+    "start": "node server.js",
+    "build": "browserify main.js -o bundle.js",
+    "watch": "watchify main.js -o bundle.js --debug --verbose"
   },
   "dependencies": {
+    "bn.js": "0.15.2",
     "express": "^4.13.0",
-    "node-minify": "^1.2.0",
+    "greedy-mesher": "^1.0.2",
+    "ndarray-pack": "^1.1.1",
     "path": "^0.11.14",
     "socket.io": "0.9.16",
     "three": "^0.71.0",

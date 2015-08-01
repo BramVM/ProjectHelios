@@ -1,3 +1,6 @@
+var cord = require('./cord.js');
+var physic = require('./physic.js'); 
+
 var bullets = [];
 
 var _createBullet = function ( ship, direction ){		
@@ -8,14 +11,14 @@ var _createBullet = function ( ship, direction ){
 	bullet.direction = direction;
 	bullet.speed = 15;
 	bullets.push(bullet);
-	scene.add( bullet );
+	shipBehavior.scene.add( bullet );
 }
 var _moveBullets = function () {
 	for (i=0;i<bullets.length;i++){
 		cord.moveIndirection( bullets[i].position , bullets[i].direction , bullets[i].speed );
 		bullets[i].range = bullets[i].range-bullets[i].speed;
 		if (bullets[i].range<=0) {
-			scene.remove(bullets[i]);
+			shipBehavior.scene.remove(bullets[i]);
 			doDispose(bullets[i]);
 			bullets.splice(i, 1);
 		}
@@ -93,3 +96,5 @@ var shipBehavior = {
 	aiBehavior : _aiBehavior,
 	moveBullets : _moveBullets
 }
+
+if (typeof(module) !== 'undefined') module.exports = shipBehavior;

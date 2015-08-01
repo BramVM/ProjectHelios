@@ -21,3 +21,4 @@ var cord = {
 	moveIndirection : _moveIndirection,
 	distance : _distance
 }
+if (typeof(module) !== 'undefined') module.exports = cord;

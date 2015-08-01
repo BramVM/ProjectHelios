@@ -4,3 +4,4 @@ _exponentialAcceleration = function ( currentSpeed, topspeed ,acceleration ){
 var physic = {
 	exponentialAcceleration : _exponentialAcceleration
 }
+if (typeof(module) !== 'undefined') module.exports = physic;
