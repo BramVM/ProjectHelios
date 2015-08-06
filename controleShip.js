@@ -10,19 +10,25 @@ var _createBullet = function ( ship, direction ){
 	bullet.position.set(ship.position.x,ship.position.y,ship.position.z);
 	bullet.direction = direction;
 	bullet.speed = 15;
+	bullet.name = "bullet";
 	bullets.push(bullet);
 	shipBehavior.scene.add( bullet );
+	physic.addToColliderList( bullet );
 }
 var _moveBullets = function () {
 	for (i=0;i<bullets.length;i++){
 		cord.moveIndirection( bullets[i].position , bullets[i].direction , bullets[i].speed );
 		bullets[i].range = bullets[i].range-bullets[i].speed;
 		if (bullets[i].range<=0) {
-			shipBehavior.scene.remove(bullets[i]);
-			doDispose(bullets[i]);
-			bullets.splice(i, 1);
+			_removeBullet(bullets[i]);
 		}
 	}
+}
+var _removeBullet = function (bullet){
+	shipBehavior.scene.remove(bullet);
+	doDispose(bullet);
+	bullets.splice(bullet, 1);
+	physic.removeFromColliderList( bullet );
 }
 
 var _shoot = function(ship,direction){
@@ -94,7 +100,8 @@ var _aiBehavior = function ( body , targetPosition ){
 var shipBehavior = {
 	playerBehavior : _playerBehavior,
 	aiBehavior : _aiBehavior,
-	moveBullets : _moveBullets
+	moveBullets : _moveBullets,
+	removeBullet : _removeBullet
 }
 
 if (typeof(module) !== 'undefined') module.exports = shipBehavior;

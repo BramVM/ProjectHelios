@@ -1,6 +1,7 @@
 var shipBehavior = require('./controleShip.js');
 var enemyHive = require('./enemyHive.js');
 var worldGenerator = require('./worldGenerator.js');
+var physic = require('./physic.js');
 
 if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
 var mouse = {
@@ -34,6 +35,8 @@ player.bulletRange = 2500;
 player.attackDelay = player.attackSpeed;
 player.speed = 0;
 player.sideSpeed = 0;
+var collidableMeshList = [];
+
 init();
 animate();
 
@@ -60,12 +63,15 @@ function init() {
   renderer.setSize( window.innerWidth, window.innerHeight );
   container.appendChild( renderer.domElement );
 
-  // player
-  player.shipModel = new THREE.Object3D();
-  player.shipModel.add(spawnMesh(ship));
-  player.add( player.shipModel );
-  scene.add( player );
-  var compileMesher = require("greedy-mesher")
+  // test area
+  /*var cubeGeometry = new THREE.CubeGeometry(50,50,50,1,1,1);
+  var wireMaterial = new THREE.MeshBasicMaterial( { color: 0xff0000, wireframe:true } );
+  StaticCube = new THREE.Mesh( cubeGeometry, wireMaterial );
+  StaticCube.position.set(0, 0, 0);
+  scene.add( StaticCube );
+  physic.addToColliderList( StaticCube );*/
+
+ /* var compileMesher = require("greedy-mesher")
 
         var mesher = compileMesher({
           extraArgs: 1,
@@ -83,7 +89,13 @@ function init() {
 
         var result = []
         mesher(test_array, result)
-        console.log(result);
+        console.log(result);*/
+
+  // player
+  player.shipModel = new THREE.Object3D();
+  player.shipModel.add(spawnMesh(ship));
+  player.add( player.shipModel );
+  scene.add( player );
 
   // pass scene to scripts
   enemyHive.scene = scene;
@@ -225,6 +237,13 @@ function render() {
   shipBehavior.playerBehavior( mouse , player );
   enemyHive.ai( player );
   shipBehavior.moveBullets();
+  var collider = physic.checkCollissionRecursive( player, collidableMeshList );
+  if(collider !== false){
+    console.log(collider.name);
+    if (collider.parent.name === "bullet"){
+      shipBehavior.removeBullet(collider.parent);
+    }
+  }
   setTimeout(function(){worldGenerator.updateWorldOnMove(player.position)},0);
   setTimeout(function(){enemyHive.spawner(player.position, 3200, scene)},0);
   setTimeout(function(){enemyHive.eraseDistantSpawns(player.position, 3600, scene)},0);
@@ -233,6 +252,7 @@ function render() {
   var camOffsetModifier = 50;
   var maxCamOffset;
   renderer.render( scene, camera );
+
   camera.position.x =player.position.x /*- camOffsetModifier*speedX*/;
   camera.position.y =player.position.y-500;
   camera.lookAt( player.position );
