@@ -309,8 +309,7 @@ function init() {
         console.log(result);*/
 
   // player
-  player.shipModel = new THREE.Object3D();
-  player.shipModel.add(spawnMesh(ship));
+  player.shipModel = spawnMesh(ship);
   player.add( player.shipModel );
   scene.add( player );
 
@@ -455,7 +454,7 @@ function render() {
   enemyHive.ai( player );
   shipBehavior.moveBullets();
   var collider = physic.checkCollissionRecursive( player, collidableMeshList );
-  if(collider !== false){
+  if(collider !== false && collider.parent){
     console.log(collider.name);
     if (collider.parent.name === "bullet"){
       shipBehavior.removeBullet(collider.parent);
