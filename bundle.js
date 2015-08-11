@@ -455,7 +455,6 @@ function render() {
   shipBehavior.moveBullets();
   var collider = physic.checkCollissionRecursive( player, collidableMeshList );
   if(collider !== false && collider.parent){
-    console.log(collider.name);
     if (collider.parent.name === "bullet"){
       shipBehavior.removeBullet(collider.parent);
     }
