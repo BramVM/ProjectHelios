@@ -9,6 +9,7 @@ var _createBullet = function ( ship, direction ){
 	bullet.range = ship.bulletRange;
 	bullet.position.set(ship.position.x,ship.position.y,ship.position.z);
 	bullet.direction = direction;
+	cord.moveIndirection( bullet.position , bullet.direction , 35 );
 	bullet.speed = 15;
 	bullet.name = "bullet";
 	bullets.push(bullet);
