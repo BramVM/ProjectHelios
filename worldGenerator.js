@@ -1,4 +1,4 @@
-function _makeVoxels(l, h, f) {
+function _makeEllipsoid(l, h, f) {
     var d = [ h[0]-l[0], h[1]-l[1], h[2]-l[2] ]
     	, v = new Int32Array(d[0]*d[1]*d[2])
     	, n = 0;
@@ -11,7 +11,7 @@ function _makeVoxels(l, h, f) {
 }
 
 function _createPlanet(radius, position, color) { 
-	data = _makeVoxels([-(radius-1),-(radius-1),-(radius-1)], [radius,radius,radius], function(i,j,k) {
+	data = _makeEllipsoid([-(radius-1),-(radius-1),-(radius-1)], [radius,radius,radius], function(i,j,k) {
 	    return i*i+j*j+k*k <= radius*radius ? 0x113344 : 0;
 	});
 
