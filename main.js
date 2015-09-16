@@ -24,12 +24,15 @@ player.moveRight = false;
 player.moveLeft = false;
 
 //settings
+player.maxHealth = 100;
+player.health = player.maxHealth;
 player.acceleration = 0.07;
 player.sideAcceleration = 0.05;
 player.topspeed = 7;
 player.topSideSpeed = 3;
 player.attackSpeed = 10;
 player.bulletRange = 2500;
+player.bulletDamage = 1;
 
 //namespace variables
 player.attackDelay = player.attackSpeed;
@@ -70,26 +73,6 @@ function init() {
   StaticCube.position.set(0, 0, 0);
   scene.add( StaticCube );
   physic.addToColliderList( StaticCube );*/
-
- /* var compileMesher = require("greedy-mesher")
-
-        var mesher = compileMesher({
-          extraArgs: 1,
-          order: [1, 0],
-          append: function(lo_x, lo_y, hi_x, hi_y, val, result) {
-            result.push([[lo_x, lo_y], [hi_x, hi_y]])
-          }
-        })
-
-        var test_array = require("ndarray-pack")(
-        [[0, 2, 0, 0],
-         [0, 1, 1, 0],
-         [0, 1, 1, 0],
-         [0, 0, 0, 0]])
-
-        var result = []
-        mesher(test_array, result)
-        console.log(result);*/
 
   // player
   player.shipModel = spawnMesh(ship);
@@ -239,7 +222,9 @@ function render() {
   var collider = physic.checkCollissionRecursive( player, collidableMeshList );
   if(collider !== false && collider.parent){
     if (collider.parent.name === "bullet"){
-      shipBehavior.removeBullet(collider.parent);
+      player.health = player.health - collider.parent.damage;
+      console.log(player.health <= 0 ? "dead" : collider.parent.damage); 
+      shipBehavior.removeBullet(collider.parent); 
     }
   }
   setTimeout(function(){worldGenerator.updateWorldOnMove(player.position)},0);

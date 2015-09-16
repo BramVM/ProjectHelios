@@ -10,8 +10,9 @@ var _createBullet = function ( ship, direction ){
 	bullet.range = ship.bulletRange;
 	bullet.position.set(ship.position.x,ship.position.y,ship.position.z);
 	bullet.direction = direction;
-	cord.moveIndirection( bullet.position , bullet.direction , 35 );
+	cord.moveIndirection( bullet.position , bullet.direction , 60 );
 	bullet.speed = 15;
+	bullet.damage = ship.bulletDamage;
 	bullet.name = "bullet";
 	bullets.push(bullet);
 	shipBehavior.scene.add( bullet );
@@ -27,10 +28,10 @@ var _moveBullets = function () {
 	}
 }
 var _removeBullet = function (bullet){
-	shipBehavior.scene.remove(bullet);
-	doDispose(bullet);
 	bullets.splice(bullet, 1);
 	physic.removeFromColliderList( bullet );
+	shipBehavior.scene.remove(bullet);
+	doDispose(bullet);
 }
 
 var _shoot = function(ship,direction){
@@ -151,6 +152,7 @@ function _createEnemy(location){
 	enemies[enemyIndex].topSideSpeed = 3;
 	enemies[enemyIndex].attackSpeed = 20;
 	enemies[enemyIndex].bulletRange = 2500;
+	enemies[enemyIndex].bulletDamage = 1;
 	enemies[enemyIndex].destination = location;
 	enemies[enemyIndex].trajectory=0;
 
@@ -242,12 +244,15 @@ player.moveRight = false;
 player.moveLeft = false;
 
 //settings
+player.maxHealth = 100;
+player.health = player.maxHealth;
 player.acceleration = 0.07;
 player.sideAcceleration = 0.05;
 player.topspeed = 7;
 player.topSideSpeed = 3;
 player.attackSpeed = 10;
 player.bulletRange = 2500;
+player.bulletDamage = 1;
 
 //namespace variables
 player.attackDelay = player.attackSpeed;
@@ -288,26 +293,6 @@ function init() {
   StaticCube.position.set(0, 0, 0);
   scene.add( StaticCube );
   physic.addToColliderList( StaticCube );*/
-
- /* var compileMesher = require("greedy-mesher")
-
-        var mesher = compileMesher({
-          extraArgs: 1,
-          order: [1, 0],
-          append: function(lo_x, lo_y, hi_x, hi_y, val, result) {
-            result.push([[lo_x, lo_y], [hi_x, hi_y]])
-          }
-        })
-
-        var test_array = require("ndarray-pack")(
-        [[0, 2, 0, 0],
-         [0, 1, 1, 0],
-         [0, 1, 1, 0],
-         [0, 0, 0, 0]])
-
-        var result = []
-        mesher(test_array, result)
-        console.log(result);*/
 
   // player
   player.shipModel = spawnMesh(ship);
@@ -457,7 +442,9 @@ function render() {
   var collider = physic.checkCollissionRecursive( player, collidableMeshList );
   if(collider !== false && collider.parent){
     if (collider.parent.name === "bullet"){
-      shipBehavior.removeBullet(collider.parent);
+      player.health = player.health - collider.parent.damage;
+      console.log(player.health <= 0 ? "dead" : collider.parent.damage); 
+      shipBehavior.removeBullet(collider.parent); 
     }
   }
   setTimeout(function(){worldGenerator.updateWorldOnMove(player.position)},0);
@@ -528,7 +515,7 @@ var physic = {
 }
 if (typeof(module) !== 'undefined') module.exports = physic;
 },{}],6:[function(require,module,exports){
-function _makeVoxels(l, h, f) {
+function _makeEllipsoid(l, h, f) {
     var d = [ h[0]-l[0], h[1]-l[1], h[2]-l[2] ]
     	, v = new Int32Array(d[0]*d[1]*d[2])
     	, n = 0;
@@ -541,8 +528,11 @@ function _makeVoxels(l, h, f) {
 }
 
 function _createPlanet(radius, position, color) { 
-	data = _makeVoxels([-(radius-1),-(radius-1),-(radius-1)], [radius,radius,radius], function(i,j,k) {
+	data = _makeEllipsoid([-(radius-1),-(radius-1),-(radius-1)], [radius,radius,radius], function(i,j,k) {
 	    return i*i+j*j+k*k <= radius*radius ? 0x113344 : 0;
+	});
+	data = _makeEllipsoid([-(radius-1),-(radius-1),-(radius-1)], [radius,radius,radius], function(i,j,k) {
+	    return ( k === 0 &&  j < radius/4 && i*i+j*j+k*k <= radius*radius && i*i+j*j+k*k >= radius*radius - 100) ? 0x113344 : 0;
 	});
 
 	var result = GreedyMesh (data.voxels, data.dims);
