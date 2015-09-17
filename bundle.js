@@ -439,7 +439,7 @@ function render() {
   shipBehavior.playerBehavior( mouse , player );
   enemyHive.ai( player );
   shipBehavior.moveBullets();
-  var collider = physic.checkCollissionRecursive( player, collidableMeshList );
+  var collider = physic.checkCollissionRecursive( player.shipModel.collisionmesh, collidableMeshList );
   if(collider !== false && collider.parent){
     if (collider.parent.name === "bullet"){
       player.health = player.health - collider.parent.damage;
@@ -475,15 +475,19 @@ _checkCollission = function (MovingCube){
 		var globalPosition = new THREE.Vector3();
 		globalPosition.setFromMatrixPosition( MovingCube.matrixWorld );
 		var originPoint = globalPosition.clone();
+		var prevVertex = undefined;
 		for (var vertexIndex = 0; vertexIndex < MovingCube.geometry.vertices.length; vertexIndex++)
 		{		
 			var localVertex = MovingCube.geometry.vertices[vertexIndex].clone();
 			var globalVertex = localVertex.applyMatrix4( MovingCube.matrixWorld );
-			var directionVector = globalVertex.sub( globalPosition);
-			var ray = new THREE.Raycaster( originPoint, directionVector.clone().normalize() );
-			var collisionResults = ray.intersectObjects( physic.collidableMeshList , true);
-			if ( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() ) 
-				return collisionResults[0].object;
+			if (prevVertex){
+				var directionVector = globalVertex.sub( prevVertex);
+				var ray = new THREE.Raycaster( originPoint, directionVector.clone().normalize() );
+				var collisionResults = ray.intersectObjects( physic.collidableMeshList , true);
+				if ( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() ) 
+					return collisionResults[0].object;
+			}
+			prevVertex = globalVertex;
 		}
 	}
 	return false
@@ -531,9 +535,10 @@ function _createPlanet(radius, position, color) {
 	data = _makeEllipsoid([-(radius-1),-(radius-1),-(radius-1)], [radius,radius,radius], function(i,j,k) {
 	    return i*i+j*j+k*k <= radius*radius ? 0x113344 : 0;
 	});
-	data = _makeEllipsoid([-(radius-1),-(radius-1),-(radius-1)], [radius,radius,radius], function(i,j,k) {
+
+	/*data = _makeEllipsoid([-(radius-1),-(radius-1),-(radius-1)], [radius,radius,radius], function(i,j,k) {
 	    return ( k === 0 &&  j < radius/4 && i*i+j*j+k*k <= radius*radius && i*i+j*j+k*k >= radius*radius - 100) ? 0x113344 : 0;
-	});
+	});*/
 
 	var result = GreedyMesh (data.voxels, data.dims);
 	var geometry = new THREE.Geometry();
@@ -719,8 +724,8 @@ var _generateTile = function(position){
 	 	}
 		indexY = position.y - gridSize.y/2;
 	}
+	
 	//planets
-
 	indexX = position.x - gridSize.x/2;
 	indexY = position.y - gridSize.y/2;
 

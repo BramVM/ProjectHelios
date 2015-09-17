@@ -219,7 +219,7 @@ function render() {
   shipBehavior.playerBehavior( mouse , player );
   enemyHive.ai( player );
   shipBehavior.moveBullets();
-  var collider = physic.checkCollissionRecursive( player, collidableMeshList );
+  var collider = physic.checkCollissionRecursive( player.shipModel.collisionmesh, collidableMeshList );
   if(collider !== false && collider.parent){
     if (collider.parent.name === "bullet"){
       player.health = player.health - collider.parent.damage;

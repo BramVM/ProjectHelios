@@ -14,6 +14,7 @@ function _createPlanet(radius, position, color) {
 	data = _makeEllipsoid([-(radius-1),-(radius-1),-(radius-1)], [radius,radius,radius], function(i,j,k) {
 	    return i*i+j*j+k*k <= radius*radius ? 0x113344 : 0;
 	});
+
 	/*data = _makeEllipsoid([-(radius-1),-(radius-1),-(radius-1)], [radius,radius,radius], function(i,j,k) {
 	    return ( k === 0 &&  j < radius/4 && i*i+j*j+k*k <= radius*radius && i*i+j*j+k*k >= radius*radius - 100) ? 0x113344 : 0;
 	});*/
@@ -202,8 +203,8 @@ var _generateTile = function(position){
 	 	}
 		indexY = position.y - gridSize.y/2;
 	}
+	
 	//planets
-
 	indexX = position.x - gridSize.x/2;
 	indexY = position.y - gridSize.y/2;
 

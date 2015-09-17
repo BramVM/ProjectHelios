@@ -12,15 +12,19 @@ _checkCollission = function (MovingCube){
 		var globalPosition = new THREE.Vector3();
 		globalPosition.setFromMatrixPosition( MovingCube.matrixWorld );
 		var originPoint = globalPosition.clone();
+		var prevVertex = undefined;
 		for (var vertexIndex = 0; vertexIndex < MovingCube.geometry.vertices.length; vertexIndex++)
 		{		
 			var localVertex = MovingCube.geometry.vertices[vertexIndex].clone();
 			var globalVertex = localVertex.applyMatrix4( MovingCube.matrixWorld );
-			var directionVector = globalVertex.sub( globalPosition);
-			var ray = new THREE.Raycaster( originPoint, directionVector.clone().normalize() );
-			var collisionResults = ray.intersectObjects( physic.collidableMeshList , true);
-			if ( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() ) 
-				return collisionResults[0].object;
+			if (prevVertex){
+				var directionVector = globalVertex.sub( prevVertex);
+				var ray = new THREE.Raycaster( originPoint, directionVector.clone().normalize() );
+				var collisionResults = ray.intersectObjects( physic.collidableMeshList , true);
+				if ( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() ) 
+					return collisionResults[0].object;
+			}
+			prevVertex = globalVertex;
 		}
 	}
 	return false
