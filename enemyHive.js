@@ -16,6 +16,7 @@ function _createEnemy(location){
 	enemies[enemyIndex].topSideSpeed = 3;
 	enemies[enemyIndex].attackSpeed = 20;
 	enemies[enemyIndex].bulletRange = 2500;
+	enemies[enemyIndex].bulletDamage = 1;
 	enemies[enemyIndex].destination = location;
 	enemies[enemyIndex].trajectory=0;
 
