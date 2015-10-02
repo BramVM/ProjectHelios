@@ -1,4 +1,4 @@
-var cord = require('./cord.js');
+var cord = require('cords');
 var physic = require('./physic.js'); 
 
 var bullets = [];

@@ -1,4 +1,4 @@
-var cord = require('./cord.js');
+var cord = require('cords');
 var shipBehavior = require('./controleShip.js');
 var enemies = [];
 function _createEnemy(location){
