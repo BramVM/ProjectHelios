@@ -13,6 +13,7 @@ var _createBullet = function ( ship, direction ){
 	bullet.speed = 15;
 	bullet.damage = ship.bulletDamage;
 	bullet.name = "bullet";
+	bullet.index = bullets.length;
 	bullets.push(bullet);
 	shipBehavior.scene.add( bullet );
 	physic.addToColliderList( bullet );
@@ -27,7 +28,8 @@ var _moveBullets = function () {
 	}
 }
 var _removeBullet = function (bullet){
-	bullets.splice(bullet, 1);
+	bullets.splice(bullet.index, 1);
+	for(i=0;i<bullets.length;i++) bullets[i].index =  i;
 	physic.removeFromColliderList( bullet );
 	shipBehavior.scene.remove(bullet);
 	doDispose(bullet);

@@ -63,10 +63,10 @@ var spawnMesh = function(data){
       voxels : data.collision
     }
     var collisionGeometry = makeGeometry(collisionData);
-    material = new THREE.MeshLambertMaterial({ color: 0xffffff, visible : true});
+    material = new THREE.MeshLambertMaterial({ color: 0xffffff, visible : false});
     positionwrapper.collisionmesh = new THREE.Mesh( collisionGeometry, material );
     positionwrapper.collisionmesh.scale.set(scale,scale,scale);
-    positionwrapper.collisionmesh.position.set(positionwrapper.collisionmesh.position.x - collisionData.dims[0] * scale / 2, positionwrapper.collisionmesh.position.y - collisionData.dims[1] * scale / 2, positionwrapper.collisionmesh.position.z - collisionData.dims[2] * scale / 2);
+    positionwrapper.collisionmesh.position.set(positionwrapper.collisionmesh.position.x - data.dims[0] * scale / 2, positionwrapper.collisionmesh.position.y - data.dims[1] * scale / 2, positionwrapper.collisionmesh.position.z - data.dims[2] * scale / 2);
     positionwrapper.add(positionwrapper.collisionmesh);
   }
   return positionwrapper;

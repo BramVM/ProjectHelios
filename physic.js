@@ -8,23 +8,24 @@ _removeFromColliderList = function (object){
 	physic.collidableMeshList.splice(object,1);
 }
 _checkCollission = function (MovingCube){
+	function topObject (child){
+		var result=child;
+		while(result && result.parent.type!="Scene") result = result.parent;
+		return result;
+	}
 	if (MovingCube.geometry){
 		var globalPosition = new THREE.Vector3();
 		globalPosition.setFromMatrixPosition( MovingCube.matrixWorld );
-		var originPoint = globalPosition.clone();
-		var prevVertex = undefined;
+		var originPoint = topObject(MovingCube).position;
 		for (var vertexIndex = 0; vertexIndex < MovingCube.geometry.vertices.length; vertexIndex++)
 		{		
 			var localVertex = MovingCube.geometry.vertices[vertexIndex].clone();
 			var globalVertex = localVertex.applyMatrix4( MovingCube.matrixWorld );
-			if (prevVertex){
-				var directionVector = globalVertex.sub( prevVertex);
-				var ray = new THREE.Raycaster( originPoint, directionVector.clone().normalize() );
-				var collisionResults = ray.intersectObjects( physic.collidableMeshList , true);
-				if ( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() ) 
-					return collisionResults[0].object;
-			}
-			prevVertex = globalVertex;
+			var directionVector = globalVertex.sub( originPoint);
+			var ray = new THREE.Raycaster( originPoint, directionVector.clone().normalize() );
+			var collisionResults = ray.intersectObjects( physic.collidableMeshList , true);
+			if ( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() ) 
+				return collisionResults[0].object;
 		}
 	}
 	return false
