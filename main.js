@@ -32,13 +32,12 @@ player.topspeed = 7;
 player.topSideSpeed = 3;
 player.attackSpeed = 10;
 player.bulletRange = 2500;
-player.bulletDamage = 1;
+player.bulletDamage = 20;
 
 //namespace variables
 player.attackDelay = player.attackSpeed;
 player.speed = 0;
 player.sideSpeed = 0;
-var collidableMeshList = [];
 
 init();
 animate();
@@ -78,6 +77,8 @@ function init() {
   player.shipModel = spawnMesh(ship);
   player.add( player.shipModel );
   scene.add( player );
+
+  //physic.collidableMeshList.push(player.shipModel.collisionmesh);
 
   // pass scene to scripts
   enemyHive.scene = scene;
@@ -219,14 +220,6 @@ function render() {
   shipBehavior.playerBehavior( mouse , player );
   enemyHive.ai( player );
   shipBehavior.moveBullets();
-  var collider = physic.checkCollissionRecursive( player.shipModel.collisionmesh, collidableMeshList );
-  if(collider !== false && collider.parent){
-    if (collider.parent.name === "bullet"){
-      player.health = player.health - collider.parent.damage;
-      console.log(player.health <= 0 ? "dead" : collider.parent.damage); 
-      shipBehavior.removeBullet(collider.parent); 
-    }
-  }
   setTimeout(function(){worldGenerator.updateWorldOnMove(player.position)},0);
   setTimeout(function(){enemyHive.spawner(player.position, 3200, scene)},0);
   setTimeout(function(){enemyHive.eraseDistantSpawns(player.position, 3600, scene)},0);

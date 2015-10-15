@@ -83,6 +83,20 @@ var _shipMovement = function(ship,direction){
 		if(!isNaN(sideRoll)) ship.shipModel.rotation.y = sideRoll;
 	}
 }
+var _hit = function( ship ){
+	var collider = physic.checkCollissionRecursive( ship.shipModel.collisionmesh );
+	if(collider !== false && collider.parent){
+		if (collider.parent.name === "bullet"){
+		  ship.health = ship.health - collider.parent.damage;
+		  shipBehavior.removeBullet(collider.parent); 
+		  if (ship.health <= 0) _die( ship ); 
+		}
+	}
+}
+var _die = function ( ship ) {
+	//physic.removeFromColliderList( ship );
+	ship.die();
+}
 
 var _playerBehavior = function( mouse , player ){
 	var origin={
@@ -93,12 +107,14 @@ var _playerBehavior = function( mouse , player ){
 	direction = cord.direction( origin , mouse );
 	_shipMovement(player,direction);
 	_shoot(player,direction);
+	_hit(player);
 }
 
 var _aiBehavior = function ( body , targetPosition ){
 	var direction = cord.direction( body.position , targetPosition );
 	_shipMovement(body,direction);
 	_shoot(body,direction);
+	_hit(body);
 }
 
 var shipBehavior = {

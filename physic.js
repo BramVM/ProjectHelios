@@ -10,12 +10,12 @@ _removeFromColliderList = function (object){
 _checkCollission = function (MovingCube){
 	function topObject (child){
 		var result=child;
-		while(result && result.parent.type!="Scene") result = result.parent;
+		while(result && result.parent && result.parent.type!="Scene") result = result.parent;
 		return result;
 	}
 	if (MovingCube.geometry){
-		var globalPosition = new THREE.Vector3();
-		globalPosition.setFromMatrixPosition( MovingCube.matrixWorld );
+		/*var globalPosition = new THREE.Vector3();
+		globalPosition.setFromMatrixPosition( MovingCube.matrixWorld );*/
 		var originPoint = topObject(MovingCube).position;
 		for (var vertexIndex = 0; vertexIndex < MovingCube.geometry.vertices.length; vertexIndex++)
 		{		

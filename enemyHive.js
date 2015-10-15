@@ -1,11 +1,17 @@
 var cord = require('cords');
 var shipBehavior = require('./controleShip.js');
 var enemies = [];
+
+function _dieFn(){
+	enemyHive.scene.remove(this);
+	doDispose(this);
+	enemies.splice(this, 1);
+}
+
 function _createEnemy(location){
-	var enemyIndex = enemies.length			
+	var enemyIndex = enemies.length;
 	enemies[enemyIndex] = new THREE.Object3D();
-	enemies[enemyIndex].shipModel = new THREE.Object3D();
-	enemies[enemyIndex].shipModel.add(spawnMesh(ship));
+	enemies[enemyIndex].shipModel = spawnMesh(ship);
 	enemies[enemyIndex].add( enemies[enemyIndex].shipModel );
 	enemies[enemyIndex].position.set(location.x, location.y, location.z);
 	enemyHive.scene.add( enemies[enemyIndex] );
@@ -17,6 +23,9 @@ function _createEnemy(location){
 	enemies[enemyIndex].attackSpeed = 20;
 	enemies[enemyIndex].bulletRange = 2500;
 	enemies[enemyIndex].bulletDamage = 1;
+	enemies[enemyIndex].health = 100;
+	enemies[enemyIndex].die = _dieFn;
+
 	enemies[enemyIndex].destination = location;
 	enemies[enemyIndex].trajectory=0;
 
