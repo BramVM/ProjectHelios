@@ -2,6 +2,7 @@ var shipBehavior = require('./controleShip.js');
 var enemyHive = require('./enemyHive.js');
 var worldGenerator = require('./worldGenerator.js');
 var physic = require('./physic.js');
+var textLayer = require('./textLayer.js');
 
 if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
 var mouse = {
@@ -25,6 +26,13 @@ player.moveLeft = false;
 
 //settings
 player.maxHealth = 100;
+player.remove = function(){
+  console.log("player died");
+  this.position.x = 0;
+  this.position.y = 0;
+  this.position.z = 0;
+  this.health = this.maxHealth;
+};
 player.health = player.maxHealth;
 player.acceleration = 0.07;
 player.sideAcceleration = 0.05;
@@ -33,6 +41,7 @@ player.topSideSpeed = 3;
 player.attackSpeed = 10;
 player.bulletRange = 2500;
 player.bulletDamage = 20;
+player.label = "player";
 
 //namespace variables
 player.attackDelay = player.attackSpeed;
@@ -65,19 +74,13 @@ function init() {
   renderer.setSize( window.innerWidth, window.innerHeight );
   container.appendChild( renderer.domElement );
 
-  // test area
-  /*var cubeGeometry = new THREE.CubeGeometry(50,50,50,1,1,1);
-  var wireMaterial = new THREE.MeshBasicMaterial( { color: 0xff0000, wireframe:true } );
-  StaticCube = new THREE.Mesh( cubeGeometry, wireMaterial );
-  StaticCube.position.set(0, 0, 0);
-  scene.add( StaticCube );
-  physic.addToColliderList( StaticCube );*/
-
   // player
   player.shipModel = spawnMesh(ship);
   player.add( player.shipModel );
   scene.add( player );
-
+  textLayer.health = player.health;
+  //textLayer.maxHealth = player.maxHealth;
+  //textLayer.redraw();
   //physic.collidableMeshList.push(player.shipModel.collisionmesh);
 
   // pass scene to scripts
@@ -170,7 +173,7 @@ function init() {
   window.addEventListener( 'resize', onWindowResize, false );
 }
 function onWindowResize() {
-
+  textLayer.resize();
   windowHalfX = window.innerWidth / 2;
   windowHalfY = window.innerHeight / 2;
 

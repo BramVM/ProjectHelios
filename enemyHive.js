@@ -2,10 +2,14 @@ var cord = require('cords');
 var shipBehavior = require('./controleShip.js');
 var enemies = [];
 
-function _dieFn(){
+function removeAi(){
 	enemyHive.scene.remove(this);
 	doDispose(this);
-	enemies.splice(this, 1);
+	for (i=0; i<enemies.length; i++){
+		if (enemies[i].uuid === this.uuid){
+			enemies.splice(i, 1);
+		}
+	}
 }
 
 function _createEnemy(location){
@@ -16,6 +20,7 @@ function _createEnemy(location){
 	enemies[enemyIndex].position.set(location.x, location.y, location.z);
 	enemyHive.scene.add( enemies[enemyIndex] );
 
+	enemies[enemyIndex].tag = "ai";
 	enemies[enemyIndex].acceleration = 0.05;
 	enemies[enemyIndex].sideAcceleration = 0.05;
 	enemies[enemyIndex].topspeed = 6;
@@ -24,7 +29,7 @@ function _createEnemy(location){
 	enemies[enemyIndex].bulletRange = 2500;
 	enemies[enemyIndex].bulletDamage = 1;
 	enemies[enemyIndex].health = 100;
-	enemies[enemyIndex].die = _dieFn;
+	enemies[enemyIndex].remove = removeAi;
 
 	enemies[enemyIndex].destination = location;
 	enemies[enemyIndex].trajectory=0;
@@ -50,11 +55,11 @@ function _ai(player){
 			if (range<approachRange) enemies[i].moveForward = false;
 			if (range<backOffRange) enemies[i].moveBackward = true;
 			if (range<shootingRange) enemies[i].shoot = true;
-			var direction = cord.direction ( enemies[i].destination, player.position )
+			var direction = cord.direction ( enemies[i].destination, player.position );
 			enemies[i].destination = cord.moveIndirection( enemies[i].destination , direction , 7);
 		}
 		else{
-			enemies[i].trajectory = enemies[i].trajectory + Math.PI/32-(Math.random()*Math.PI/16)
+			enemies[i].trajectory = enemies[i].trajectory + Math.PI/32-(Math.random()*Math.PI/16);
 			enemies[i].destination = cord.moveIndirection( enemies[i].destination , enemies[i].trajectory , enemies[i].topspeed);
 		}
 		shipBehavior.aiBehavior ( enemies[i] , enemies[i].destination );
@@ -68,25 +73,23 @@ function _spawner (playerPosition, range){
 			x : playerPosition.x,
 			y : playerPosition.y,
 			z : playerPosition.z
-		} 
+		};
 		enemyLocation = cord.moveIndirection (enemyLocation, Math.random()*Math.PI*2, range);
 		_createEnemy(enemyLocation);
 	}
-};
+}
 
 function _eraseDistantSpawns (playerPosition, range){
 	for (var i = 0; i <enemies.length; i++) {
 		if (cord.distance(playerPosition, enemies[i].position)>range) {
-			enemyHive.scene.remove(enemies[i]);
-			doDispose(enemies[i]);
-			enemies.splice(i, 1);
-		};
-	};
+			enemies[i].remove();
+		}
+	}
 }
 var enemyHive = {
 	ai : _ai,
 	spawner : _spawner,
 	eraseDistantSpawns : _eraseDistantSpawns
-}
+};
 
 if (typeof(module) !== 'undefined') module.exports = enemyHive;
