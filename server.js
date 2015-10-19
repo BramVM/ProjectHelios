@@ -24,15 +24,20 @@ exec("browserify main.js -o bundle.js",runServer());*/
 
 var express = require('express');
 var app = express();
+var exec = require("child_process").exec;+
 
-app.set('port', (process.env.PORT || 5000));
+exec("browserify main.js -o bundle.js",runServer());
 
-app.use(express.static(__dirname + '/'));
+function runServer (){
+	app.set('port', (process.env.PORT || 5000));
 
-app.get('/', function(request, response) {
-  response.render('index');
-});
+	app.use(express.static(__dirname + '/'));
 
-app.listen(app.get('port'), function() {
-  console.log('Node app is running on port', app.get('port'));
-});
+	app.get('/', function(request, response) {
+	  response.render('index');
+	});
+
+	app.listen(app.get('port'), function() {
+	  console.log('Node app is running on port', app.get('port'));
+	});
+}

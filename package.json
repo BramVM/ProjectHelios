@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "bn.js": "0.15.2",
+    "browserify": "^11.2.0",
     "cords": "^1.0.2",
     "express": "^4.13.0",
     "greedy-mesher": "^1.0.2",
