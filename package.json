@@ -14,6 +14,7 @@
     "greedy-mesher": "^1.0.2",
     "ndarray-pack": "^1.1.1",
     "path": "^0.11.14",
+    "seedrandom": "^2.4.2",
     "socket.io": "0.9.16",
     "three": "^0.71.0",
     "three-dev": "^0.72.0",
