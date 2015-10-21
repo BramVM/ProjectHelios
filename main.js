@@ -68,7 +68,7 @@ function init() {
   }else{
     renderer = new THREE.CanvasRenderer();
   }
-  //renderer.setClearColorHex( 0xBBBBBB, 1 );
+  
   renderer = new THREE.WebGLRenderer();
   renderer.setPixelRatio( window.devicePixelRatio );
   renderer.setSize( window.innerWidth, window.innerHeight );
@@ -83,13 +83,13 @@ function init() {
   //textLayer.redraw();
   //physic.collidableMeshList.push(player.shipModel.collisionmesh);
 
-  // pass scene to scripts
+  // pass scene to modules
   enemyHive.scene = scene;
   worldGenerator.scene = scene;
   shipBehavior.scene = scene;
 
   //world
-  worldGenerator.initWorld( player.position, scene);
+  worldGenerator.initWorld( player.position);
 
   //lights
   var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.4 );

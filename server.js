@@ -1,6 +1,6 @@
 var express = require('express');
 var app = express();
-var exec = require("child_process").exec;+
+var exec = require("child_process").exec;
 
 exec("browserify main.js -o bundle.js",runServer());
 

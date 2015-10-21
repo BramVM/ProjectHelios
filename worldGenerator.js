@@ -17,10 +17,6 @@ function _createPlanet(radius, position, color) {
 	    return i*i+j*j+k*k <= radius*radius ? 0x113344 : 0;
 	});
 
-	/*data = _makeEllipsoid([-(radius-1),-(radius-1),-(radius-1)], [radius,radius,radius], function(i,j,k) {
-	    return ( k === 0 &&  j < radius/4 && i*i+j*j+k*k <= radius*radius && i*i+j*j+k*k >= radius*radius - 100) ? 0x113344 : 0;
-	});*/
-
 	var result = GreedyMesh (data.voxels, data.dims);
 	var geometry = new THREE.Geometry();
 
@@ -147,6 +143,26 @@ var _generateWorld = function (nearestTilePosition,init){
 };
 var biomes = [
 	{
+		label : "defualt",
+		starDensety : 5,
+		starColor : {
+			r : 225,
+			g : 225,
+			b : 225,
+			delta: 20
+		},
+		maxStarSize : 6,
+		minPlanetSize : 5,
+		maxPlanetSize : 20,
+		planetColor : {
+			r : 80,
+			g : 225,
+			b : 80,
+			delta: 20
+		},
+		numberOfPlanetsByAcreage : 0.0003
+	},
+	{
 		label : "red",
 		starDensety : 7,
 		starColor : {
@@ -160,15 +176,15 @@ var biomes = [
 		maxPlanetSize : 20,
 		planetColor : {
 			r : 225,
-			g : 110,
-			b : 110,
+			g : 80,
+			b : 80,
 			delta: 20
 		},
 		numberOfPlanetsByAcreage : 0.0003
 	},
 	{
 		label : "blue",
-		starDensety : 7,
+		starDensety : 6,
 		starColor : {
 			r : 110,
 			g : 110,
@@ -179,8 +195,8 @@ var biomes = [
 		minPlanetSize : 5,
 		maxPlanetSize : 20,
 		planetColor : {
-			r : 110,
-			g : 110,
+			r : 80,
+			g : 80,
 			b : 225,
 			delta: 20
 		},
@@ -190,8 +206,8 @@ var biomes = [
 function seed(x,y){
 	var i=x-y;
 	var k=x+y;
-	var frequency=0.0005;
-	var amplitude=6;
+	var frequency=0.0002;
+	var amplitude=1;
 	var offset=0;
 	var newSin;
 	var result=0;
@@ -231,26 +247,6 @@ var _generateTile = function(position){
 
 	var indexX = position.x - gridSize.x/2;
 	var indexY = position.y - gridSize.y/2;
-	var biome ={
-		label : "red",
-		starDensety : 7,
-		starColor : {
-			r : 225,
-			g : 110,
-			b : 110,
-			delta: 20
-		},
-		maxStarSize : 6,
-		minPlanetSize : 5,
-		maxPlanetSize : 20,
-		planetColor : {
-			r : 225,
-			g : 110,
-			b : 110,
-			delta: 20
-		},
-		numberOfPlanetsByAcreage : 0.0003
-	}
 	
 	var color = {
 		r : 225,
@@ -262,11 +258,21 @@ var _generateTile = function(position){
 	//stars
 	for( indexX ; indexX < position.x + gridSize.x/2 ; indexX = indexX  + gridSize.x/biome.starDensety ) {
 		for( indexY ; indexY < position.y + gridSize.y/2 ; indexY = indexY + gridSize.y/biome.starDensety ) {
-			seed(indexX,indexY) > 0 ? biome=biomes[0] : biome=biomes[1] ;
+			
+			//set star values depending on biome
+			var seedValue = seed(indexX,indexY);
+			seedValue > 0 ? biome=biomes[1] : biome=biomes[2] ;
+			var biomeIntensity = Math.abs(seedValue);
+			var seededColor = {
+ 				r : biome.starColor.r * biomeIntensity + biomes[0].starColor.r * (1-biomeIntensity),
+ 				g : biome.starColor.g * biomeIntensity + biomes[0].starColor.g * (1-biomeIntensity),
+ 				b : biome.starColor.b * biomeIntensity + biomes[0].starColor.b * (1-biomeIntensity)
+ 			};
+ 			seededRadius = biome.maxStarSize * biomeIntensity + biomes[0].maxStarSize * (1-biomeIntensity);
+
 			//random size
  			Math.seedrandom("radius" + indexX + '&' + indexY);
- 			var seededRadius = Math.random()*biome.maxStarSize;
- 			//var seededRadius = seed(indexX,indexY);
+ 			seededRadius = Math.random()*seededRadius;
 	 		if (seededRadius && seededRadius!==0){
 	 			//random position
 	 			var seededPosition = {
@@ -276,15 +282,16 @@ var _generateTile = function(position){
 	 			seededPosition.x = indexX - (gridSize.x/biome.starDensety)/2 + Math.random()*gridSize.x/biome.starDensety;
 	 			Math.seedrandom("y" + indexX + '&' + indexY);
 	 			seededPosition.y = indexY - (gridSize.y/biome.starDensety)/2 + Math.random()*gridSize.y/biome.starDensety;
+	 			
 	 			//random color
-	 			var seededColor = {};
 	 			Math.seedrandom("r" + indexX + '&' + indexY);
-	 			seededColor.r = Math.round(biome.starColor.r - biome.starColor.delta + Math.random()*biome.starColor.delta);
+	 			seededColor.r = Math.round(seededColor.r - biome.starColor.delta + Math.random()*biome.starColor.delta);
 	 			Math.seedrandom("g" + indexX + '&' + indexY);
-	 			seededColor.g = Math.round(biome.starColor.g - biome.starColor.delta + Math.random()*biome.starColor.delta);
+	 			seededColor.g = Math.round(seededColor.g - biome.starColor.delta + Math.random()*biome.starColor.delta);
 	 			Math.seedrandom("b" + indexX + '&' + indexY);
-	 			seededColor.b = Math.round(biome.starColor.b - biome.starColor.delta + Math.random()*biome.starColor.delta);
+	 			seededColor.b = Math.round(seededColor.b - biome.starColor.delta + Math.random()*biome.starColor.delta);
 	 			seededColor ="rgb("+seededColor.r+","+seededColor.g+","+seededColor.b+")";
+	 			//create star
 	 			tiles[ tileIndex ].stars.push(_createStar (seededRadius,seededPosition,seededColor));
 	 		}
 	 	}
@@ -298,13 +305,23 @@ var _generateTile = function(position){
 
 	var scale = 7; //size of each voxel
 
-	//calculate random radius
-	Math.seedrandom("radius" + position.x + '&' + position.y);
-	var radius = minPlanetSize + Math.round(Math.random()*(maxPlanetSize-minPlanetSize));
 	//check existance based on numberOfPlanetsByAcreage
 	Math.seedrandom("existance" + position.x + '&' + position.y);
-	if (radius && radius!=0 && Math.random()<Math.sqrt(gridSize.x*gridSize.y)*numberOfPlanetsByAcreage){
-		
+	if (Math.random()<Math.sqrt(gridSize.x*gridSize.y)*biome.numberOfPlanetsByAcreage){
+		//set planet values depending on biome
+		var seedValue = seed(position.x,position.y);
+		seedValue > 0 ? biome=biomes[1] : biome=biomes[2] ;
+		var biomeIntensity = Math.abs(seedValue);
+		var seededColor = {
+			r : biome.planetColor.r * biomeIntensity + biomes[0].planetColor.r * (1-biomeIntensity),
+			g : biome.planetColor.g * biomeIntensity + biomes[0].planetColor.g * (1-biomeIntensity),
+			b : biome.planetColor.b * biomeIntensity + biomes[0].planetColor.b * (1-biomeIntensity)
+		};
+		seededMaxPlanetSize = biome.maxPlanetSize * biomeIntensity + biomes[0].maxPlanetSize * (1-biomeIntensity);
+	 	seededMinPlanetSize = biome.minPlanetSize * biomeIntensity + biomes[0].minPlanetSize * (1-biomeIntensity);
+		//random radius
+		Math.seedrandom("radius" + position.x + '&' + position.y);
+		var radius = seededMinPlanetSize + Math.round(Math.random()*(seededMaxPlanetSize-seededMinPlanetSize));
 		//randomize position
 		Math.seedrandom("position" + position.x + '&' + position.y);
 		var maxOffsetX = gridSize.x/2 - radius*7/2;
@@ -316,13 +333,12 @@ var _generateTile = function(position){
 		}
 
 		//randomize color
-		var seededColor = {};
 		Math.seedrandom("r" + position.x + '&' + position.y);
-		seededColor.r = Math.round(color.r - colorDelta + Math.random()*colorDelta);
+		seededColor.r = Math.round(seededColor.r - colorDelta + Math.random()*colorDelta);
 		Math.seedrandom("g" + position.x + '&' + position.y);
-		seededColor.g = Math.round(color.g - colorDelta + Math.random()*colorDelta);
+		seededColor.g = Math.round(seededColor.g - colorDelta + Math.random()*colorDelta);
 		Math.seedrandom("b" + position.x + '&' + position.y);
-		seededColor.b = Math.round(color.b - colorDelta + Math.random()*colorDelta);
+		seededColor.b = Math.round(seededColor.b - colorDelta + Math.random()*colorDelta);
 		seededColor ="rgb("+seededColor.r+","+seededColor.g+","+seededColor.b+")";
 		tiles[ tileIndex ].planets.push(_createPlanet (radius,planetPosition,seededColor));
 	}
