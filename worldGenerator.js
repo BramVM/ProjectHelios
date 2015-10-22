@@ -83,10 +83,10 @@ function _seed(x,y){
 	return result;
 }
 var gridSize = {
-	x:1500,
-	y:1500
+	x:1000,
+	y:1000
 } ;
-var gridMatrixSize = 1;
+var gridMatrixSize = 2;
 var tiles = [];
 var prevTilePos;
 
@@ -160,7 +160,8 @@ var biomes = [
 			b : 80,
 			delta: 20
 		},
-		numberOfPlanetsByAcreage : 0.0003
+		numberOfPlanetsByAcreage : 0.0003,
+		probability : 0
 	},
 	{
 		label : "red",
@@ -180,7 +181,8 @@ var biomes = [
 			b : 80,
 			delta: 20
 		},
-		numberOfPlanetsByAcreage : 0.0003
+		numberOfPlanetsByAcreage : 0.0003,
+		probability : 1
 	},
 	{
 		label : "blue",
@@ -200,76 +202,60 @@ var biomes = [
 			b : 225,
 			delta: 20
 		},
-		numberOfPlanetsByAcreage : 0.0003
+		numberOfPlanetsByAcreage : 0.0003,
+		probability : 1
 	}
 ];
 function seed(x,y){
-	var i=x-y;
-	var k=x+y;
-	var frequency=0.0002;
-	var amplitude=1;
-	var offset=0;
+	var frequency=0.0005;
 	var newSin;
 	var result=0;
-	for (var j=0;j<1;j++){
-		amplitude=amplitude/2;
-		frequency=frequency*2;
-		newSin=amplitude*Math.sin(((k+offset)*frequency));
-		newSin=newSin+amplitude*Math.sin(((i+offset)*frequency));
-		//offset=offset+100;
-		result=result+newSin;
+	sinA=0.5*Math.sin(((x)*frequency));
+	sinB=0.5*Math.sin(((y)*frequency));
+	var indexOfSin = Math.floor(x/(Math.PI/frequency))+Math.floor(y/(Math.PI/frequency));
+	return {
+		value : sinA+sinB,
+		index : indexOfSin
 	}
-	return result;
 }
-
-var _generateTile = function(position){
-	var tileIndex = tiles.length;
-	tiles[ tileIndex] = new THREE.Object3D();
-	tiles[ tileIndex].stay=true;
-	tiles[ tileIndex].stars = [];
-	tiles[ tileIndex].planets = [];
-	tiles[ tileIndex].gridPosX = position.x/gridSize.x;
-	tiles[ tileIndex].gridPosY = position.y/gridSize.y;
-
-	/*var square = new THREE.Shape();
-    square.moveTo(-gridSize.x/2+5, -gridSize.y/2+5);
-    square.lineTo(-gridSize.x/2+5, gridSize.y/2-5);
-    square.lineTo(gridSize.x/2-5, gridSize.y/2-5);
-    square.lineTo(gridSize.x/2-5, -gridSize.y/2+5);
-    square.lineTo(-gridSize.x/2+5, -gridSize.y/2+5);
-	var geometry = square.makeGeometry();
-	var material = new THREE.MeshLambertMaterial({ color: 0xffffff, transparent: true, opacity: 0.3});
-	var square = new THREE.Mesh(geometry, material);
-	square.position.set(position.x,position.y,-500);
-	var wireframe = new THREE.WireframeHelper( square, 0xffffff );
-	tiles[ tileIndex ].stars.push(square);
-	tiles[ tileIndex ].stars.push(wireframe);*/
-
+var _calculateBiome = (function () {
+    var total = 0;
+	for (i=0; i<biomes.length; i++){
+		total=total+biomes[i].probability;
+	}
+	var probabilitys = [];
+	if (total>0){
+		for (i=0; i<biomes.length; i++){
+			probabilitys[i] = biomes[i].probability/total;
+		}
+	}
+    return function (rng) {
+    	var a = 0;
+    	for (i=0; i<probabilitys.length; i++){
+    		if (rng<probabilitys[i]+a){
+    			return biomes[i]
+    		}
+    	}
+    }
+})();
+var _fillTileWithStars = function(position, tileIndex){
 	var indexX = position.x - gridSize.x/2;
 	var indexY = position.y - gridSize.y/2;
-	
-	var color = {
-		r : 225,
-		g : 110,
-		b : 110
-	};
-	colorDelta = 20;
-	
-	//stars
 	for( indexX ; indexX < position.x + gridSize.x/2 ; indexX = indexX  + gridSize.x/biome.starDensety ) {
 		for( indexY ; indexY < position.y + gridSize.y/2 ; indexY = indexY + gridSize.y/biome.starDensety ) {
-			
-			//set star values depending on biome
-			var seedValue = seed(indexX,indexY);
-			seedValue > 0 ? biome=biomes[1] : biome=biomes[2] ;
-			var biomeIntensity = Math.abs(seedValue);
+			//calculate biome and biome intensity
+			var seedObj = seed(indexX,indexY);
+			Math.seedrandom("biome" + seedObj.index);
+			biome = biomes[Math.floor(Math.random()*biomes.length)];
+			//biome = _calculateBiome(Math.random());
+			var biomeIntensity = Math.abs(seedObj.value);
+			//set values depending on biome
 			var seededColor = {
  				r : biome.starColor.r * biomeIntensity + biomes[0].starColor.r * (1-biomeIntensity),
  				g : biome.starColor.g * biomeIntensity + biomes[0].starColor.g * (1-biomeIntensity),
  				b : biome.starColor.b * biomeIntensity + biomes[0].starColor.b * (1-biomeIntensity)
  			};
  			seededRadius = biome.maxStarSize * biomeIntensity + biomes[0].maxStarSize * (1-biomeIntensity);
-
 			//random size
  			Math.seedrandom("radius" + indexX + '&' + indexY);
  			seededRadius = Math.random()*seededRadius;
@@ -282,7 +268,6 @@ var _generateTile = function(position){
 	 			seededPosition.x = indexX - (gridSize.x/biome.starDensety)/2 + Math.random()*gridSize.x/biome.starDensety;
 	 			Math.seedrandom("y" + indexX + '&' + indexY);
 	 			seededPosition.y = indexY - (gridSize.y/biome.starDensety)/2 + Math.random()*gridSize.y/biome.starDensety;
-	 			
 	 			//random color
 	 			Math.seedrandom("r" + indexX + '&' + indexY);
 	 			seededColor.r = Math.round(seededColor.r - biome.starColor.delta + Math.random()*biome.starColor.delta);
@@ -297,21 +282,20 @@ var _generateTile = function(position){
 	 	}
 		indexY = position.y - gridSize.y/2;
 	}
-	
-	//planets
-	var minPlanetSize = 5;
-	var maxPlanetSize = 20;
-	var numberOfPlanetsByAcreage = 0.0003; //capped to 1 per tile
-
+};
+_addPlanetToTile = function(position, tileIndex){
 	var scale = 7; //size of each voxel
 
 	//check existance based on numberOfPlanetsByAcreage
 	Math.seedrandom("existance" + position.x + '&' + position.y);
 	if (Math.random()<Math.sqrt(gridSize.x*gridSize.y)*biome.numberOfPlanetsByAcreage){
+		//calculate biome and biome intensity
+		var seedObj = seed(position.x, position.y);
+		Math.seedrandom("biome" + seedObj.index);
+		biome = biomes[Math.floor(Math.random()*biomes.length)];
+		//biome = _calculateBiome(Math.random());
+		var biomeIntensity = Math.abs(seedObj.value);
 		//set planet values depending on biome
-		var seedValue = seed(position.x,position.y);
-		seedValue > 0 ? biome=biomes[1] : biome=biomes[2] ;
-		var biomeIntensity = Math.abs(seedValue);
 		var seededColor = {
 			r : biome.planetColor.r * biomeIntensity + biomes[0].planetColor.r * (1-biomeIntensity),
 			g : biome.planetColor.g * biomeIntensity + biomes[0].planetColor.g * (1-biomeIntensity),
@@ -331,17 +315,44 @@ var _generateTile = function(position){
 			y : position.y - maxOffsetY + Math.random()*maxOffsetY*2,
 			z : -500
 		}
-
 		//randomize color
 		Math.seedrandom("r" + position.x + '&' + position.y);
-		seededColor.r = Math.round(seededColor.r - colorDelta + Math.random()*colorDelta);
+		seededColor.r = Math.round(seededColor.r - biome.planetColor.delta + Math.random()*biome.planetColor.delta);
 		Math.seedrandom("g" + position.x + '&' + position.y);
-		seededColor.g = Math.round(seededColor.g - colorDelta + Math.random()*colorDelta);
+		seededColor.g = Math.round(seededColor.g - biome.planetColor.delta + Math.random()*biome.planetColor.delta);
 		Math.seedrandom("b" + position.x + '&' + position.y);
-		seededColor.b = Math.round(seededColor.b - colorDelta + Math.random()*colorDelta);
+		seededColor.b = Math.round(seededColor.b - biome.planetColor.delta + Math.random()*biome.planetColor.delta);
 		seededColor ="rgb("+seededColor.r+","+seededColor.g+","+seededColor.b+")";
 		tiles[ tileIndex ].planets.push(_createPlanet (radius,planetPosition,seededColor));
 	}
+}
+var _generateTile = function(position, tileIndex){
+	var tileIndex = tiles.length;
+	tiles[ tileIndex] = new THREE.Object3D();
+	tiles[ tileIndex].stay = true;
+	tiles[ tileIndex].stars = [];
+	tiles[ tileIndex].planets = [];
+	tiles[ tileIndex].gridPosX = position.x/gridSize.x;
+	tiles[ tileIndex].gridPosY = position.y/gridSize.y;
+
+	var square = new THREE.Shape();
+    square.moveTo(-gridSize.x/2+5, -gridSize.y/2+5);
+    square.lineTo(-gridSize.x/2+5, gridSize.y/2-5);
+    square.lineTo(gridSize.x/2-5, gridSize.y/2-5);
+    square.lineTo(gridSize.x/2-5, -gridSize.y/2+5);
+    square.lineTo(-gridSize.x/2+5, -gridSize.y/2+5);
+	var geometry = square.makeGeometry();
+	var material = new THREE.MeshLambertMaterial({ color: 0xffffff, transparent: true, opacity: 0.3});
+	var square = new THREE.Mesh(geometry, material);
+	square.position.set(position.x,position.y,-500);
+	var wireframe = new THREE.WireframeHelper( square, 0xffffff );
+	tiles[ tileIndex ].stars.push(square);
+	tiles[ tileIndex ].stars.push(wireframe);
+	
+	_fillTileWithStars(position, tileIndex);
+	_addPlanetToTile(position, tileIndex);
+	
+	
 	Math.seedrandom();
 
 	//add all objects to the scene
