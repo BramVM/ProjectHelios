@@ -107,7 +107,12 @@ var _die = function ( ship ) {
 	//physic.removeFromColliderList( ship );
 	ship.remove();
 };
-
+_detectPlanet = function ( player ) {
+	var ray = new THREE.Raycaster( player.position, new THREE.Vector3( 0, 0, -1 ));
+	var collisionResults = ray.intersectObjects( shipBehavior.scene.children );
+	if ( collisionResults.length > 0 ) 
+		console.log(collisionResults[0].object);
+}
 var _playerBehavior = function( mouse , player ){
 	var origin={
 			x : 0,
@@ -118,6 +123,7 @@ var _playerBehavior = function( mouse , player ){
 	_shipMovement(player,direction);
 	_shoot(player,direction);
 	_hit(player);
+	_detectPlanet(player);
 };
 
 var _aiBehavior = function ( body , targetPosition ){
