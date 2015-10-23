@@ -24,6 +24,10 @@ var biomes = [
                 delta: 20
             }
 
+        },
+        materials : {
+            iron : 100,
+            fuel : 50
         }
     },
     {

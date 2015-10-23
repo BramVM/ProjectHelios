@@ -108,8 +108,17 @@ var _die = function ( ship ) {
 	ship.remove();
 };
 _detectPlanet = function ( player ) {
+	var planets = [];
+	for (i=0; i<shipBehavior.scene.children.length;i++){
+		if (shipBehavior.scene.children[i].planets){
+			for (var p = shipBehavior.scene.children[i].planets.length - 1; p >= 0; p--) {
+				planets.push(shipBehavior.scene.children[i].planets[p]);
+			};
+		}
+	}
+
 	var ray = new THREE.Raycaster( player.position, new THREE.Vector3( 0, 0, -1 ));
-	var collisionResults = ray.intersectObjects( shipBehavior.scene.children );
+	var collisionResults = ray.intersectObjects( planets );
 	if ( collisionResults.length > 0 ) 
 		console.log(collisionResults[0].object);
 }
