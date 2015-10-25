@@ -57,22 +57,22 @@ var _shipMovement = function(ship,direction){
 
 	//modify speed on controles
 	if( ship.moveForward ){
-		ship.speed = physic.exponentialAcceleration(ship.speed, ship.topspeed ,ship.acceleration);
+		ship.speed = physic.exponentialAcceleration(ship.speed, ship.engine.topspeed ,ship.engine.acceleration);
 	}
 	if( ship.moveBackward ){
-		ship.speed = physic.exponentialAcceleration(ship.speed, -ship.topspeed ,ship.acceleration);
+		ship.speed = physic.exponentialAcceleration(ship.speed, -ship.engine.topspeed ,ship.engine.acceleration);
 	}
 	if ( !(ship.moveBackward||ship.moveForward)&&!(ship.speed===0) ){
-		ship.speed = physic.exponentialAcceleration(ship.speed, 0 ,ship.acceleration);
+		ship.speed = physic.exponentialAcceleration(ship.speed, 0 ,ship.engine.acceleration);
 	}
 	if( ship.moveLeft ){
-		ship.sideSpeed = physic.exponentialAcceleration(ship.sideSpeed, ship.topSideSpeed ,ship.sideAcceleration);
+		ship.sideSpeed = physic.exponentialAcceleration(ship.sideSpeed, ship.sideEngine.topspeed ,ship.sideEngine.acceleration);
 	}
 	if( ship.moveRight ){
-		ship.sideSpeed = physic.exponentialAcceleration(ship.sideSpeed, -ship.topSideSpeed ,ship.sideAcceleration);
+		ship.sideSpeed = physic.exponentialAcceleration(ship.sideSpeed, -ship.sideEngine.topspeed ,ship.sideEngine.acceleration);
 	}
 	if ( !(ship.moveLeft||ship.moveRight)&&!(ship.sideSpeed===0) ){
-		ship.sideSpeed = physic.exponentialAcceleration(ship.sideSpeed, 0 ,ship.sideAcceleration);
+		ship.sideSpeed = physic.exponentialAcceleration(ship.sideSpeed, 0 ,ship.sideEngine.acceleration);
 	}
 
 	//rotate
@@ -80,7 +80,7 @@ var _shipMovement = function(ship,direction){
 
 	//roll animation
 	var maxRollRotation = Math.PI/6;
-	var sideRoll = ship.sideSpeed*maxRollRotation/ship.topSideSpeed;
+	var sideRoll = ship.sideSpeed*maxRollRotation/ship.sideEngine.topspeed;
 	if ( sideRoll > maxRollRotation ) sideRoll = maxRollRotation;
 	if ( sideRoll < -maxRollRotation ) sideRoll = -maxRollRotation;
 	if(ship.shipModel){
@@ -119,8 +119,12 @@ _detectPlanet = function ( player ) {
 
 	var ray = new THREE.Raycaster( player.position, new THREE.Vector3( 0, 0, -1 ));
 	var collisionResults = ray.intersectObjects( planets );
-	if ( collisionResults.length > 0 ) 
-		console.log(collisionResults[0].object);
+	collisionResults.length > 0 ? player.targetPlanet = collisionResults[0].object : player.targetPlanet = undefined;
+}
+_sentMineDroid = function ( droid, planet ) {
+	if (planet){
+		
+	}
 }
 var _playerBehavior = function( mouse , player ){
 	var origin={

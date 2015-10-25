@@ -21,10 +21,16 @@ function _createEnemy(location){
 	enemyHive.scene.add( enemies[enemyIndex] );
 
 	enemies[enemyIndex].tag = "ai";
-	enemies[enemyIndex].acceleration = 0.05;
-	enemies[enemyIndex].sideAcceleration = 0.05;
-	enemies[enemyIndex].topspeed = 6;
-	enemies[enemyIndex].topSideSpeed = 3;
+	enemies[enemyIndex].engine = {
+	  label: "bad engine",
+	  acceleration : 0.05,
+	  topspeed :6
+	};
+	enemies[enemyIndex].sideEngine = {
+	  label: "bad side engine",
+	  acceleration : 0.05,
+	  topspeed :3
+	};
 	enemies[enemyIndex].attackSpeed = 20;
 	enemies[enemyIndex].bulletRange = 2500;
 	enemies[enemyIndex].bulletDamage = 1;
@@ -60,7 +66,7 @@ function _ai(player){
 		}
 		else{
 			enemies[i].trajectory = enemies[i].trajectory + Math.PI/32-(Math.random()*Math.PI/16);
-			enemies[i].destination = cord.moveIndirection( enemies[i].destination , enemies[i].trajectory , enemies[i].topspeed);
+			enemies[i].destination = cord.moveIndirection( enemies[i].destination , enemies[i].trajectory , enemies[i].engine.topspeed);
 		}
 		shipBehavior.aiBehavior ( enemies[i] , enemies[i].destination );
 	}

@@ -13,7 +13,7 @@ function _makeEllipsoid(l, h, f) {
 	return {voxels:v, dims:d};
 }
 
-function _createPlanet(radius, position, color) { 
+function _createPlanet(radius, position, color, items) { 
 	data = _makeEllipsoid([-(radius-1),-(radius-1),-(radius-1)], [radius,radius,radius], function(i,j,k) {
 	    return i*i+j*j+k*k <= radius*radius ? 0x113344 : 0;
 	});
@@ -49,6 +49,7 @@ function _createPlanet(radius, position, color) {
 	surfacemesh.doubleSided = false;
 	surfacemesh.scale.set(7,7,7);
 	surfacemesh.position.set(position.x,position.y,-7*radius*4);
+	surfacemesh.items = items;
 	return surfacemesh;
 }
 
@@ -232,7 +233,6 @@ _addPlanetToTile = function(position, tileIndex){
 	Math.seedrandom("biome" + seedObj.index);
 	biome = _calculateBiome(Math.random());
 	var biomeIntensity = Math.abs(seedObj.value);
-	console.log(biome.label + " : " + biomeIntensity*100 +"%");
 	//check existance based on planets.densety
 	Math.seedrandom("existance" + position.x + '&' + position.y);
 	if (Math.random()<Math.sqrt(gridSize.x*gridSize.y)*biome.planets.densety){
@@ -267,7 +267,35 @@ _addPlanetToTile = function(position, tileIndex){
 		Math.seedrandom("b" + position.x  + '&' + position.y );
 		planet.color.b = Math.round(planet.color.b - planet.color.delta + 2*Math.random()*planet.color.delta);
 		planet.color ="rgb("+planet.color.r+","+planet.color.g+","+planet.color.b+")";
-		tiles[ tileIndex ].planets.push(_createPlanet (radius,planet.position,planet.color));
+		//items
+		planet.items = [];
+		if(biome.planets.items){
+			for (b=0; b<biome.planets.items.length; b++){
+				planet.items.push(biome.planets.items[b]);
+				planet.items[b].probability = planet.items[b].probability*biomeIntensity;
+			}
+		}
+		if(biomes[0].planets.items){
+			for (b=0; b<biomes[0].planets.items.length;b++){
+				var notInItems = true;
+				for (m=0; m<planet.items.length;m++){
+					if (biomes[0].planets.items[b].label === planet.items[m].label){
+						notInitems = false;
+						planet.items[m].probability = planet.items[m].probability + biomes[0].planets.items[b].probability * (1-biomeIntensity);
+					}
+				}
+				if (notInItems) {
+					var newItem = {
+						label: biomes[0].planets.items[b].label,
+						probability : biomes[0].planets.items[b].probability
+					};
+					newItem.probability = newItem.probability*(1-biomeIntensity);
+					planet.items.push(newItem);
+				}
+			}
+		}
+		//add to tile
+		tiles[ tileIndex ].planets.push(_createPlanet (radius, planet.position, planet.color, planet.items));
 	}
 };
 _visualizeTiles = function(position, tileIndex){

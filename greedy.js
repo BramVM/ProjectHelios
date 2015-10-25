@@ -116,6 +116,4 @@ return function(volume, dims) {
 }
 })();
 
-if(exports) {
-  exports.mesher = GreedyMesh;
-}
+if (typeof(module) !== 'undefined') module.exports = GreedyMesh;

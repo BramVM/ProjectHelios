@@ -22,13 +22,14 @@ var biomes = [
                 g : 122,
                 b : 20,
                 delta: 20
-            }
-
+            },
+            items : [
+                {
+                    label: "iron",
+                    probability : 1
+                }
+            ]
         },
-        materials : {
-            iron : 100,
-            fuel : 50
-        }
     },
     {
         label : "red",

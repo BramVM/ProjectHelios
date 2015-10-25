@@ -18,7 +18,6 @@
 
 			}
 			body {
-				background-color: #000022;
 				margin: 0px;
 				overflow: hidden;
 			}
@@ -46,10 +45,30 @@
 			a:hover {
 				color: #0080ff;
 			}
+			canvas {
+				position: absolute;
+				top:0;
+				left:0;
+				z-index: -2;
+			}
+			html, body {
+				height: 100%;
+			}
+			.interface  {
+				max-height: 100%;
+				width: 100%;
+			}
 
 		</style>
+		<link rel="stylesheet" type="text/css" href="node_modules/bootstrap/dist/css/bootstrap.css">
+		<script src="node_modules/angular/angular.min.js"></script>
 	</head>
-	<body>
+	<body style="height:100%;">
+		<div id="blueprints">
+			<div ng-repeat="item in items">
+				
+			</div>
+		</div>
 		<script src="node_modules/three-dev/build/three.js"></script>
 		<script src="libs/Detector.js"></script>
 		<script src="threehelper.js"></script>
@@ -58,7 +77,45 @@
 		<script src="public/models/mainShip.js"></script>
 		<script src="public/models/bullet.js"></script>
 		<script src="spawnMesh.js"></script>
-
+		<script type="text/javascript">
+			var mainModule = angular.module('mainModule', []);
+		</script>
 		<script src="bundle.js"></script>
+		<script src="interfaceController.js"></script>
+
+		<div ng-app="mainModule" ng-controller="mainController" class="interface">
+			<div class="planet-info col-xs-6 col-sm-3 col-lg-2">
+				<div ng-show="showPlanet" class="panel panel-default">
+					<div class="panel-heading" ng-if="showPlanet">Planet</div>
+					<div class="panel-body"  ng-repeat="item in planetItems">
+						<button ng-click="selectItem(item)">{{item.label}}</button>
+					</div>
+					<div class="panel-body" ng-if="showDroidlist && listAvailableDroids.length>0">
+						mine {{wantedItem.label}} with: <button ng-repeat="droid in listAvailableDroids" ng-click="collect(droid);">{{droid.label}}</button>
+					</div>
+					<div class="panel-body" ng-if="showDroidlist && !listAvailableDroids.length>0">
+						no mining droids available to mine {{wantedItem.label}}
+					</div>
+				</div>
+			</div>
+			<div class="xs-hidden col-sm-6 col-lg-8"></div>
+			<div class="menu col-xs-6 col-sm-3 col-lg-2">
+				<div class="btn btn-block btn-primary" ng-click="menu = !menu; panel = undefined">Menu</div>
+				<div ng-show="menu" class="panel panel-default">
+				  <div class="panel-heading" ng-click="panel = 'inventory'">inventory</div>
+				  <div class="panel-body" ng-if="panel === 'inventory'" ng-repeat="item in items">
+					{{item.quantity + " " + item.label}}
+				  </div>
+				  <div class="panel-heading" ng-click="panel = 'equipment'">equipment</div>
+				  <div class="panel-body" ng-if="panel === 'equipment'">
+					{{engine.label}}
+				  </div>
+				  <div class="panel-heading" ng-click="panel = 'mining'">mining droids</div>
+				  <div class="panel-body" ng-if="panel === 'mining'" ng-repeat="miningDroid in miningDroids">
+					{{miningDroid.label}}
+				  </div>
+				</div>
+			</div>
+		</div>
 	</body>
 </html>
