@@ -3,7 +3,9 @@ var textLayer = require('./textLayer.js');
 var player = new THREE.Object3D();
 var _collect = function (item){
   this.active = true;
-  this.position = player.targetPlanet.position;
+  this.position = player.targetPlanet.position.clone();
+  this.position.x = this.position.x + player.targetPlanet.radius;
+  this.position.y = this.position.y + player.targetPlanet.radius;
 }
 
 function droidProgress (){
@@ -41,6 +43,7 @@ player.miningDroids= [
   }
 ];
 textLayer.droids = player.miningDroids;
+textLayer.origin = player.position;
 player.items=[
   {
     label : "iron",

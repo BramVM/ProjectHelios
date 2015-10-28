@@ -150,6 +150,8 @@ mainModule.controller('mainController', ['$scope', function($scope) {
     camera.lookAt( player.position );
     // update interface
     updateInterface();
+    textLayer.camera = camera;
+    textLayer.redraw();
   }
   
   function updateInterface (){  

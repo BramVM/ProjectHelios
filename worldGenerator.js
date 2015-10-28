@@ -48,7 +48,8 @@ function _createPlanet(radius, position, color, items) {
 	surfacemesh	= new THREE.Mesh( geometry, material );
 	surfacemesh.doubleSided = false;
 	surfacemesh.scale.set(7,7,7);
-	surfacemesh.position.set(position.x,position.y,-7*radius*4);
+	surfacemesh.position.set(position.x-7*radius,position.y-7*radius,-7*radius*2-7);
+	surfacemesh.radius = 7*radius;
 	surfacemesh.items = items;
 	return surfacemesh;
 }
