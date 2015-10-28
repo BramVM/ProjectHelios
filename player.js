@@ -8,7 +8,7 @@ var _collect = function (item){
 }
 player.pickUpDroid = function() {
   for (var i = 0; i < player.miningDroids.length; i++) {
-    if(player.miningDroids[i].position === player.targetPlanet.mid && player.miningDroids[i].timer <= 0){
+    if(player.miningDroids[i].position && player.miningDroids[i].position.x === player.targetPlanet.mid.x && player.miningDroids[i].position.y === player.targetPlanet.mid.y && player.miningDroids[i].timer <= 0){
       player.miningDroids[i].active = false;
       player.miningDroids[i].position = undefined;
       player.miningDroids[i].timer = player.miningDroids[i].searchTime;
