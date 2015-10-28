@@ -1,6 +1,6 @@
 var cord = require('cords');
 var physic = require('./physic.js'); 
-var textLayer = require('./textLayer.js');
+var flatLayer = require('./flatLayer.js');
 
 var bullets = [];
 
@@ -94,9 +94,9 @@ var _hit = function( ship ){
 		  ship.health = ship.health - collider.parent.damage;
 		  collider.parent.remove();
 		  if (ship.label === "player") {
-		  	textLayer.health = ship.health;
-		  	textLayer.maxHealth = ship.maxHealth;
-		  	textLayer.redraw();
+		  	flatLayer.health = ship.health;
+		  	flatLayer.maxHealth = ship.maxHealth;
+		  	flatLayer.redraw();
 		  }
 		  if (ship.health <= 0) _die( ship ); 
 		}
@@ -119,18 +119,19 @@ _detectPlanet = function ( player ) {
 
 	var ray = new THREE.Raycaster( player.position, new THREE.Vector3( 0, 0, -1 ));
 	var collisionResults = ray.intersectObjects( planets );
-	collisionResults.length > 0 ? player.targetPlanet = collisionResults[0].object : player.targetPlanet = undefined;
-}
-_sentMineDroid = function ( droid, planet ) {
-	if (planet){
-		
+	if(collisionResults.length > 0){
+		player.targetPlanet = collisionResults[0].object;
+		player.pickUpDroid();
 	}
-}
+	else{
+		player.targetPlanet = undefined;
+	}	
+};
 var _playerBehavior = function( mouse , player ){
 	var origin={
 			x : 0,
 			y : 0,
-			z : 0,
+			z : 0
 	},
 	direction = cord.direction( origin , mouse );
 	_shipMovement(player,direction);

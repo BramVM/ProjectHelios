@@ -1,13 +1,32 @@
-var textLayer = require('./textLayer.js');
+var flatLayer = require('./flatLayer.js');
 
 var player = new THREE.Object3D();
 var _collect = function (item){
   this.active = true;
-  this.position = player.targetPlanet.position.clone();
-  this.position.x = this.position.x + player.targetPlanet.radius;
-  this.position.y = this.position.y + player.targetPlanet.radius;
+  this.position = player.targetPlanet.mid;
+  this.item = item;
 }
-
+player.pickUpDroid = function() {
+  for (var i = 0; i < player.miningDroids.length; i++) {
+    if(player.miningDroids[i].position === player.targetPlanet.mid && player.miningDroids[i].timer <= 0){
+      player.miningDroids[i].active = false;
+      player.miningDroids[i].position = undefined;
+      player.miningDroids[i].timer = player.miningDroids[i].searchTime;
+      player.addItemToInventory(player.miningDroids[i].item.label, player.miningDroids[i].capacity)
+    }
+  };
+}
+player.addItemToInventory = function(label, quantity){
+  var found = false;
+  for (var i = 0; i < player.items.length; i++) {
+    if (player.items[i].label === label){
+      player.items[i].quantity = player.items[i].quantity+quantity;
+      found = true;
+    }
+  };
+  if (!found) player.items.push({label:label, quantity:quantity});
+  flatLayer.message(quantity + " " + label + " added to inventory");
+} 
 function droidProgress (){
   setTimeout(function(){  
     for(i=0;i<player.miningDroids.length;i++){
@@ -16,7 +35,7 @@ function droidProgress (){
           player.miningDroids[i].timer = player.miningDroids[i].timer - 1;
         }
       }
-      console.log(player.miningDroids[i].label + " : " +player.miningDroids[i].timer); 
+      console.log(player.miningDroids[i].label + " : " +player.miningDroids[i].timer);
     }
     droidProgress();
   }, 1000);
@@ -35,15 +54,15 @@ player.sideEngine = {
 player.miningDroids= [
   {
     label: "basic mining droid",
-    inventorySpace : 1,
-    searchTime : 100,
-    timer : 100,
+    capacity : 1,
+    searchTime : 5,
+    timer : 5,
     active : false,
     collect : _collect
   }
 ];
-textLayer.droids = player.miningDroids;
-textLayer.origin = player.position;
+flatLayer.droids = player.miningDroids;
+flatLayer.origin = player.position;
 player.items=[
   {
     label : "iron",

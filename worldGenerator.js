@@ -49,7 +49,9 @@ function _createPlanet(radius, position, color, items) {
 	surfacemesh.doubleSided = false;
 	surfacemesh.scale.set(7,7,7);
 	surfacemesh.position.set(position.x-7*radius,position.y-7*radius,-7*radius*2-7);
-	surfacemesh.radius = 7*radius;
+	surfacemesh.mid = surfacemesh.position.clone();
+  	surfacemesh.mid.x = surfacemesh.mid.x + 7*radius;
+  	surfacemesh.mid.y = surfacemesh.mid.y + 7*radius;
 	surfacemesh.items = items;
 	return surfacemesh;
 }

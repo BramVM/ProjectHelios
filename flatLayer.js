@@ -15,9 +15,18 @@ _redraw = function( ){
   ctx.clearRect(0, 0, textCanvas.width, textCanvas.height);
   if (this.health && this.maxHealth) ctx.fillText( this.health + " / " + this.maxHealth, windowHalfX, windowHalfY+70 );
   _drawDroids();
+  if (this.msgStr) {
+    flatLayer.msgTmr = flatLayer.msgTmr-0.1;
+    ctx.fillStyle = "rgba(255, 255, 255, "+ flatLayer.msgTmr +")";
+    ctx.fillText( flatLayer.msgStr, windowHalfX, windowHalfY/2 );
+  }
+}
+_message = function(string){
+ flatLayer.msgStr = string;
+ flatLayer.msgTmr = 6;
 }
 _drawDroids = function(){
-  if(textLayer.droids){
+  if(flatLayer.droids){
     var width = 60;
     var height = 20;
     var fontHeight = 15;
@@ -28,9 +37,9 @@ _drawDroids = function(){
     var marginTop = height/2;
 
     ctx.font= fontHeight + "px munroregular";
-    for (var i = 0; i < textLayer.droids.length; i++) {
-      if (textLayer.droids[i].active){
-        var calculatedPosition = _convertPositionToScreen(textLayer.droids[i].position, textLayer.camera);
+    for (var i = 0; i < flatLayer.droids.length; i++) {
+      if (flatLayer.droids[i].active){
+        var calculatedPosition = _convertPositionToScreen(flatLayer.droids[i].position, flatLayer.camera);
         if(calculatedPosition.y>marginBottom){
           calculatedPosition.x = windowHalfX+((2*windowHalfY-windowHalfY)*(calculatedPosition.x-windowHalfX) / (calculatedPosition.y-windowHalfY));
           calculatedPosition.y = 2*windowHalfY;
@@ -65,7 +74,7 @@ _drawDroids = function(){
         ctx.fillStyle = "rgba(255, 255, 255, 1)";
         ctx.fill();
         ctx.fillStyle = "rgba(0, 0, 0, 1)";
-        ctx.fillText( textLayer.droids[i].timer + " sec", calculatedPosition.x+offsetLeft, calculatedPosition.y + fontHeight/2 );
+        ctx.fillText( flatLayer.droids[i].timer + " sec", calculatedPosition.x+offsetLeft, calculatedPosition.y + fontHeight/2 );
         ctx.textAlign = "center";
       }
     };
@@ -89,8 +98,9 @@ function _resize() {
   this.redraw();
 }
 
-var textLayer = {
+var flatLayer = {
   redraw : _redraw,
-  resize: _resize
+  resize: _resize,
+  message: _message
 }
-if (typeof(module) !== 'undefined') module.exports = textLayer;
+if (typeof(module) !== 'undefined') module.exports = flatLayer;

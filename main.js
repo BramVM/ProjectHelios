@@ -4,7 +4,7 @@ mainModule.controller('mainController', ['$scope', function($scope) {
   var worldGenerator = require('./worldGenerator.js');
   var physic = require('./physic.js');
   var player = require('./player.js');
-  var textLayer = require('./textLayer.js');
+  var flatLayer = require('./flatLayer.js');
   if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
   var mouse = {
     x : 0,
@@ -55,7 +55,7 @@ mainModule.controller('mainController', ['$scope', function($scope) {
 
     // player
     scene.add( player );
-    textLayer.health = player.health;
+    flatLayer.health = player.health;
 
     // pass scene to modules
     enemyHive.scene = scene;
@@ -82,7 +82,7 @@ mainModule.controller('mainController', ['$scope', function($scope) {
     
   }
   function onWindowResize() {
-    textLayer.resize();
+    flatLayer.resize();
     windowHalfX = window.innerWidth / 2;
     windowHalfY = window.innerHeight / 2;
 
@@ -150,8 +150,8 @@ mainModule.controller('mainController', ['$scope', function($scope) {
     camera.lookAt( player.position );
     // update interface
     updateInterface();
-    textLayer.camera = camera;
-    textLayer.redraw();
+    flatLayer.camera = camera;
+    flatLayer.redraw();
   }
   
   function updateInterface (){  
