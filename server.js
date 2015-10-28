@@ -1,6 +1,5 @@
 var express = require('express');
 var app = express();
-//var exec = require("child_process").exec;
 var browserify = require('browserify');
 var fs = require('fs');
 var UglifyJS = require('uglify-js');
@@ -30,8 +29,6 @@ bundler.bundle()
   		fs.writeFileSync('bundle.js', result.code);
   		runServer()
   	}));
-
-//exec("browserify main.js -o bundle.js",runServer());
 
 function runServer (){
 	app.set('port', (process.env.PORT || 5000));
