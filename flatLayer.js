@@ -39,7 +39,7 @@ _drawDroids = function(){
     ctx.font= fontHeight + "px munroregular";
     for (var i = 0; i < flatLayer.droids.length; i++) {
       if (flatLayer.droids[i].active){
-        var calculatedPosition = _convertPositionToScreen(flatLayer.droids[i].position, flatLayer.camera);
+        var calculatedPosition = _convertPositionToScreen(flatLayer.droids[i].position.x,flatLayer.droids[i].position.y,flatLayer.droids[i].position.z, flatLayer.camera);
         if(calculatedPosition.y>marginBottom){
           calculatedPosition.x = windowHalfX+((2*windowHalfY-windowHalfY)*(calculatedPosition.x-windowHalfX) / (calculatedPosition.y-windowHalfY));
           calculatedPosition.y = 2*windowHalfY;
@@ -80,14 +80,23 @@ _drawDroids = function(){
     };
   }
 }
-_convertPositionToScreen=function(position, camera){
-  var pos = position.clone();
-  projScreenMat = new THREE.Matrix4();
-  projScreenMat.multiply( camera.projectionMatrix, camera.matrixWorldInverse );
-  projScreenMat.multiplyVector3( pos );
+function createVector(x, y, z, camera, width, height) {
+        var p = new THREE.Vector3(x, y, z);
+        var vector = p.project(camera);
 
-  return { x: ( pos.x + 1 ) * textCanvas.width / 2 ,
-         y: ( - pos.y + 1) * textCanvas.height / 2  };
+        vector.x = (vector.x + 1) / 2 * width;
+        vector.y = -(vector.y - 1) / 2 * height;
+
+        return vector;
+    }
+_convertPositionToScreen=function(x, y, z, camera){
+        var p = new THREE.Vector3(x, y, z);
+        var vector = p.project(camera);
+
+        vector.x = (vector.x + 1) * textCanvas.width / 2
+        vector.y = -(vector.y - 1) * textCanvas.height / 2 ;
+
+        return vector;
 }
 function _resize() {
   windowHalfX = window.innerWidth / 2;
