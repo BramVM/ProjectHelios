@@ -85,9 +85,9 @@
 		<div ng-app="mainModule" ng-controller="mainController" class="interface">
 			<div class="planet-info col-xs-6 col-sm-3 col-lg-2">
 				<div ng-show="showPlanet" class="panel panel-default">
-					<div class="panel-heading" ng-if="showPlanet">Planet</div>
+					<div class="panel-heading" ng-if="showPlanet">Planet composition</div>
 					<div class="panel-body"  ng-repeat="item in planetItems">
-						<button ng-click="selectItem(item)">{{item.label}}</button>
+						<button ng-click="selectItem(item)">{{item.label}}</button> {{item.share*100}}%
 					</div>
 					<div class="panel-body" ng-if="showDroidlist && listAvailableDroids.length>0">
 						mine {{wantedItem.label}} with: <button ng-repeat="droid in listAvailableDroids" ng-click="collect(droid);">{{droid.label}}</button>

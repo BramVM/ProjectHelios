@@ -26,7 +26,8 @@ var biomes = [
             items : [
                 {
                     label: "iron",
-                    probability : 1
+                    probability : 1,
+                    share : 0.05
                 }
             ]
         },

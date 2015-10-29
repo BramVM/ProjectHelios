@@ -276,6 +276,7 @@ _addPlanetToTile = function(position, tileIndex){
 			for (b=0; b<biome.planets.items.length; b++){
 				planet.items.push(biome.planets.items[b]);
 				planet.items[b].probability = planet.items[b].probability*biomeIntensity;
+				planet.items[b].share = planet.items[b].share*biomeIntensity;
 			}
 		}
 		if(biomes[0].planets.items){
@@ -285,15 +286,25 @@ _addPlanetToTile = function(position, tileIndex){
 					if (biomes[0].planets.items[b].label === planet.items[m].label){
 						notInitems = false;
 						planet.items[m].probability = planet.items[m].probability + biomes[0].planets.items[b].probability * (1-biomeIntensity);
+						planet.items[m].share = planet.items[m].share + biomes[0].planets.items[b].share * (1-biomeIntensity);
+						Math.seedrandom(planet.items[m].label + position.x + position.y );
+						if (Math.random()>=planet.items[m].probability){
+							planet.items.splice(m,1);
+						}
 					}
 				}
 				if (notInItems) {
 					var newItem = {
 						label: biomes[0].planets.items[b].label,
-						probability : biomes[0].planets.items[b].probability
+						probability : biomes[0].planets.items[b].probability,
+						share : biomes[0].planets.items[b].share
 					};
 					newItem.probability = newItem.probability*(1-biomeIntensity);
-					planet.items.push(newItem);
+					newItem.share = newItem.share*(1-biomeIntensity);
+					Math.seedrandom(newItem.label + position.x + position.y );
+					if (Math.random()<newItem.probability){
+						planet.items.push(newItem);
+					}
 				}
 			}
 		}
