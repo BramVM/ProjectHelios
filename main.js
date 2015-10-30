@@ -153,10 +153,25 @@ mainModule.controller('mainController', ['$scope', function($scope) {
     flatLayer.camera = camera;
     flatLayer.redraw();
   }
-  
+
   function updateInterface (){  
     if(!$scope.$$phase) {
       $scope.$apply(function(){
+        $scope.craft = function(blueprint){
+          for (var i = 0; i < blueprint.items.length; i++) {
+            player.removeItemFromInventory(blueprint.items[i].label, blueprint.items[i].quantity);
+          };
+          player.addItemToInventory(blueprint.result.label, blueprint.result.quantity);
+        }
+        $scope.removeUpgrade = function(droid, index){
+          player.items.push(droid.upgrade[index]);
+          droid.upgrades.splice(index, 1);
+        }
+        $scope.showDroidInfo = function(miningDroid) {
+          $scope.droidInfo = {};
+          $scope.droidInfo.show = true;
+          $scope.droidInfo.droid = miningDroid;
+        }
         $scope.collect = function(droid){
           droid.collect($scope.wantedItem);
           $scope.listAvailableDroids = player.listAvailableDroids($scope.wantedItem);
@@ -169,6 +184,7 @@ mainModule.controller('mainController', ['$scope', function($scope) {
         $scope.engine = player.engine;
         $scope.items = player.items;
         $scope.miningDroids = player.miningDroids;
+        $scope.blueprints = player.blueprints;
         player.targetPlanet && player.targetPlanet.items ? $scope.planetItems = player.targetPlanet.items :  $scope.planetItems = [];
         if (player.targetPlanet){
           $scope.showPlanet = true;

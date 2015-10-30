@@ -6,6 +6,20 @@ var _collect = function (item){
   this.position = player.targetPlanet.mid;
   this.item = item;
 }
+player.updateCraftableBlueprint = function(){
+  for (var b = 0; b < player.blueprints.length; b++) {
+    var allItemsFound = true;
+    for (var i = 0; i< player.blueprints[b].items.length; i++){
+      if(!player.checkItemInInventory(player.blueprints[b].items[i].label, player.blueprints[b].items[i].quantity)) allItemsFound = false;
+    }
+    if(allItemsFound){
+      player.blueprints[b].craftable = true;
+    }
+    else{
+      player.blueprints[b].craftable = false;
+    }
+  };
+}
 player.pickUpDroid = function() {
   for (var i = 0; i < player.miningDroids.length; i++) {
     if(player.miningDroids[i].position && player.miningDroids[i].position.x === player.targetPlanet.mid.x && player.miningDroids[i].position.y === player.targetPlanet.mid.y && player.miningDroids[i].timer <= 0){
@@ -16,6 +30,15 @@ player.pickUpDroid = function() {
     }
   };
 }
+player.checkItemInInventory = function(label, quantity){
+  var itemFound = false;
+  for (var ii = 0; ii < player.items.length; ii++) {
+    if (player.items[ii].label === label && player.items[ii].quantity >= quantity){
+      itemFound = true;
+    }
+  }
+  return itemFound;
+};
 player.addItemToInventory = function(label, quantity){
   var found = false;
   for (var i = 0; i < player.items.length; i++) {
@@ -26,6 +49,17 @@ player.addItemToInventory = function(label, quantity){
   };
   if (!found) player.items.push({label:label, quantity:quantity});
   flatLayer.message(quantity + " " + label + " added to inventory");
+  player.updateCraftableBlueprint();
+}
+player.removeItemFromInventory = function(label, quantity){
+  for (var i = 0; i < player.items.length; i++) {
+    if (player.items[i].label === label){
+      player.items[i].quantity = player.items[i].quantity-quantity;
+      if(player.items[i].quantity<=0) player.items.splice(i,1);
+    }
+  };
+  flatLayer.message(quantity + " " + label + " removed from inventory");
+  player.updateCraftableBlueprint();
 } 
 function droidProgress (){
   setTimeout(function(){  
@@ -63,6 +97,21 @@ player.miningDroids= [
 ];
 flatLayer.droids = player.miningDroids;
 flatLayer.origin = player.position;
+player.blueprints = [
+  {
+    label : "super item",
+    items : [
+      {
+        label : "iron",
+        quantity : 6
+      }
+    ],
+    result : {
+      label : "super item",
+      quantity : 1
+    }
+  }
+]
 player.items=[
   {
     label : "iron",

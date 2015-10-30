@@ -111,8 +111,20 @@
 				  </div>
 				  <div class="panel-heading" ng-click="panel = 'mining'">mining droids</div>
 				  <div class="panel-body" ng-if="panel === 'mining'" ng-repeat="miningDroid in miningDroids">
-					{{miningDroid.label}}
+					{{miningDroid.label}} <div class="btn btn-primary" ng-click="showDroidInfo(miningDroid)">i</div>
 				  </div>
+				  <div class="panel-heading" ng-click="panel = 'blueprints'">blueprints</div>
+				  <div class="panel-body" ng-if="panel === 'blueprints'" ng-repeat="blueprint in blueprints">
+					{{blueprint.label}} <div ng-show="blueprint.craftable" class="btn btn-default" ng-click="craft(blueprint)">craft</div>
+				  </div>
+				</div>
+			</div>
+			<div ng-if="droidInfo && droidInfo.show">
+				<input type="text" class="form-control" id="name" ng-model="droidInfo.droid.label">
+				<div class="btn" ng-click="droidInfo.show = false">X</div>
+				<div class="panel-body" ng-repeat="upgrade in droidInfo.droid.upgrades">
+					{{upgrade.label}} 
+					<div class="btn btn-primary" ng-click="removeUpgrade(droidInfo.droid, $index)">remove</div>
 				</div>
 			</div>
 		</div>
