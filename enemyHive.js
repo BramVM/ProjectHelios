@@ -1,5 +1,6 @@
 var cord = require('cords');
 var shipBehavior = require('./controleShip.js');
+var model = require('./models/mainShip1.js');
 var enemies = [];
 
 function removeAi(){
@@ -15,7 +16,7 @@ function removeAi(){
 function _createEnemy(location){
 	var enemyIndex = enemies.length;
 	enemies[enemyIndex] = new THREE.Object3D();
-	enemies[enemyIndex].shipModel = spawnMesh(ship);
+	enemies[enemyIndex].shipModel = spawnMesh(model);
 	enemies[enemyIndex].add( enemies[enemyIndex].shipModel );
 	enemies[enemyIndex].position.set(location.x, location.y, location.z);
 	enemyHive.scene.add( enemies[enemyIndex] );

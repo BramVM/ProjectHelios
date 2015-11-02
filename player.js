@@ -1,4 +1,5 @@
 var flatLayer = require('./flatLayer.js');
+model = require('./models/mainShip.js');
 
 var player = new THREE.Object3D();
 var _collect = function (item){
@@ -136,7 +137,7 @@ player.attackSpeed = 10;
 player.bulletRange = 2500;
 player.bulletDamage = 20;
 player.label = "player";
-player.shipModel = spawnMesh(ship);
+player.shipModel = spawnMesh(model);
 player.add( player.shipModel );
 player.listAvailableDroids = function(){
   if (player.targetPlanet){

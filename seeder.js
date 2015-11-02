@@ -5,8 +5,8 @@ var _seedBiome = function (x,y){
 	var frequency=0.0007;
 	var newSin;
 	var result=0;
-	sinA=0.5*Math.sin(((x)*frequency));
-	sinB=0.5*Math.sin(((y)*frequency));
+	sinA=0.5*Math.sin(x*frequency);
+	sinB=0.5*Math.sin(y*frequency);
 	var indexOfSin = Math.floor(x/(Math.PI/frequency))+Math.floor(y/(Math.PI/frequency));
 	Math.seedrandom("biome" + indexOfSin);
 	return {

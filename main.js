@@ -68,11 +68,9 @@ mainModule.controller('mainController', ['$scope', function($scope) {
     var thruster1=voxelEffects.thruster(1,3,player.speed,player.engine.topspeed);
     thruster1.position.y=+7*8;
     thruster1.position.x=+7;
-    thruster1.position.z=-7;
     var thruster2=voxelEffects.thruster(1,3,player.speed,player.engine.topspeed);
     thruster2.position.y=+7*8;
     thruster2.position.x=-7;
-    thruster2.position.z=-7;
     player.shipModel.add(thruster1 );
     player.shipModel.add(thruster2 );
     scene.add( player );
@@ -87,7 +85,7 @@ mainModule.controller('mainController', ['$scope', function($scope) {
     worldGenerator.initWorld( player.position);
     //light
     scene.add( directionalLight );
-     var ambientLight = new THREE.AmbientLight (0x404040);
+    var ambientLight = new THREE.AmbientLight (0x404040);
     scene.add(ambientLight);
     //cam
     camera = new THREE.PerspectiveCamera( 33, window.innerWidth / window.innerHeight, 1, 10000 );
@@ -147,8 +145,8 @@ mainModule.controller('mainController', ['$scope', function($scope) {
 
   function render() {
     voxelEffects.animateThruster();
-     //set lighting
-    updateLighting(directionalLight);
+    //set lighting
+    //updateLighting(directionalLight);
     shipBehavior.playerBehavior( mouse , player );
     enemyHive.ai( player );
     shipBehavior.moveBullets();
