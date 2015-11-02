@@ -5,10 +5,12 @@ mainModule.controller('mainController', ['$scope', function($scope) {
   var physic = require('./physic.js');
   var player = require('./player.js');
   var flatLayer = require('./flatLayer.js');
+<<<<<<< HEAD
   var seeder = require('./seeder');
   var biomes = require('./biomes');
+=======
   var voxelEffects = require('./voxelEffects.js');
-  
+>>>>>>> 874bfe6f1939435446710f2ee02d7457e6f533fd
   if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
   var mouse = {
     x : 0,
@@ -146,9 +148,12 @@ mainModule.controller('mainController', ['$scope', function($scope) {
   }
 
   function render() {
-    voxelEffects.animateThruster();
+<<<<<<< HEAD
      //set lighting
     updateLighting(directionalLight);
+=======
+    voxelEffects.animateThruster();
+>>>>>>> 874bfe6f1939435446710f2ee02d7457e6f533fd
     shipBehavior.playerBehavior( mouse , player );
     enemyHive.ai( player );
     shipBehavior.moveBullets();
