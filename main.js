@@ -5,6 +5,7 @@ mainModule.controller('mainController', ['$scope', function($scope) {
   var physic = require('./physic.js');
   var player = require('./player.js');
   var flatLayer = require('./flatLayer.js');
+  var voxelEffects = require('./voxelEffects.js');
   if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
   var mouse = {
     x : 0,
@@ -54,6 +55,16 @@ mainModule.controller('mainController', ['$scope', function($scope) {
     container.appendChild( renderer.domElement );
 
     // player
+    var thruster1=voxelEffects.thruster(1,3,player.speed,player.engine.topspeed);
+    thruster1.position.y=+7*8;
+    thruster1.position.x=+7;
+    thruster1.position.z=-7;
+    var thruster2=voxelEffects.thruster(1,3,player.speed,player.engine.topspeed);
+    thruster2.position.y=+7*8;
+    thruster2.position.x=-7;
+    thruster2.position.z=-7;
+    player.shipModel.add(thruster1 );
+    player.shipModel.add(thruster2 );
     scene.add( player );
     flatLayer.health = player.health;
 
@@ -132,6 +143,7 @@ mainModule.controller('mainController', ['$scope', function($scope) {
   }
 
   function render() {
+    voxelEffects.animateThruster();
     shipBehavior.playerBehavior( mouse , player );
     
     enemyHive.ai( player );
