@@ -5,6 +5,8 @@ mainModule.controller('mainController', ['$scope', function($scope) {
   var physic = require('./physic.js');
   var player = require('./player.js');
   var flatLayer = require('./flatLayer.js');
+  var seeder = require('./seeder');
+  var biomes = require('./biomes');
   if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
   var mouse = {
     x : 0,
@@ -20,7 +22,14 @@ mainModule.controller('mainController', ['$scope', function($scope) {
   windowHalfY = window.innerHeight / 2,
 
   camera, scene, renderer;
-
+  //lights
+    var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.4 );
+    directionalLight.position.set( 1, -0.5, 1 );
+    var directionalLight2 = new THREE.DirectionalLight( 0xffffff, 0.4 );
+    directionalLight2.position.set( -1, 0.5, 1 );
+    //scene.add( directionalLight2 );
+    var ambientLight = new THREE.AmbientLight (0x404040);
+    //scene.add(ambientLight);
 
   //namespace variables
   player.attackDelay = player.attackSpeed;
@@ -64,17 +73,10 @@ mainModule.controller('mainController', ['$scope', function($scope) {
 
     //world
     worldGenerator.initWorld( player.position);
-
-    //lights
-    var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.4 );
-    directionalLight.position.set( 1, -0.5, 1 );
-    var directionalLight2 = new THREE.DirectionalLight( 0xffffff, 0.4 );
-    directionalLight2.position.set( -1, 0.5, 1 );
+    //light
     scene.add( directionalLight );
-    scene.add( directionalLight2 );
-    var ambientLight = new THREE.AmbientLight (0x404040);
+     var ambientLight = new THREE.AmbientLight (0x404040);
     scene.add(ambientLight);
-
     //cam
     camera = new THREE.PerspectiveCamera( 33, window.innerWidth / window.innerHeight, 1, 10000 );
     camera.position.z = 2500;
@@ -132,19 +134,18 @@ mainModule.controller('mainController', ['$scope', function($scope) {
   }
 
   function render() {
+     //set lighting
+    updateLighting(directionalLight);
     shipBehavior.playerBehavior( mouse , player );
-    
     enemyHive.ai( player );
     shipBehavior.moveBullets();
     setTimeout(function(){worldGenerator.updateWorldOnMove(player.position)},0);
     setTimeout(function(){enemyHive.spawner(player.position, 3200, scene)},0);
     setTimeout(function(){enemyHive.eraseDistantSpawns(player.position, 3600, scene)},0);
-
     //camera follow
     var camOffsetModifier = 50;
     var maxCamOffset;
     renderer.render( scene, camera );
-
     camera.position.x = player.position.x /*- camOffsetModifier*speedX*/;
     camera.position.y = player.position.y-500;
     camera.lookAt( player.position );
@@ -153,7 +154,10 @@ mainModule.controller('mainController', ['$scope', function($scope) {
     flatLayer.camera = camera;
     flatLayer.redraw();
   }
-
+  function updateLighting(directionalLight){
+      var biomeObj = seeder.seedBiome(player.position.x, player.position.y);
+      directionalLight.intensity= 1-Math.round(biomeObj.biomeIntensity * 1000) / 1000;
+  }
   function updateInterface (){  
     if(!$scope.$$phase) {
       $scope.$apply(function(){

@@ -1,5 +1,7 @@
 var seedrandom = require('seedrandom');
+var seeder = require('./seeder');
 var biomes = require('./biomes');
+
 
 function _makeEllipsoid(l, h, f) {
     var d = [ h[0]-l[0], h[1]-l[1], h[2]-l[2] ], 
@@ -76,16 +78,6 @@ var _createStar = function(radius,position,color){
 	star.position.set(position.x,position.y,position.z);
 	return star;
 };
-function _seed(x,y){
-	var i=x+y;
-	var k=x-y;
-	var frequency=20;
-	var amplitude=1;
-	var result=0;
-	result=amplitude*Math.sin(i*frequency);
-	result=result+amplitude*Math.sin(k*frequency);
-	return result;
-}
 var gridSize = {
 	x:1000,
 	y:1000
@@ -145,75 +137,40 @@ var _generateWorld = function (nearestTilePosition,init){
 		}
 	}
 };
-function seed(x,y){
-	var frequency=0.0007;
-	var newSin;
-	var result=0;
-	sinA=0.5*Math.sin(((x)*frequency));
-	sinB=0.5*Math.sin(((y)*frequency));
-	var indexOfSin = Math.floor(x/(Math.PI/frequency))+Math.floor(y/(Math.PI/frequency));
-	return {
-		value : sinA+sinB,
-		index : indexOfSin
-	};
-}
-var _calculateBiome = (function () {
-    var total = 0;
-	for (b=0; b<biomes.length; b++){
-		total=total+biomes[b].presence;
-	}
-	var presence = [];
-	if (total>0){
-		for (b=0; b<biomes.length; b++){
-			presence[b] = biomes[b].presence/total;
-		}
-	}
-    return function (rng) {
-    	var a = 0;
-    	for (b=0; b<presence.length; b++){
-    		if (rng<presence[b]+a){
-    			return biomes[b];
-    		}
-    		a=a+presence[b];
-    	}
-    };
-})();
+
 var _fillTileWithStars = function(position, tileIndex){
 	var indexX = position.x - gridSize.x/2;
 	var indexY = position.y - gridSize.y/2;
 	for( indexX ; indexX < position.x + gridSize.x/2 ; indexX = indexX  + gridSize.x/star.densety ) {
 		for( indexY ; indexY < position.y + gridSize.y/2 ; indexY = indexY + gridSize.y/star.densety ) {
 			//calculate biome and biome intensity
-			var seedObj = seed(indexX,indexY);
-			Math.seedrandom("biome" + seedObj.index);
-			biome = _calculateBiome(Math.random());
-			var biomeIntensity = Math.abs(seedObj.value);
+			var biomeObj = seeder.seedBiome(indexX,indexY);
 			//set values depending on biome
 			var star = {
-				size : biome.stars.maxSize * biomeIntensity + biomes[0].stars.maxSize * (1-biomeIntensity),
+				size : biomeObj.biome.stars.maxSize * biomeObj.biomeIntensity + biomes[0].stars.maxSize * (1-biomeObj.biomeIntensity),
 				color : {
-					r : biome.stars.color.r * biomeIntensity + biomes[0].stars.color.r * (1-biomeIntensity),
- 					g : biome.stars.color.g * biomeIntensity + biomes[0].stars.color.g * (1-biomeIntensity),
- 					b : biome.stars.color.b * biomeIntensity + biomes[0].stars.color.b * (1-biomeIntensity),
- 					delta : biome.stars.color.delta * biomeIntensity + biomes[0].stars.color.delta * (1-biomeIntensity)
+					r : biomeObj.biome.stars.color.r * biomeObj.biomeIntensity + biomes[0].stars.color.r * (1-biomeObj.biomeIntensity),
+ 					g : biomeObj.biome.stars.color.g * biomeObj.biomeIntensity + biomes[0].stars.color.g * (1-biomeObj.biomeIntensity),
+ 					b : biomeObj.biome.stars.color.b * biomeObj.biomeIntensity + biomes[0].stars.color.b * (1-biomeObj.biomeIntensity),
+ 					delta : biomeObj.biome.stars.color.delta * biomeObj.biomeIntensity + biomes[0].stars.color.delta * (1-biomeObj.biomeIntensity)
 				},
 				position : {
 					x : indexX,
 					y : indexY,
 					z : -500
 				},
-				densety : biome.stars.densety * biomeIntensity + biomes[0].stars.densety * (1-biomeIntensity),
-				minSize: biome.stars.minSize * biomeIntensity + biomes[0].stars.minSize * (1-biomeIntensity),
-				maxSize: biome.stars.maxSize * biomeIntensity + biomes[0].stars.maxSize * (1-biomeIntensity)
+				densety : biomeObj.biome.stars.densety * biomeObj.biomeIntensity + biomes[0].stars.densety * (1-biomeObj.biomeIntensity),
+				minSize: biomeObj.biome.stars.minSize * biomeObj.biomeIntensity + biomes[0].stars.minSize * (1-biomeObj.biomeIntensity),
+				maxSize: biomeObj.biome.stars.maxSize * biomeObj.biomeIntensity + biomes[0].stars.maxSize * (1-biomeObj.biomeIntensity)
 			};
 			//random, seeded size based biome
 			Math.seedrandom("radius" + indexX + '&' + indexY);
 			star.size = star.minSize + Math.random()*(star.maxSize-star.minSize);
  			//random seeded position
  			Math.seedrandom("x" + indexX + '&' + indexY);
- 			star.position.x = indexX - (gridSize.x/biome.stars.densety)/2 + Math.random()*gridSize.x/biome.stars.densety;
+ 			star.position.x = indexX - (gridSize.x/biomeObj.biome.stars.densety)/2 + Math.random()*gridSize.x/biomeObj.biome.stars.densety;
  			Math.seedrandom("y" + indexX + '&' + indexY);
- 			star.position.y = indexY - (gridSize.y/biome.stars.densety)/2 + Math.random()*gridSize.y/biome.stars.densety;
+ 			star.position.y = indexY - (gridSize.y/biomeObj.biome.stars.densety)/2 + Math.random()*gridSize.y/biomeObj.biome.stars.densety;
  			//random, seeded color based biome
  			Math.seedrandom("r" + indexX + '&' + indexY);
  			star.color.r = Math.round(star.color.r - star.color.delta + 2*Math.random()*star.color.delta);
@@ -232,25 +189,22 @@ var _fillTileWithStars = function(position, tileIndex){
 _addPlanetToTile = function(position, tileIndex){
 	var scale = 7; //size of each voxel
 	//calculate biome and biome intensity
-	var seedObj = seed(position.x, position.y);
-	Math.seedrandom("biome" + seedObj.index);
-	biome = _calculateBiome(Math.random());
-	var biomeIntensity = Math.abs(seedObj.value);
+	var biomeObj = seeder.seedBiome(position.x,position.y);
 	//check existance based on planets.densety
 	Math.seedrandom("existance" + position.x + '&' + position.y);
-	if (Math.random()<Math.sqrt(gridSize.x*gridSize.y)*biome.planets.densety){
+	if (Math.random()<Math.sqrt(gridSize.x*gridSize.y)*biomeObj.biome.planets.densety){
 		//set planet values depending on biome
 		var planet = {
 			color : {
-				r : biome.planets.color.r * biomeIntensity + biomes[0].planets.color.r * (1-biomeIntensity),
-				g : biome.planets.color.g * biomeIntensity + biomes[0].planets.color.g * (1-biomeIntensity),
-				b : biome.planets.color.b * biomeIntensity + biomes[0].planets.color.b * (1-biomeIntensity),
-				delta : biome.planets.color.delta * biomeIntensity + biomes[0].planets.color.delta * (1-biomeIntensity)
+				r : biomeObj.biome.planets.color.r * biomeObj.biomeIntensity + biomes[0].planets.color.r * (1-biomeObj.biomeIntensity),
+				g : biomeObj.biome.planets.color.g * biomeObj.biomeIntensity + biomes[0].planets.color.g * (1-biomeObj.biomeIntensity),
+				b : biomeObj.biome.planets.color.b * biomeObj.biomeIntensity + biomes[0].planets.color.b * (1-biomeObj.biomeIntensity),
+				delta : biomeObj.biome.planets.color.delta * biomeObj.biomeIntensity + biomes[0].planets.color.delta * (1-biomeObj.biomeIntensity)
 			}
 		};
 		//random radius
-		seededMaxPlanetSize = biome.planets.maxSize * biomeIntensity + biomes[0].planets.maxSize * (1-biomeIntensity);
-	 	seededMinPlanetSize = biome.planets.minSize * biomeIntensity + biomes[0].planets.minSize * (1-biomeIntensity);
+		seededMaxPlanetSize = biomeObj.biome.planets.maxSize * biomeObj.biomeIntensity + biomes[0].planets.maxSize * (1-biomeObj.biomeIntensity);
+	 	seededMinPlanetSize = biomeObj.biome.planets.minSize * biomeObj.biomeIntensity + biomes[0].planets.minSize * (1-biomeObj.biomeIntensity);
 		Math.seedrandom("radius" + position.x + '&' + position.y);
 		var radius = seededMinPlanetSize + Math.round(Math.random()*(seededMaxPlanetSize-seededMinPlanetSize));
 		//randomize position
@@ -272,11 +226,11 @@ _addPlanetToTile = function(position, tileIndex){
 		planet.color ="rgb("+planet.color.r+","+planet.color.g+","+planet.color.b+")";
 		//items
 		planet.items = [];
-		if(biome.planets.items){
-			for (b=0; b<biome.planets.items.length; b++){
-				planet.items.push(biome.planets.items[b]);
-				planet.items[b].probability = planet.items[b].probability*biomeIntensity;
-				planet.items[b].share = planet.items[b].share*biomeIntensity;
+		if(biomeObj.biome.planets.items){
+			for (b=0; b<biomeObj.biome.planets.items.length; b++){
+				planet.items.push(biomeObj.biome.planets.items[b]);
+				planet.items[b].probability = planet.items[b].probability*biomeObj.biomeIntensity;
+				planet.items[b].share = planet.items[b].share*biomeObj.biomeIntensity;
 			}
 		}
 		if(biomes[0].planets.items){
@@ -285,8 +239,8 @@ _addPlanetToTile = function(position, tileIndex){
 				for (m=0; m<planet.items.length;m++){
 					if (biomes[0].planets.items[b].label === planet.items[m].label){
 						notInitems = false;
-						planet.items[m].probability = planet.items[m].probability + biomes[0].planets.items[b].probability * (1-biomeIntensity);
-						planet.items[m].share = planet.items[m].share + biomes[0].planets.items[b].share * (1-biomeIntensity);
+						planet.items[m].probability = planet.items[m].probability + biomes[0].planets.items[b].probability * (1-biomeObj.biomeIntensity);
+						planet.items[m].share = planet.items[m].share + biomes[0].planets.items[b].share * (1-biomeObj.biomeIntensity);
 						Math.seedrandom(planet.items[m].label + position.x + position.y );
 						if (Math.random()>=planet.items[m].probability){
 							planet.items.splice(m,1);
@@ -299,8 +253,8 @@ _addPlanetToTile = function(position, tileIndex){
 						probability : biomes[0].planets.items[b].probability,
 						share : biomes[0].planets.items[b].share
 					};
-					newItem.probability = newItem.probability*(1-biomeIntensity);
-					newItem.share = newItem.share*(1-biomeIntensity);
+					newItem.probability = newItem.probability*(1-biomeObj.biomeIntensity);
+					newItem.share = newItem.share*(1-biomeObj.biomeIntensity);
 					Math.seedrandom(newItem.label + position.x + position.y );
 					if (Math.random()<newItem.probability){
 						planet.items.push(newItem);
@@ -312,7 +266,7 @@ _addPlanetToTile = function(position, tileIndex){
 		tiles[ tileIndex ].planets.push(_createPlanet (radius, planet.position, planet.color, planet.items));
 	}
 };
-_visualizeTiles = function(position, tileIndex){
+var _visualizeTiles = function(position, tileIndex){
 	var square = new THREE.Shape();
     square.moveTo(-gridSize.x/2+5, -gridSize.y/2+5);
     square.lineTo(-gridSize.x/2+5, gridSize.y/2-5);
