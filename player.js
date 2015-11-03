@@ -70,7 +70,6 @@ function droidProgress (){
           player.miningDroids[i].timer = player.miningDroids[i].timer - 1;
         }
       }
-      console.log(player.miningDroids[i].label + " : " +player.miningDroids[i].timer);
     }
     droidProgress();
   }, 1000);

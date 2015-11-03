@@ -13,6 +13,13 @@ var biomes = [
                 delta: 50
             }
         },
+        light :{
+            color: {
+                r : 255,
+                g : 255,
+                b : 255
+            }
+        },
         planets : {
             densety : 0.0003,
             maxSize : 20,
@@ -46,6 +53,13 @@ var biomes = [
                 delta: 25
             }
         },
+        light :{
+            color: {
+                r : 255,
+                g : 20,
+                b : 20
+            }
+        },
         planets : {
             densety : 0.0003,
             maxSize : 20,
@@ -61,7 +75,7 @@ var biomes = [
     },
     {
         label : "blue",
-        presence : 1,
+        presence : 0,
         stars : {
             densety : 4,
             maxSize : 6,
@@ -71,6 +85,13 @@ var biomes = [
                 g : 110,
                 b : 225,
                 delta: 20
+            }
+        },
+        light :{
+            color: {
+                r : 20,
+                g : 20,
+                b : 255
             }
         },
         planets : {
@@ -98,6 +119,13 @@ var biomes = [
                 g : 225,
                 b : 110,
                 delta: 20
+            }
+        },
+        light :{
+            color: {
+                r : 20,
+                g : 255,
+                b : 20
             }
         },
         planets : {

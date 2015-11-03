@@ -1,18 +1,19 @@
 var cord = require('cords');
 var physic = require('./physic.js'); 
 var flatLayer = require('./flatLayer.js');
+var scene = require('./scene.js');
 
 var bullets = [];
 
 function _removeBullet(){
-	shipBehavior.scene.remove( this );
-	doDispose(this);
 	physic.removeFromColliderList( this );
 	for (i=0; i<bullets.length; i++){
-		if (bullets[i].uuid === this.uuid){
+		if (bullets[i].id === this.id){
 			bullets.splice(i, 1);
 		}
 	}
+	scene.remove( this );
+	doDispose(this);
 }
 
 var _createBullet = function ( ship, direction ){		
@@ -27,7 +28,7 @@ var _createBullet = function ( ship, direction ){
 	bullet.tag = "bullet";
 	bullet.remove = _removeBullet;
 	bullets.push(bullet);
-	shipBehavior.scene.add( bullet );
+	scene.add( bullet );
 	physic.addToColliderList( bullet );
 };
 
@@ -109,10 +110,10 @@ var _die = function ( ship ) {
 };
 _detectPlanet = function ( player ) {
 	var planets = [];
-	for (i=0; i<shipBehavior.scene.children.length;i++){
-		if (shipBehavior.scene.children[i].planets){
-			for (var p = shipBehavior.scene.children[i].planets.length - 1; p >= 0; p--) {
-				planets.push(shipBehavior.scene.children[i].planets[p]);
+	for (i=0; i<scene.children.length;i++){
+		if (scene.children[i].planets){
+			for (var p = scene.children[i].planets.length - 1; p >= 0; p--) {
+				planets.push(scene.children[i].planets[p]);
 			};
 		}
 	}

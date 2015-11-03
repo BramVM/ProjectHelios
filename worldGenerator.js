@@ -1,6 +1,7 @@
 var seedrandom = require('seedrandom');
 var seeder = require('./seeder');
 var biomes = require('./biomes');
+var scene = require('./scene.js');
 
 
 function _makeEllipsoid(l, h, f) {
@@ -103,7 +104,6 @@ var _initWorld = function (position){
 var _updateWorldOnMove = function (position){
 	if (_checkNearestTile(position).x!=prevTilePos.x||_checkNearestTile(position).y!=prevTilePos.y){
 		prevTilePos = _checkNearestTile(position);
-		//assynchrone
 		_generateWorld (prevTilePos,false);
 	}
 };
@@ -129,13 +129,17 @@ var _generateWorld = function (nearestTilePosition,init){
 			} 
 		}
 	}
+	var indexes=[];
 	for ( l = 0 ; l < tiles.length ; l++ ){	
 		if (!tiles[l].stay){
-			worldGenerator.scene.remove(tiles[l]);
-			doDispose(tiles[l]);
-			tiles.splice(l, 1);
+			indexes.push(l);
 		}
 	}
+	for (var r = indexes.length - 1; r >= 0; r--) {
+		scene.remove(tiles[indexes[r]]);
+		doDispose(tiles[indexes[r]]);
+		tiles.splice(indexes[r], 1);
+	};
 };
 
 var _fillTileWithStars = function(position, tileIndex){
@@ -299,7 +303,7 @@ var _generateTile = function(position){
 	Math.seedrandom();
 
 	//add all objects to the scene
-	worldGenerator.scene.add(tiles[tileIndex]);
+	scene.add(tiles[tileIndex]);
 	for ( k = 0 ; k < tiles[tileIndex].stars.length ; k++ ){
 		tiles[tileIndex].add(tiles[tileIndex].stars[k]);
 	}

@@ -75,6 +75,6 @@ var spawnMesh = function(data){
 var pixelMesh = function(scale , color, opacity){
 	var geometry = new THREE.BoxGeometry( scale, scale, scale );
 	color = parseInt("0x" + color);
-	var material = new THREE.MeshLambertMaterial({ color: color, opacity: opacity, transparent: true });
+	var material = new THREE.MeshBasicMaterial({ color: color, opacity: opacity, transparent: true });
 	return new THREE.Mesh(geometry, material);
 }

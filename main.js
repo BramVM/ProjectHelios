@@ -5,9 +5,9 @@ mainModule.controller('mainController', ['$scope', function($scope) {
   var physic = require('./physic.js');
   var player = require('./player.js');
   var flatLayer = require('./flatLayer.js');
-  var seeder = require('./seeder');
-  var biomes = require('./biomes');
+  var scene = require('./scene.js');
   var voxelEffects = require('./voxelEffects.js');
+  var lighting = require('./lighting.js');
   
   if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
   var mouse = {
@@ -23,15 +23,7 @@ mainModule.controller('mainController', ['$scope', function($scope) {
   windowHalfX = window.innerWidth / 2,
   windowHalfY = window.innerHeight / 2,
 
-  camera, scene, renderer;
-  //lights
-    var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.4 );
-    directionalLight.position.set( 1, -0.5, 1 );
-    var directionalLight2 = new THREE.DirectionalLight( 0xffffff, 0.4 );
-    directionalLight2.position.set( -1, 0.5, 1 );
-    //scene.add( directionalLight2 );
-    var ambientLight = new THREE.AmbientLight (0x404040);
-    //scene.add(ambientLight);
+  camera, renderer;
 
   //namespace variables
   player.attackDelay = player.attackSpeed;
@@ -48,8 +40,6 @@ mainModule.controller('mainController', ['$scope', function($scope) {
     container = document.createElement( 'div' );
     document.body.appendChild( container );
 
-    scene = new THREE.Scene();
-
     if( Detector.webgl ){
       renderer = new THREE.WebGLRenderer({
         antialias   : true, // to get smoother output
@@ -65,6 +55,23 @@ mainModule.controller('mainController', ['$scope', function($scope) {
     container.appendChild( renderer.domElement );
 
     // player
+    var spotLight = new THREE.SpotLight( 0xff0000 );
+    spotLight.position.set( 0, 0,100 );
+    spotLight.position.y=-7*8;
+    spotLight.target=player;
+   //spotLight.target.position.x=player.position.x;
+   //spotLight.target.position.y=player.position.y;
+
+//spotLight.castShadow = false;
+
+/*spotLight.shadowMapWidth = 1024;
+spotLight.shadowMapHeight = 1024;
+
+spotLight.shadowCameraNear = 500;
+spotLight.shadowCameraFar = 4000;
+spotLight.shadowCameraFov = 30;*/
+
+//scene.add( spotLight );
     var thruster1=voxelEffects.thruster(1,3,player.speed,player.engine.topspeed);
     thruster1.position.y=+7*8;
     thruster1.position.x=+7;
@@ -76,21 +83,13 @@ mainModule.controller('mainController', ['$scope', function($scope) {
     scene.add( player );
     flatLayer.health = player.health;
 
-    // pass scene to modules
-    enemyHive.scene = scene;
-    worldGenerator.scene = scene;
-    shipBehavior.scene = scene;
-
     //world
     worldGenerator.initWorld( player.position);
-    //light
-    scene.add( directionalLight );
-    var ambientLight = new THREE.AmbientLight (0x404040);
-    scene.add(ambientLight);
+
     //cam
     camera = new THREE.PerspectiveCamera( 33, window.innerWidth / window.innerHeight, 1, 10000 );
     camera.position.z = 2500;
-
+    console.log(renderer.info);
     
   }
   function onWindowResize() {
@@ -145,8 +144,6 @@ mainModule.controller('mainController', ['$scope', function($scope) {
 
   function render() {
     voxelEffects.animateThruster();
-    //set lighting
-    //updateLighting(directionalLight);
     shipBehavior.playerBehavior( mouse , player );
     enemyHive.ai( player );
     shipBehavior.moveBullets();
@@ -164,11 +161,10 @@ mainModule.controller('mainController', ['$scope', function($scope) {
     updateInterface();
     flatLayer.camera = camera;
     flatLayer.redraw();
+    //set lighting
+    lighting.updateLighting(player.position.x, player.position.y);
   }
-  function updateLighting(directionalLight){
-      var biomeObj = seeder.seedBiome(player.position.x, player.position.y);
-      directionalLight.intensity= 1-Math.round(biomeObj.biomeIntensity * 1000) / 1000;
-  }
+  
   function updateInterface (){  
     if(!$scope.$$phase) {
       $scope.$apply(function(){

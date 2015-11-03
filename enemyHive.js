@@ -1,13 +1,14 @@
 var cord = require('cords');
+var scene = require('./scene.js');
 var shipBehavior = require('./controleShip.js');
 var model = require('./models/mainShip1.js');
 var enemies = [];
 
 function removeAi(){
-	enemyHive.scene.remove(this);
+	scene.remove(this);
 	doDispose(this);
 	for (i=0; i<enemies.length; i++){
-		if (enemies[i].uuid === this.uuid){
+		if (enemies[i].id === this.id){
 			enemies.splice(i, 1);
 		}
 	}
@@ -19,7 +20,7 @@ function _createEnemy(location){
 	enemies[enemyIndex].shipModel = spawnMesh(model);
 	enemies[enemyIndex].add( enemies[enemyIndex].shipModel );
 	enemies[enemyIndex].position.set(location.x, location.y, location.z);
-	enemyHive.scene.add( enemies[enemyIndex] );
+	scene.add( enemies[enemyIndex] );
 
 	enemies[enemyIndex].tag = "ai";
 	enemies[enemyIndex].engine = {
