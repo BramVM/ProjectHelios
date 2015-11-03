@@ -2,11 +2,12 @@ var seedrandom = require('seedrandom');
 var biomes = require('./biomes');
 
 var _seedBiome = function (x,y){
-	var frequency=0.002;
+	var frequency=0.0003;
 	sinA=0.5*Math.sin((x-y)*frequency);
 	sinB=0.5*Math.sin((x+y)*frequency);
-	var indexOfSin = Math.floor((x-y)/(2*Math.PI/frequency))+Math.floor((x+y)/(2*Math.PI/frequency));
-	Math.seedrandom("biome" + indexOfSin);
+	var indexOfSinA = Math.floor((x)/(Math.PI/frequency))
+	var indexOfSinB = Math.floor((y+Math.PI/frequency/2)/(Math.PI/frequency));
+	Math.seedrandom("biome" + indexOfSinA + "" +indexOfSinB);
 	var seededRandom = Math.random();
 	Math.seedrandom();
 	return {

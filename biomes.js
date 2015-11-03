@@ -75,7 +75,7 @@ var biomes = [
     },
     {
         label : "blue",
-        presence : 0,
+        presence : 1,
         stars : {
             densety : 4,
             maxSize : 6,

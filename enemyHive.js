@@ -75,7 +75,7 @@ function _ai(player){
 }
 
 function _spawner (playerPosition, range){
-	var maxEnemies = 3;
+	var maxEnemies = 0;
 	if (enemies.length	< maxEnemies){
 		var enemyLocation = {
 			x : playerPosition.x,

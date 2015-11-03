@@ -64,12 +64,12 @@ mainModule.controller('mainController', ['$scope', function($scope) {
 
 //spotLight.castShadow = false;
 
-/*spotLight.shadowMapWidth = 1024;
+spotLight.shadowMapWidth = 1024;
 spotLight.shadowMapHeight = 1024;
 
 spotLight.shadowCameraNear = 500;
 spotLight.shadowCameraFar = 4000;
-spotLight.shadowCameraFov = 30;*/
+spotLight.shadowCameraFov = 30;
 
 //scene.add( spotLight );
     var thruster1=voxelEffects.thruster(1,3,player.speed,player.engine.topspeed);
