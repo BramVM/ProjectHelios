@@ -29,7 +29,6 @@ mainModule.controller('mainController', ['$scope', function($scope) {
   player.attackDelay = player.attackSpeed;
   player.speed = 0;
   player.sideSpeed = 0;
-
   init();
   animate();
 
@@ -55,23 +54,31 @@ mainModule.controller('mainController', ['$scope', function($scope) {
     container.appendChild( renderer.domElement );
 
     // player
-    var spotLight = new THREE.SpotLight( 0xff0000 );
-    spotLight.position.set( 0, 0,100 );
-    spotLight.position.y=-7*8;
-    spotLight.target=player;
-   //spotLight.target.position.x=player.position.x;
-   //spotLight.target.position.y=player.position.y;
 
-//spotLight.castShadow = false;
 
-spotLight.shadowMapWidth = 1024;
-spotLight.shadowMapHeight = 1024;
+    //spotLightLeft.castShadow = true;
 
-spotLight.shadowCameraNear = 500;
-spotLight.shadowCameraFar = 4000;
-spotLight.shadowCameraFov = 30;
+  /*spotLightLeft.shadowMapWidth = 1024;
+  spotLightLeft.shadowMapHeight = 1024;
 
-//scene.add( spotLight );
+  spotLightLeft.shadowCameraNear = 500;
+  spotLightLeft.shadowCameraFar = 4000;
+  spotLightLeft.shadowCameraFov = 30;*/
+    player.spotLightLeft = new THREE.SpotLight( 0xffffff);
+    player.spotLightLeft.position.set( 0, 0, 0 );
+    player.spotLightLeft.distance = 1000;
+    player.spotLightLeft.target.position.set( 0, 0, -player.spotLightLeft.distance/5 );
+    player.spotLightLeft.position.y=-7*8;
+    player.spotLightLeft.position.x=7*3;
+    player.spotLightLeft.shadowMapVisible = true;
+    player.spotLightRight = new THREE.SpotLight( 0xffffff);
+    player.spotLightRight.position.set( 0, 0, 0 );
+    player.spotLightRight.target.position.set( 0, 0, -player.spotLightLeft.distance/5 );
+    player.spotLightRight.position.y=-7*8;
+    player.spotLightRight.position.x=-7*3;
+    player.add( player.spotLightLeft );
+    player.add( player.spotLightRight );
+
     var thruster1=voxelEffects.thruster(1,3,player.speed,player.engine.topspeed);
     thruster1.position.y=+7*8;
     thruster1.position.x=+7;
@@ -143,6 +150,13 @@ spotLight.shadowCameraFov = 30;
   }
 
   function render() {
+    //spotLight.position.x = player.position.x;
+    //spotLight.position.y = player.position.y;
+    //spotLight.target.position.x = player.position.x+mouse.x ;
+    //spotLight.target.position.y = player.position.y+mouse.y ;
+   // spotLight.target.position.z = 0;
+    /*console.log(mouse.x);
+    console.log(mouse.y);*/
     voxelEffects.animateThruster();
     shipBehavior.playerBehavior( mouse , player );
     enemyHive.ai( player );

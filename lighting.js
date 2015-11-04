@@ -1,12 +1,12 @@
 var scene = require('./scene.js');
 var seeder = require('./seeder');
-var biomes = require('./biomes');
+var player = require('./player');
 
 var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
-directionalLight.position.set( 1, -0.5, 1 );
+directionalLight.position.set( 0.5, -1, 1 );
 scene.add( directionalLight );
 var directionalLight2 = new THREE.DirectionalLight( 0xffffff, 0.5 );
-directionalLight2.position.set( -1, 0.5, 1 );
+directionalLight2.position.set( -0.5, 0.5, 1 );
 scene.add( directionalLight2 );
 //var ambientLight = new THREE.AmbientLight (0x404040);
 //scene.add(ambientLight);
@@ -19,6 +19,13 @@ function _updateLighting(x,y){
   color.b = (biomeObj.biome.light.color.b*biomeObj.biomeIntensity + 255*(1-biomeObj.biomeIntensity))/255;
   directionalLight.color= color;
   directionalLight2.color= color;
+  var intensity = (color.r + color.g + color.b)/3;
+  if(player.spotLightLeft){
+		player.spotLightLeft.intensity = 1 - intensity;
+	}
+	if(player.spotLightRight){
+		player.spotLightRight.intensity = 1 - intensity;
+	}
 }
 
 var lighting = {

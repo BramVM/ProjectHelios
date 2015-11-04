@@ -56,8 +56,8 @@ var biomes = [
         light :{
             color: {
                 r : 255,
-                g : 20,
-                b : 20
+                g : 80,
+                b : 80
             }
         },
         planets : {
@@ -81,16 +81,16 @@ var biomes = [
             maxSize : 6,
             minSize : 1, 
             color: {
-                r : 110,
-                g : 110,
+                r : 80,
+                g : 80,
                 b : 225,
                 delta: 20
             }
         },
         light :{
             color: {
-                r : 20,
-                g : 20,
+                r : 120,
+                g : 120,
                 b : 255
             }
         },
@@ -123,9 +123,9 @@ var biomes = [
         },
         light :{
             color: {
-                r : 20,
-                g : 255,
-                b : 20
+                r : 0,
+                g : 0,
+                b : 0
             }
         },
         planets : {

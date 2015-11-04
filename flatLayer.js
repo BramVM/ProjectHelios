@@ -90,13 +90,13 @@ function createVector(x, y, z, camera, width, height) {
         return vector;
     }
 _convertPositionToScreen=function(x, y, z, camera){
-        var p = new THREE.Vector3(x, y, z);
-        var vector = p.project(camera);
+  var p = new THREE.Vector3(x, y, z);
+  var vector = p.project(camera);
 
-        vector.x = (vector.x + 1) * textCanvas.width / 2
-        vector.y = -(vector.y - 1) * textCanvas.height / 2 ;
+  vector.x = (vector.x + 1) * textCanvas.width / 2
+  vector.y = -(vector.y - 1) * textCanvas.height / 2 ;
 
-        return vector;
+  return vector;
 }
 function _resize() {
   windowHalfX = window.innerWidth / 2;

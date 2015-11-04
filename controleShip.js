@@ -78,6 +78,19 @@ var _shipMovement = function(ship,direction){
 
 	//rotate
 	ship.rotation.z = Math.PI/2+direction;
+	if(ship.spotLightLeft){
+		ship.spotLightLeft.target.position.x = ship.position.x;
+    	ship.spotLightLeft.target.position.y = ship.position.y;
+		ship.spotLightLeft.target.position = cord.moveIndirection( ship.spotLightLeft.target.position , direction , ship.spotLightLeft.distance );
+		ship.spotLightLeft.target.updateMatrixWorld();
+	}
+	if(ship.spotLightRight){
+		ship.spotLightRight.target.position.x = ship.position.x;
+    	ship.spotLightRight.target.position.y = ship.position.y;
+		ship.spotLightRight.target.position = cord.moveIndirection( ship.spotLightRight.target.position , direction , ship.spotLightLeft.distance );
+		ship.spotLightRight.target.updateMatrixWorld();
+	}
+
 
 	//roll animation
 	var maxRollRotation = Math.PI/6;
