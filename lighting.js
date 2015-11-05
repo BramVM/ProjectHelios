@@ -18,13 +18,28 @@ function _updateLighting(x,y){
   color.g = (biomeObj.biome.light.color.g*biomeObj.biomeIntensity + 255*(1-biomeObj.biomeIntensity))/255;
   color.b = (biomeObj.biome.light.color.b*biomeObj.biomeIntensity + 255*(1-biomeObj.biomeIntensity))/255;
   directionalLight.color= color;
+  var max = biomeObj.biome.light.max*biomeObj.biomeIntensity + 0.5*(1-biomeObj.biomeIntensity);
+  var min = biomeObj.biome.light.min*biomeObj.biomeIntensity + 0.4*(1-biomeObj.biomeIntensity);
+  var flux = biomeObj.biome.light.flux*biomeObj.biomeIntensity + 0.01*(1-biomeObj.biomeIntensity);
+  if(directionalLight.intensity < max){
+    directionalLight.intensity = directionalLight.intensity + Math.random() * flux;
+  }
+  if(directionalLight2.intensity < max){
+    directionalLight2.intensity = directionalLight2.intensity + Math.random() * flux;
+  }
+  if(directionalLight.intensity > min){
+    directionalLight.intensity = directionalLight.intensity - Math.random() * flux;
+  }
+  if(directionalLight2.intensity > min){
+    directionalLight2.intensity = directionalLight2.intensity - Math.random() * flux;
+  }
   directionalLight2.color= color;
   var intensity = (color.r + color.g + color.b)/3;
   if(player.spotLightLeft){
-		player.spotLightLeft.intensity = 1 - intensity;
+		player.spotLightLeft.intensity = 1 - intensity*directionalLight2.intensity - intensity*directionalLight.intensity;
 	}
 	if(player.spotLightRight){
-		player.spotLightRight.intensity = 1 - intensity;
+		player.spotLightRight.intensity = 1 - intensity*directionalLight2.intensity - intensity*directionalLight.intensity;
 	}
 }
 

@@ -234,7 +234,7 @@ _addPlanetToTile = function(position, tileIndex){
 			for (b=0; b<biomeObj.biome.planets.items.length; b++){
 				planet.items.push(biomeObj.biome.planets.items[b]);
 				planet.items[b].probability = planet.items[b].probability*biomeObj.biomeIntensity;
-				planet.items[b].share = planet.items[b].share*biomeObj.biomeIntensity;
+				planet.items[b].share = Math.round(planet.items[b].share*biomeObj.biomeIntensity*100)/100;
 			}
 		}
 		if(biomes[0].planets.items){
@@ -244,7 +244,7 @@ _addPlanetToTile = function(position, tileIndex){
 					if (biomes[0].planets.items[b].label === planet.items[m].label){
 						notInitems = false;
 						planet.items[m].probability = planet.items[m].probability + biomes[0].planets.items[b].probability * (1-biomeObj.biomeIntensity);
-						planet.items[m].share = planet.items[m].share + biomes[0].planets.items[b].share * (1-biomeObj.biomeIntensity);
+						planet.items[m].share = Math.round((planet.items[m].share + biomes[0].planets.items[b].share * (1-biomeObj.biomeIntensity))*100)/100;
 						Math.seedrandom(planet.items[m].label + position.x + position.y );
 						if (Math.random()>=planet.items[m].probability){
 							planet.items.splice(m,1);
@@ -258,7 +258,7 @@ _addPlanetToTile = function(position, tileIndex){
 						share : biomes[0].planets.items[b].share
 					};
 					newItem.probability = newItem.probability*(1-biomeObj.biomeIntensity);
-					newItem.share = newItem.share*(1-biomeObj.biomeIntensity);
+					newItem.share = Math.round(newItem.share*(1-biomeObj.biomeIntensity)*100)/100;
 					Math.seedrandom(newItem.label + position.x + position.y );
 					if (Math.random()<newItem.probability){
 						planet.items.push(newItem);

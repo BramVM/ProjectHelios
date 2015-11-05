@@ -14,6 +14,9 @@ var biomes = [
             }
         },
         light :{
+            min : 0.4,
+            max : 0.5,
+            flux : 0.01,
             color: {
                 r : 255,
                 g : 255,
@@ -34,10 +37,13 @@ var biomes = [
                 {
                     label: "iron",
                     probability : 1,
-                    share : 0.05
+                    share : 5
                 }
             ]
         },
+        ennemies:[
+
+        ]
     },
     {
         label : "red",
@@ -54,6 +60,9 @@ var biomes = [
             }
         },
         light :{
+            min : 0.3,
+            max : 0.5,
+            flux : 0.05,
             color: {
                 r : 255,
                 g : 80,
@@ -88,6 +97,9 @@ var biomes = [
             }
         },
         light :{
+            min : 0.4,
+            max : 0.5,
+            flux : 0.01,
             color: {
                 r : 120,
                 g : 120,
@@ -122,6 +134,9 @@ var biomes = [
             }
         },
         light :{
+            min : 0,
+            max : 0,
+            flux : 0.1,
             color: {
                 r : 0,
                 g : 0,
