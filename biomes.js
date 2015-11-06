@@ -64,9 +64,9 @@ var biomes = [
             max : 0.5,
             flux : 0.05,
             color: {
-                r : 255,
-                g : 80,
-                b : 80
+                r : 165,
+                g : 90,
+                b : 90
             }
         },
         planets : {
