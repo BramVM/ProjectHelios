@@ -1,6 +1,6 @@
 var biomes = [
     {
-        label : "defualt",
+        label : "Save haven",
         presence : 0,
         stars : {
             densety : 2,
@@ -46,7 +46,7 @@ var biomes = [
         ]
     },
     {
-        label : "red",
+        label : "Chaotic red",
         presence : 1,
         stars : {
             densety : 7,
@@ -83,7 +83,7 @@ var biomes = [
         }
     },
     {
-        label : "blue",
+        label : "Still Blue",
         presence : 1,
         stars : {
             densety : 4,
@@ -120,7 +120,7 @@ var biomes = [
         }
     },
     {
-        label : "green",
+        label : "Dark Green",
         presence : 1,
         stars : {
             densety : 6,
