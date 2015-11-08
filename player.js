@@ -1,5 +1,6 @@
 var flatLayer = require('./flatLayer.js');
 model = require('./models/mainShip.js');
+var seeder = require('./seeder');
 
 var player = new THREE.Object3D();
 var _collect = function (item){
@@ -138,6 +139,14 @@ player.bulletDamage = 20;
 player.label = "player";
 player.shipModel = spawnMesh(model);
 player.add( player.shipModel );
+
+player.updateBiome = function(){
+  var biomeObj = seeder.seedBiome(player.position.x, player.position.y);
+  player.biome = biomeObj.biome;
+  player.biomeIntensity = biomeObj.biomeIntensity;
+}
+player.updateBiome();
+
 player.listAvailableDroids = function(){
   if (player.targetPlanet){
     var availableDroids = [];

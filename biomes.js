@@ -41,8 +41,15 @@ var biomes = [
                 }
             ]
         },
-        ennemies:[
-
+        enemies : [
+            {   
+                label : "test1",
+                presence : 1
+            },
+            {   
+                label : "test2",
+                presence : 1
+            }
         ]
     },
     {
@@ -80,7 +87,17 @@ var biomes = [
                 delta: 20
             }
 
-        }
+        },
+        enemies : [
+            {   
+                label : "test1",
+                presence : 1
+            },
+            {   
+                label : "test2",
+                presence : 1
+            }
+        ]
     },
     {
         label : "Still Blue",
@@ -117,7 +134,17 @@ var biomes = [
                 delta: 20
             }
 
-        }
+        },
+        enemies : [
+            {   
+                label : "test1",
+                presence : 1
+            },
+            {   
+                label : "test2",
+                presence : 1
+            }
+        ]
     },
     {
         label : "Dark Green",
@@ -153,8 +180,17 @@ var biomes = [
                 b : 20,
                 delta: 20
             }
-
-        }
+        },
+        enemies : [
+            {   
+                label : "test1",
+                presence : 1
+            },
+            {   
+                label : "test2",
+                presence : 1
+            }
+        ]
     }
 ];
 

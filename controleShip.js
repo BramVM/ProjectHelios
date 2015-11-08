@@ -100,6 +100,10 @@ var _shipMovement = function(ship,direction){
 	if(ship.shipModel){
 		if(!isNaN(sideRoll)) ship.shipModel.rotation.y = sideRoll;
 	}
+
+	if(ship.updateBiome){
+		ship.updateBiome();
+	}
 };
 var _hit = function( ship ){
 	var collider = physic.checkCollissionRecursive( ship.shipModel.collisionmesh );

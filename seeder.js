@@ -7,13 +7,15 @@ var _seedBiome = function (x,y){
 	sinB=0.5*Math.sin((x+y)*frequency);
 	var indexOfSinA = Math.floor((x)/(Math.PI/frequency))
 	var indexOfSinB = Math.floor((y+Math.PI/frequency/2)/(Math.PI/frequency));
-	Math.seedrandom("biome" + indexOfSinA + "" +indexOfSinB);
+	var biomeId = "biome" + indexOfSinA + "" +indexOfSinB;
+	Math.seedrandom(biomeId);
 	var seededRandom = Math.random();
 	Math.seedrandom();
 	return {
 		//biome : biomes[1],
 		biome : _calculateBiome(seededRandom),
-		biomeIntensity : Math.abs(sinA+sinB)
+		biomeIntensity : Math.abs(sinA+sinB),
+		id : biomeId
 	};
 }
 

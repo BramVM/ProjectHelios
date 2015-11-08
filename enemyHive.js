@@ -2,6 +2,9 @@ var cord = require('cords');
 var scene = require('./scene.js');
 var shipBehavior = require('./controleShip.js');
 var model = require('./models/mainShip1.js');
+var seeder = require('./seeder');
+var enemyData = require('./enemies');
+
 var enemies = [];
 
 function removeAi(){
@@ -16,35 +19,64 @@ function removeAi(){
 
 function _createEnemy(location){
 	var enemyIndex = enemies.length;
-	enemies[enemyIndex] = new THREE.Object3D();
-	enemies[enemyIndex].shipModel = spawnMesh(model);
-	enemies[enemyIndex].add( enemies[enemyIndex].shipModel );
-	enemies[enemyIndex].position.set(location.x, location.y, location.z);
-	scene.add( enemies[enemyIndex] );
+	var biomeObj = seeder.seedBiome(location.x,location.y);
+	//determen ship
+	if(!biomeObj.biome.calculateEnemy){
+		biomeObj.biome.calculateEnemy = (function () {
+		    var total = 0;
+			for (b=0; b<biomeObj.biome.enemies.length; b++){
+				total=total+biomeObj.biome.enemies[b].presence;
+			}
+			var presence = [];
+			if (total>0){
+				for (b=0; b<biomeObj.biome.enemies.length; b++){
+					presence[b] = biomeObj.biome.enemies[b].presence/total;
+				}
+			}
+		    return function (rng) {
+		    	var a = 0;
+		    	for (b=0; b<presence.length; b++){
+		    		if (rng<presence[b]+a){
+		    			return biomeObj.biome.enemies[b];
+		    		}
+		    		a=a+presence[b];
+		    	}
+		    };
+		})();
+	}
+	var calculatedEnemy = biomeObj.biome.calculateEnemy(Math.random());
+	if(calculatedEnemy && calculatedEnemy.label){
+		for (var ii = 0; ii < enemyData.length; ii++) {
+			if (calculatedEnemy.label === enemyData[ii].label){
 
-	enemies[enemyIndex].tag = "ai";
-	enemies[enemyIndex].engine = {
-	  label: "bad engine",
-	  acceleration : 0.05,
-	  topspeed :6
-	};
-	enemies[enemyIndex].sideEngine = {
-	  label: "bad side engine",
-	  acceleration : 0.05,
-	  topspeed :3
-	};
-	enemies[enemyIndex].attackSpeed = 20;
-	enemies[enemyIndex].bulletRange = 2500;
-	enemies[enemyIndex].bulletDamage = 1;
-	enemies[enemyIndex].health = 100;
-	enemies[enemyIndex].remove = removeAi;
+				enemies[enemyIndex] = new THREE.Object3D();
+				enemies[enemyIndex].originBiomeId = biomeObj.id;
+				enemies[enemyIndex].biome = biomeObj.biome;
+				enemies[enemyIndex].biomeIntensity = biomeObj.biomeIntensity;
 
-	enemies[enemyIndex].destination = location;
-	enemies[enemyIndex].trajectory=0;
+				enemies[enemyIndex].shipModel = spawnMesh(enemyData[ii].model);
+				enemies[enemyIndex].add( enemies[enemyIndex].shipModel );
+				enemies[enemyIndex].position.set(location.x, location.y, location.z);
+				scene.add( enemies[enemyIndex] );
 
-	enemies[enemyIndex].attackDelay = enemies[enemyIndex].attackSpeed;
-	enemies[enemyIndex].speed = 0;
-	enemies[enemyIndex].sideSpeed = 0;
+				enemies[enemyIndex].tag = "ai";
+				enemies[enemyIndex].engine = enemyData[ii].engine;
+				enemies[enemyIndex].sideEngine = enemyData[ii].sideEngine;
+				enemies[enemyIndex].attackSpeed = enemyData[ii].attackSpeed;
+				enemies[enemyIndex].bulletRange = enemyData[ii].bulletRange;
+				enemies[enemyIndex].bulletDamage = enemyData[ii].bulletDamage;
+				enemies[enemyIndex].health = enemyData[ii].health;
+				enemies[enemyIndex].remove = removeAi;
+
+				enemies[enemyIndex].destination = location;
+				enemies[enemyIndex].trajectory=0;
+
+				enemies[enemyIndex].attackDelay = enemies[enemyIndex].attackSpeed;
+				enemies[enemyIndex].speed = 0;
+				enemies[enemyIndex].sideSpeed = 0;
+			}
+		};
+	}
 }
 
 function _ai(player){
@@ -75,7 +107,7 @@ function _ai(player){
 }
 
 function _spawner (playerPosition, range){
-	var maxEnemies = 0;
+	var maxEnemies = 3;
 	if (enemies.length	< maxEnemies){
 		var enemyLocation = {
 			x : playerPosition.x,
