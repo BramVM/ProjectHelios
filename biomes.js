@@ -42,14 +42,6 @@ var biomes = [
             ]
         },
         enemies : [
-            {   
-                label : "test1",
-                presence : 1
-            },
-            {   
-                label : "test2",
-                presence : 1
-            }
         ]
     },
     {
@@ -90,11 +82,7 @@ var biomes = [
         },
         enemies : [
             {   
-                label : "test1",
-                presence : 1
-            },
-            {   
-                label : "test2",
+                label : "redBaron",
                 presence : 1
             }
         ]
@@ -137,11 +125,7 @@ var biomes = [
         },
         enemies : [
             {   
-                label : "test1",
-                presence : 1
-            },
-            {   
-                label : "test2",
+                label : "blueBaron",
                 presence : 1
             }
         ]
@@ -183,11 +167,7 @@ var biomes = [
         },
         enemies : [
             {   
-                label : "test1",
-                presence : 1
-            },
-            {   
-                label : "test2",
+                label : "greenBaron",
                 presence : 1
             }
         ]

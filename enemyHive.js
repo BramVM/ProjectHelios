@@ -53,6 +53,7 @@ function _createEnemy(location){
 				enemies[enemyIndex].originBiomeId = biomeObj.id;
 				enemies[enemyIndex].biome = biomeObj.biome;
 				enemies[enemyIndex].biomeIntensity = biomeObj.biomeIntensity;
+				enemies[enemyIndex].biomeMid = biomeObj.mid;
 
 				enemies[enemyIndex].shipModel = spawnMesh(enemyData[ii].model);
 				enemies[enemyIndex].add( enemies[enemyIndex].shipModel );
@@ -74,6 +75,11 @@ function _createEnemy(location){
 				enemies[enemyIndex].attackDelay = enemies[enemyIndex].attackSpeed;
 				enemies[enemyIndex].speed = 0;
 				enemies[enemyIndex].sideSpeed = 0;
+
+				enemies[enemyIndex].updateBiome = function(){
+				  var biomeObj = seeder.seedBiome(enemies[enemyIndex].position.x, enemies[enemyIndex].position.y);
+				  enemies[enemyIndex].biomeIntensity = biomeObj.biomeIntensity;
+				}
 			}
 		};
 	}
@@ -89,8 +95,8 @@ function _ai(player){
 		enemies[i].moveForward = true;
 		enemies[i].moveBackward = false;
 		enemies[i].shoot = false;
-		if (range<detectionRange) enemies[i].detectedTarget = true;
-		else enemies[i].detectedTarget = false;
+		/*if (range<detectionRange) enemies[i].detectedTarget = true;
+		else enemies[i].detectedTarget = false;*/
 		if (enemies[i].detectedTarget === true) {
 			if (range<approachRange) enemies[i].moveForward = false;
 			if (range<backOffRange) enemies[i].moveBackward = true;
@@ -99,15 +105,22 @@ function _ai(player){
 			enemies[i].destination = cord.moveIndirection( enemies[i].destination , direction , 7);
 		}
 		else{
-			enemies[i].trajectory = enemies[i].trajectory + Math.PI/32-(Math.random()*Math.PI/16);
-			enemies[i].destination = cord.moveIndirection( enemies[i].destination , enemies[i].trajectory , enemies[i].engine.topspeed);
+			//console.log(enemies[i].biomeIntensity)
+			homeDirection = cord.direction ( enemies[i].position, enemies[i].biomeMid );
+			//ship.rotation.z = direction;
+			var hoek = (Math.PI/2+homeDirection - enemies[i].rotation.z)*(1-enemies[i].biomeIntensity);
+			if(Math.sin(hoek)<0) hoek = -hoek;
+			enemies[i].rotation.z = enemies[i].rotation.z + hoek + Math.PI/80-(Math.random()*Math.PI/40);
+			//enemies[i].trajectory = enemies[i].trajectory + (homeDirection-enemies[i].trajectory)*(1-enemies[i].biomeIntensity) + Math.PI/32-(Math.random()*Math.PI/16);
+			//enemies[i].destination = cord.moveIndirection( enemies[i].destination , enemies[i].trajectory , enemies[i].engine.topspeed);
+			//enemies[i].destination = cord.moveIndirection( enemies[i].destination , homeDirection , enemies[i].engine.topspeed*(1-enemies[i].biomeIntensity));
 		}
 		shipBehavior.aiBehavior ( enemies[i] , enemies[i].destination );
 	}
 }
 
 function _spawner (playerPosition, range){
-	var maxEnemies = 3;
+	var maxEnemies = 1;
 	if (enemies.length	< maxEnemies){
 		var enemyLocation = {
 			x : playerPosition.x,

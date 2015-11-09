@@ -159,7 +159,7 @@ var _playerBehavior = function( mouse , player ){
 };
 
 var _aiBehavior = function ( body , targetPosition ){
-	var direction = cord.direction( body.position , targetPosition );
+	var direction = body.rotation.z - Math.PI/2;
 	_shipMovement(body,direction);
 	_shoot(body,direction);
 	_hit(body);

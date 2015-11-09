@@ -150,13 +150,6 @@ mainModule.controller('mainController', ['$scope', function($scope) {
   }
 
   function render() {
-    //spotLight.position.x = player.position.x;
-    //spotLight.position.y = player.position.y;
-    //spotLight.target.position.x = player.position.x+mouse.x ;
-    //spotLight.target.position.y = player.position.y+mouse.y ;
-   // spotLight.target.position.z = 0;
-    /*console.log(mouse.x);
-    console.log(mouse.y);*/
     voxelEffects.animateThruster();
     shipBehavior.playerBehavior( mouse , player );
     enemyHive.ai( player );

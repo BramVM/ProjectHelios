@@ -1,6 +1,6 @@
 var model = {
 	dims : [15,15,5],
-	colors : [0x8A8A8A,0xffffff,0x9FFFE8,0x505050],
+	colors : [0x8A8A8A,0x000080,0x9FFFE8,0x505050],
 	voxels : [
 
         0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,

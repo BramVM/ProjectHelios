@@ -143,6 +143,7 @@ player.add( player.shipModel );
 player.updateBiome = function(){
   var biomeObj = seeder.seedBiome(player.position.x, player.position.y);
   player.biome = biomeObj.biome;
+  player.biomeMid = biomeObj.mid;
   player.biomeIntensity = biomeObj.biomeIntensity;
 }
 player.updateBiome();

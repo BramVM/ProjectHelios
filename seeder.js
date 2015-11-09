@@ -9,12 +9,17 @@ var _seedBiome = function (x,y){
 	var indexOfSinB = Math.floor((y+Math.PI/frequency/2)/(Math.PI/frequency));
 	var biomeId = "biome" + indexOfSinA + "" +indexOfSinB;
 	Math.seedrandom(biomeId);
+	var biomeMid = new THREE.Vector3(
+		indexOfSinA*Math.PI/frequency+Math.PI/frequency/2,
+		indexOfSinB*Math.PI/frequency,
+		0
+	);
 	var seededRandom = Math.random();
 	Math.seedrandom();
 	return {
-		//biome : biomes[1],
 		biome : _calculateBiome(seededRandom),
 		biomeIntensity : Math.abs(sinA+sinB),
+		mid : biomeMid,
 		id : biomeId
 	};
 }
