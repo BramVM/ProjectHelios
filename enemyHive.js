@@ -109,8 +109,9 @@ function _ai(player){
 			homeDirection = cord.direction ( enemies[i].position, enemies[i].biomeMid );
 			//ship.rotation.z = direction;
 			var hoek = (Math.PI/2+homeDirection - enemies[i].rotation.z)*(1-enemies[i].biomeIntensity);
+			console.log(enemies[i].position.x + "      " + enemies[i].biomeMid.x);
 			if(Math.sin(hoek)<0) hoek = -hoek;
-			enemies[i].rotation.z = enemies[i].rotation.z + hoek + Math.PI/80-(Math.random()*Math.PI/40);
+			enemies[i].rotation.z = enemies[i].rotation.z + hoek;
 			//enemies[i].trajectory = enemies[i].trajectory + (homeDirection-enemies[i].trajectory)*(1-enemies[i].biomeIntensity) + Math.PI/32-(Math.random()*Math.PI/16);
 			//enemies[i].destination = cord.moveIndirection( enemies[i].destination , enemies[i].trajectory , enemies[i].engine.topspeed);
 			//enemies[i].destination = cord.moveIndirection( enemies[i].destination , homeDirection , enemies[i].engine.topspeed*(1-enemies[i].biomeIntensity));
