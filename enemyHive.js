@@ -51,6 +51,7 @@ function _createEnemy(location){
 
 				enemies[enemyIndex] = new THREE.Object3D();
 				enemies[enemyIndex].originBiomeId = biomeObj.id;
+				enemies[enemyIndex].biomeId = biomeObj.id;
 				enemies[enemyIndex].biome = biomeObj.biome;
 				enemies[enemyIndex].biomeIntensity = biomeObj.biomeIntensity;
 				enemies[enemyIndex].biomeMid = biomeObj.mid;
@@ -79,6 +80,7 @@ function _createEnemy(location){
 				enemies[enemyIndex].updateBiome = function(){
 				  var biomeObj = seeder.seedBiome(enemies[enemyIndex].position.x, enemies[enemyIndex].position.y);
 				  enemies[enemyIndex].biomeIntensity = biomeObj.biomeIntensity;
+				  enemies[enemyIndex].biomeId = biomeObj.id;
 				}
 			}
 		};
@@ -92,36 +94,45 @@ function _ai(player){
 		var backOffRange = 300;
 		var shootingRange = 750;
 		var range = cord.distance(enemies[i].position,player.position);
+		var maneuverability = 0.05; 
 		enemies[i].moveForward = true;
 		enemies[i].moveBackward = false;
 		enemies[i].shoot = false;
-		/*if (range<detectionRange) enemies[i].detectedTarget = true;
-		else enemies[i].detectedTarget = false;*/
+		if (range<detectionRange) enemies[i].detectedTarget = true;
+		else enemies[i].detectedTarget = false;
 		if (enemies[i].detectedTarget === true) {
 			if (range<approachRange) enemies[i].moveForward = false;
 			if (range<backOffRange) enemies[i].moveBackward = true;
 			if (range<shootingRange) enemies[i].shoot = true;
-			var direction = cord.direction ( enemies[i].destination, player.position );
-			enemies[i].destination = cord.moveIndirection( enemies[i].destination , direction , 7);
+			//direction = cord.direction ( enemies[i].position, enemies[i].biomeMid );
+			var direction = cord.direction ( enemies[i].position, player.position );
+			var deviation = (Math.PI/2+direction - enemies[i].rotation.z);
+			if(deviation>2*Math.PI) deviation = deviation - 2*Math.PI;
+			if(deviation>Math.PI) deviation = - (2*Math.PI - deviation);
+			//ease rotation
+			if(deviation>maneuverability) deviation = maneuverability;
+			if(deviation<-maneuverability) deviation = -maneuverability;
+			enemies[i].rotation.z = enemies[i].rotation.z + deviation;
 		}
 		else{
-			//console.log(enemies[i].biomeIntensity)
-			homeDirection = cord.direction ( enemies[i].position, enemies[i].biomeMid );
-			//ship.rotation.z = direction;
-			var hoek = (Math.PI/2+homeDirection - enemies[i].rotation.z)*(1-enemies[i].biomeIntensity);
-			console.log(enemies[i].position.x + "      " + enemies[i].biomeMid.x);
-			if(Math.sin(hoek)<0) hoek = -hoek;
-			enemies[i].rotation.z = enemies[i].rotation.z + hoek;
-			//enemies[i].trajectory = enemies[i].trajectory + (homeDirection-enemies[i].trajectory)*(1-enemies[i].biomeIntensity) + Math.PI/32-(Math.random()*Math.PI/16);
-			//enemies[i].destination = cord.moveIndirection( enemies[i].destination , enemies[i].trajectory , enemies[i].engine.topspeed);
-			//enemies[i].destination = cord.moveIndirection( enemies[i].destination , homeDirection , enemies[i].engine.topspeed*(1-enemies[i].biomeIntensity));
+			if(enemies[i].biomeIntensity<0.5 || enemies[i].originBiomeId != enemies[i].biomeId){
+				direction = cord.direction ( enemies[i].position, enemies[i].biomeMid );
+				var deviation = (Math.PI/2+direction - enemies[i].rotation.z);
+				if(deviation>2*Math.PI) deviation = deviation - 2*Math.PI;
+				if(deviation>Math.PI) deviation = - (2*Math.PI - deviation);
+				//ease rotation
+				if(deviation>maneuverability) deviation = maneuverability;
+				if(deviation<-maneuverability) deviation = -maneuverability;
+				enemies[i].rotation.z = enemies[i].rotation.z + deviation;
+			}
+			enemies[i].rotation.z = enemies[i].rotation.z - 0.025 + Math.random()*0.05
 		}
 		shipBehavior.aiBehavior ( enemies[i] , enemies[i].destination );
 	}
 }
 
 function _spawner (playerPosition, range){
-	var maxEnemies = 1;
+	var maxEnemies = 3;
 	if (enemies.length	< maxEnemies){
 		var enemyLocation = {
 			x : playerPosition.x,
