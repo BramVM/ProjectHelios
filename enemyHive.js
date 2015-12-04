@@ -78,9 +78,9 @@ function _createEnemy(location){
 				enemies[enemyIndex].sideSpeed = 0;
 
 				enemies[enemyIndex].updateBiome = function(){
-				  var biomeObj = seeder.seedBiome(enemies[enemyIndex].position.x, enemies[enemyIndex].position.y);
-				  enemies[enemyIndex].biomeIntensity = biomeObj.biomeIntensity;
-				  enemies[enemyIndex].biomeId = biomeObj.id;
+				  var biomeObj = seeder.seedBiome(this.position.x, this.position.y);
+				  this.biomeIntensity = biomeObj.biomeIntensity;
+				  this.biomeId = biomeObj.id;
 				}
 			}
 		};

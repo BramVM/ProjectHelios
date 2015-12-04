@@ -125,6 +125,7 @@ player.moveBackward = false;
 player.moveRight = false;
 player.moveLeft = false;
 player.maxHealth = 100;
+player.passiveRegen = 0.01;
 player.remove = function(){
   console.log("player died");
   this.position.x = 0;

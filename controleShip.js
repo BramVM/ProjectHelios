@@ -105,6 +105,13 @@ var _shipMovement = function(ship,direction){
 		ship.updateBiome();
 	}
 };
+var _passiveRegen = function( ship ){
+	if (ship.health<ship.maxHealth)	ship.health = ship.health + ship.passiveRegen;
+	if (ship.health>ship.maxHealth)	ship.health = ship.maxHealth;
+	flatLayer.health = ship.health;
+	flatLayer.maxHealth = ship.maxHealth;
+	flatLayer.redraw();
+}
 var _hit = function( ship ){
 	var collider = physic.checkCollissionRecursive( ship.shipModel.collisionmesh );
 	if(collider !== false && collider.parent){
@@ -156,6 +163,7 @@ var _playerBehavior = function( mouse , player ){
 	_shoot(player,direction);
 	_hit(player);
 	_detectPlanet(player);
+	_passiveRegen(player);
 };
 
 var _aiBehavior = function ( body , targetPosition ){

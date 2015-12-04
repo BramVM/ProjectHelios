@@ -13,7 +13,7 @@ _redraw = function( ){
   ctx.fillStyle = "white";
   ctx.textAlign = "center";
   ctx.clearRect(0, 0, textCanvas.width, textCanvas.height);
-  if (this.health && this.maxHealth) ctx.fillText( this.health + " / " + this.maxHealth, windowHalfX, windowHalfY+70 );
+  if (this.health && this.maxHealth) ctx.fillText( Math.round(this.health) + " / " + this.maxHealth, windowHalfX, windowHalfY+70 );
   _drawDroids();
   if (this.msgStr) {
     flatLayer.msgTmr = flatLayer.msgTmr-0.1;
