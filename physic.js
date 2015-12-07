@@ -1,5 +1,5 @@
 _exponentialAcceleration = function ( currentSpeed, topspeed ,acceleration ){
-	return currentSpeed+(topspeed-currentSpeed)*acceleration;
+	return currentSpeed+((topspeed-currentSpeed)*acceleration);
 }
 _addToColliderList = function (object){
 	physic.collidableMeshList.push(object);

@@ -137,7 +137,9 @@ player.health = player.maxHealth;
 player.attackSpeed = 10;
 player.bulletRange = 2500;
 player.bulletDamage = 20;
+player.bulletModelData = require('./models/bullet.js');
 player.label = "player";
+player.shipModelData = model;
 player.shipModel = spawnMesh(model);
 player.add( player.shipModel );
 

@@ -17,12 +17,13 @@ function _removeBullet(){
 }
 
 var _createBullet = function ( ship, direction ){		
-	var bullet = spawnMesh(bulletVoxels);
+	var bullet = spawnMesh(ship.bulletModelData);
 	bullet.rotation.z = Math.PI/2+direction;
 	bullet.range = ship.bulletRange;
 	bullet.position.set(ship.position.x,ship.position.y,ship.position.z);
 	bullet.direction = direction;
-	cord.moveIndirection( bullet.position , bullet.direction , 60 );
+	console.log(ship.shipModelData.dims[1] );
+	cord.moveIndirection( bullet.position , bullet.direction , (ship.shipModelData.dims[1]/2+ship.bulletModelData.dims[1]/2+2)*7);
 	bullet.speed = 15;
 	bullet.damage = ship.bulletDamage;
 	bullet.tag = "bullet";
@@ -46,10 +47,28 @@ var _shoot = function(ship,direction){
 		if (ship.attackDelay>=ship.attackSpeed){
 			ship.attackDelay=0;
 			_createBullet(ship,direction);
+			if (ship.recoil){
+				ship.recoilSpeed=0;
+				ship.recoilStarted = true;
+				ship.recoilDiretion = direction;
+			}
 		}
 	}
 };
+
 var _shipMovement = function(ship,direction){
+	// recoil movement
+	if (ship.recoil && ship.recoilStarted){
+		ship.recoilSpeed = physic.exponentialAcceleration(ship.recoilSpeed, ship.recoil ,0.6);
+		if (ship.recoilSpeed>=ship.recoil-0.1) ship.recoilStarted = false;
+		//console.log(ship.recoilSpeed);
+	}
+	if (ship.recoil && ship.recoilSpeed && !ship.recoilStarted){
+		//console.log(ship.recoilSpeed);
+		ship.recoilSpeed = physic.exponentialAcceleration(ship.recoilSpeed, 0 ,0.1);
+		
+	}
+	if (ship.recoil && ship.recoilSpeed && ship.recoilDiretion) cord.moveIndirection( ship.position , ship.recoilDiretion+Math.PI , ship.recoilSpeed );
 
 	// move
 	cord.moveIndirection( ship.position , direction , ship.speed );

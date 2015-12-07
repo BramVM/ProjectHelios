@@ -65,15 +65,15 @@ mainModule.controller('mainController', ['$scope', function($scope) {
   spotLightLeft.shadowCameraFar = 4000;
   spotLightLeft.shadowCameraFov = 30;*/
     player.spotLightLeft = new THREE.SpotLight( 0xffffff);
-    player.spotLightLeft.position.set( 0, 0, 0 );
+    player.spotLightLeft.position.set( 0, 0, 100 );
     player.spotLightLeft.distance = 1000;
-    player.spotLightLeft.target.position.set( 0, 0, -player.spotLightLeft.distance/5 );
+    player.spotLightLeft.target.position.set( 0, 0, 0);
     player.spotLightLeft.position.y=-7*8;
     player.spotLightLeft.position.x=7*3;
     player.spotLightLeft.shadowMapVisible = true;
     player.spotLightRight = new THREE.SpotLight( 0xffffff);
-    player.spotLightRight.position.set( 0, 0, 0 );
-    player.spotLightRight.target.position.set( 0, 0, -player.spotLightLeft.distance/5 );
+    player.spotLightRight.position.set( 0, 0, 100 );
+    player.spotLightRight.target.position.set( 0, 0, 0);
     player.spotLightRight.position.y=-7*8;
     player.spotLightRight.position.x=-7*3;
     player.add( player.spotLightLeft );

@@ -56,6 +56,7 @@ function _createEnemy(location){
 				enemies[enemyIndex].biomeIntensity = biomeObj.biomeIntensity;
 				enemies[enemyIndex].biomeMid = biomeObj.mid;
 
+				enemies[enemyIndex].shipModelData = enemyData[ii].model;
 				enemies[enemyIndex].shipModel = spawnMesh(enemyData[ii].model);
 				enemies[enemyIndex].add( enemies[enemyIndex].shipModel );
 				enemies[enemyIndex].position.set(location.x, location.y, location.z);
@@ -67,6 +68,8 @@ function _createEnemy(location){
 				enemies[enemyIndex].attackSpeed = enemyData[ii].attackSpeed;
 				enemies[enemyIndex].bulletRange = enemyData[ii].bulletRange;
 				enemies[enemyIndex].bulletDamage = enemyData[ii].bulletDamage;
+				enemies[enemyIndex].bulletModelData = enemyData[ii].bulletModel;
+				enemies[enemyIndex].recoil = enemyData[ii].recoil;
 				enemies[enemyIndex].health = enemyData[ii].health;
 				enemies[enemyIndex].remove = removeAi;
 
@@ -104,7 +107,6 @@ function _ai(player){
 			if (range<approachRange) enemies[i].moveForward = false;
 			if (range<backOffRange) enemies[i].moveBackward = true;
 			if (range<shootingRange) enemies[i].shoot = true;
-			//direction = cord.direction ( enemies[i].position, enemies[i].biomeMid );
 			var direction = cord.direction ( enemies[i].position, player.position );
 			var deviation = (Math.PI/2+direction - enemies[i].rotation.z);
 			if(deviation>2*Math.PI) deviation = deviation - 2*Math.PI;
