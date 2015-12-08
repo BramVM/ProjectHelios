@@ -18,12 +18,15 @@ function _removeBullet(){
 
 var _createBullet = function ( ship, direction ){		
 	var bullet = spawnMesh(ship.bulletModelData);
+	/*bullet.pointLight = new THREE.PointLight( 0xffffff, 1, 50 );
+    bullet.pointLight.position.set( 0, 0, 0 );
+    bullet.add( bullet.pointLight );*/
 	bullet.rotation.z = Math.PI/2+direction;
 	bullet.range = ship.bulletRange;
 	bullet.position.set(ship.position.x,ship.position.y,ship.position.z);
 	bullet.direction = direction;
 	console.log(ship.shipModelData.dims[1] );
-	cord.moveIndirection( bullet.position , bullet.direction , (ship.shipModelData.dims[1]/2+ship.bulletModelData.dims[1]/2+2)*7);
+	cord.moveIndirection( bullet.position , bullet.direction , (ship.shipModelData.dims[1]/2 + ship.bulletModelData.dims[1]/2 + 2)*7);
 	bullet.speed = 15;
 	bullet.damage = ship.bulletDamage;
 	bullet.tag = "bullet";

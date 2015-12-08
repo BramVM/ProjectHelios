@@ -49,9 +49,16 @@ var spawnMesh = function(data){
 	var scale = 7;
   var positionwrapper =  new THREE.Object3D();
 	var geometry = makeGeometry(data);
-  var material  = new THREE.MeshLambertMaterial({
-    vertexColors: true
-  });
+  if (data.material === 0) {
+    var material  = new THREE.MeshBasicMaterial({
+      vertexColors: true
+    });
+  }
+  else{
+    var material  = new THREE.MeshLambertMaterial({
+      vertexColors: true
+    });
+  }
   positionwrapper.surfacemesh = new THREE.Mesh( geometry, material );
   positionwrapper.surfacemesh.doubleSided = false;
   positionwrapper.surfacemesh.scale.set(scale,scale,scale);

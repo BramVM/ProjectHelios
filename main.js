@@ -68,16 +68,28 @@ mainModule.controller('mainController', ['$scope', function($scope) {
     player.spotLightLeft.position.set( 0, 0, 100 );
     player.spotLightLeft.distance = 1000;
     player.spotLightLeft.target.position.set( 0, 0, 0);
-    player.spotLightLeft.position.y=-7*8;
+    player.spotLightLeft.position.y=0;
     player.spotLightLeft.position.x=7*3;
+    player.spotLightLeft.angle = Math.PI/2.5;
+    player.add( player.spotLightLeft );
     player.spotLightLeft.shadowMapVisible = true;
+
+    player.pointLightLeft = new THREE.PointLight( 0xffffff, 1, 50 );
+    player.pointLightLeft.position.set( 7*3, -7*9, 7 );
+    player.shipModel.add( player.pointLightLeft );
+
     player.spotLightRight = new THREE.SpotLight( 0xffffff);
     player.spotLightRight.position.set( 0, 0, 100 );
     player.spotLightRight.target.position.set( 0, 0, 0);
-    player.spotLightRight.position.y=-7*8;
+    player.spotLightRight.position.y=0;
     player.spotLightRight.position.x=-7*3;
-    player.add( player.spotLightLeft );
+    player.spotLightRight.angle = Math.PI/2.5;
     player.add( player.spotLightRight );
+    player.spotLightRight.shadowMapVisible = true;
+
+    player.pointLighRight = new THREE.PointLight( 0xffffff, 1, 50 );
+    player.pointLighRight.position.set( -7*3, -7*9, 7 );
+    player.shipModel.add( player.pointLighRight );
 
     var thruster1=voxelEffects.thruster(1,3,player.speed,player.engine.topspeed);
     thruster1.position.y=+7*8;

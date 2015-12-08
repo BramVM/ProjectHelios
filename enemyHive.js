@@ -108,9 +108,11 @@ function _ai(player){
 			if (range<backOffRange) enemies[i].moveBackward = true;
 			if (range<shootingRange) enemies[i].shoot = true;
 			var direction = cord.direction ( enemies[i].position, player.position );
-			var deviation = (Math.PI/2+direction - enemies[i].rotation.z);
+			var deviation = (direction - (enemies[i].rotation.z-Math.PI/2));
 			if(deviation>2*Math.PI) deviation = deviation - 2*Math.PI;
 			if(deviation>Math.PI) deviation = - (2*Math.PI - deviation);
+			if(deviation<-2*Math.PI) deviation = deviation + 2*Math.PI;
+			if(deviation<-Math.PI) deviation = 2*Math.PI + deviation;
 			//ease rotation
 			if(deviation>maneuverability) deviation = maneuverability;
 			if(deviation<-maneuverability) deviation = -maneuverability;
@@ -119,9 +121,11 @@ function _ai(player){
 		else{
 			if(enemies[i].biomeIntensity<0.5 || enemies[i].originBiomeId != enemies[i].biomeId){
 				direction = cord.direction ( enemies[i].position, enemies[i].biomeMid );
-				var deviation = (Math.PI/2+direction - enemies[i].rotation.z);
+				var deviation = (direction - (enemies[i].rotation.z - Math.PI/2));
 				if(deviation>2*Math.PI) deviation = deviation - 2*Math.PI;
 				if(deviation>Math.PI) deviation = - (2*Math.PI - deviation);
+				if(deviation<-2*Math.PI) deviation = deviation + 2*Math.PI;
+				if(deviation<-Math.PI) deviation = 2*Math.PI + deviation;
 				//ease rotation
 				if(deviation>maneuverability) deviation = maneuverability;
 				if(deviation<-maneuverability) deviation = -maneuverability;
