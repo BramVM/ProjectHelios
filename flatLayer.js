@@ -8,11 +8,21 @@ document.body.appendChild( textCanvas );
 
 var ctx=textCanvas.getContext("2d");
 
+_hitAlert = function(x, y, c, i) {
+    r = Math.sqrt(Math.pow(windowHalfX,2)+Math.pow(windowHalfY,2))
+    ctx.beginPath();
+    var rad = ctx.createRadialGradient(x, y, 1, x, y, r);
+    rad.addColorStop(0, 'rgba('+c+',0)');
+    rad.addColorStop(1, 'rgba('+c+','+i+')');
+    ctx.fillStyle = rad;
+    ctx.arc(x, y, r, 0, Math.PI*2, false);
+    ctx.fill();
+}
 _redraw = function( ){
+  ctx.clearRect(0, 0, textCanvas.width, textCanvas.height);
   ctx.font="15px munroregular";
   ctx.fillStyle = "white";
   ctx.textAlign = "center";
-  ctx.clearRect(0, 0, textCanvas.width, textCanvas.height);
   if (this.health && this.maxHealth) ctx.fillText( Math.round(this.health) + " / " + this.maxHealth, windowHalfX, windowHalfY+70 );
   _drawDroids();
   if (this.msgStr) {
@@ -20,6 +30,13 @@ _redraw = function( ){
     ctx.fillStyle = "rgba(255, 255, 255, "+ flatLayer.msgTmr +")";
     ctx.fillText( flatLayer.msgStr, windowHalfX, windowHalfY/2 );
   }
+  if (this.hitTmr>0) {
+    flatLayer.hitTmr = flatLayer.hitTmr-0.1;
+    _hitAlert(windowHalfX, windowHalfY, "255,0,0",flatLayer.hitTmr/12);
+  }
+}
+_hit = function(){
+  flatLayer.hitTmr = 3;
 }
 _message = function(string){
  flatLayer.msgStr = string;
@@ -110,6 +127,7 @@ function _resize() {
 var flatLayer = {
   redraw : _redraw,
   resize: _resize,
-  message: _message
+  message: _message,
+  hit: _hit
 }
 if (typeof(module) !== 'undefined') module.exports = flatLayer;

@@ -141,6 +141,7 @@ var _hit = function( ship ){
 		  ship.health = ship.health - collider.parent.damage;
 		  collider.parent.remove();
 		  if (ship.label === "player") {
+		  	flatLayer.hit();
 		  	flatLayer.health = ship.health;
 		  	flatLayer.maxHealth = ship.maxHealth;
 		  	flatLayer.redraw();
