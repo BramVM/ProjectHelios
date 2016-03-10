@@ -4,6 +4,7 @@ var seeder = require('./seeder');
 
 var player = new THREE.Object3D();
 var _collect = function (item){
+  this.timer = Math.round(100/item.share*this.searchTime);
   this.active = true;
   this.position = player.targetPlanet.mid;
   this.item = item;
@@ -27,7 +28,6 @@ player.pickUpDroid = function() {
     if(player.miningDroids[i].position && player.miningDroids[i].position.x === player.targetPlanet.mid.x && player.miningDroids[i].position.y === player.targetPlanet.mid.y && player.miningDroids[i].timer <= 0){
       player.miningDroids[i].active = false;
       player.miningDroids[i].position = undefined;
-      player.miningDroids[i].timer = player.miningDroids[i].searchTime;
       player.addItemToInventory(player.miningDroids[i].item.label, player.miningDroids[i].capacity)
     }
   };
@@ -90,8 +90,8 @@ player.miningDroids= [
   {
     label: "basic mining droid",
     capacity : 1,
-    searchTime : 5,
-    timer : 5,
+    searchTime : 1,
+    timer : 0,
     active : false,
     collect : _collect
   }

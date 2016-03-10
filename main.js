@@ -215,7 +215,12 @@ mainModule.controller('mainController', ['$scope', function($scope) {
         $scope.items = player.items;
         $scope.miningDroids = player.miningDroids;
         $scope.blueprints = player.blueprints;
-        player.targetPlanet && player.targetPlanet.items ? $scope.planetItems = player.targetPlanet.items :  $scope.planetItems = [];
+        if(player.targetPlanet && player.targetPlanet.items){
+         $scope.planetItems = player.targetPlanet.items;
+        }
+        else{
+          $scope.planetItems = [];
+        }
         if (player.targetPlanet){
           $scope.showPlanet = true;
         }

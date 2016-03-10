@@ -241,33 +241,40 @@ _addPlanetToTile = function(position, tileIndex){
 			for (b=0; b<biomes[0].planets.items.length;b++){
 				var notInItems = true;
 				for (m=0; m<planet.items.length;m++){
-					if (biomes[0].planets.items[b].label === planet.items[m].label){
-						notInitems = false;
-						planet.items[m].probability = planet.items[m].probability + biomes[0].planets.items[b].probability * (1-biomeObj.biomeIntensity);
-						planet.items[m].share = Math.round((planet.items[m].share + biomes[0].planets.items[b].share * (1-biomeObj.biomeIntensity))*100)/100;
-						Math.seedrandom(planet.items[m].label + position.x + position.y );
-						if (Math.random()>=planet.items[m].probability){
-							planet.items.splice(m,1);
-						}
+					if (biomes[0].planets.items[b].id === planet.items[m].id){
+						notInItems = false;
+						planet.items[m].probability = planet.items[m].probability + (biomes[0].planets.items[b].probability * (1-biomeObj.biomeIntensity));
+						planet.items[m].share = Math.round(planet.items[m].share + (biomes[0].planets.items[b].share * (1-biomeObj.biomeIntensity))*100)/100;
 					}
 				}
 				if (notInItems) {
-					var newItem = {
-						label: biomes[0].planets.items[b].label,
-						probability : biomes[0].planets.items[b].probability,
-						share : biomes[0].planets.items[b].share
-					};
-					newItem.probability = newItem.probability*(1-biomeObj.biomeIntensity);
-					newItem.share = Math.round(newItem.share*(1-biomeObj.biomeIntensity)*100)/100;
-					Math.seedrandom(newItem.label + position.x + position.y );
-					if (Math.random()<newItem.probability){
-						planet.items.push(newItem);
-					}
+					planet.items.push(biomes[0].planets.items[b]);
+					var index = planet.items.length-1;
+					planet.items[index].probability = planet.items[index].probability*(1-biomeObj.biomeIntensity);
+					planet.items[index].share = Math.round(planet.items[index].share*(1-biomeObj.biomeIntensity)*100)/100;
 				}
 			}
 		}
+		//checkSum composition
+		var finalItems = [];
+		var totalShare = 100;
+		for (var i = 0; i < planet.items.length; i++) {
+			Math.seedrandom(planet.items[i].label + position.x + position.y );
+			if(totalShare - planet.items[i].share >= 0 && Math.random()<= planet.items[i].probability && planet.items[i].share > 0){
+				finalItems.push(planet.items[i]);
+				totalShare = Math.round((totalShare - planet.items[i].share)*100)/100;
+			}
+		};
+		if (totalShare > 0){
+			var uselessMass = {
+				label: "junk",
+				probability : 1,
+				share : totalShare
+			};
+			finalItems.push(uselessMass);
+		}
 		//add to tile
-		tiles[ tileIndex ].planets.push(_createPlanet (radius, planet.position, planet.color, planet.items));
+		tiles[ tileIndex ].planets.push(_createPlanet (radius, planet.position, planet.color, finalItems));
 	}
 };
 var _visualizeTiles = function(position, tileIndex){

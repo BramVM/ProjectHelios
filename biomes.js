@@ -35,9 +35,22 @@ var biomes = [
             },
             items : [
                 {
+                    id: 1,
                     label: "iron",
-                    probability : 1,
+                    probability : 0.5,
                     share : 5
+                },
+                {
+                    id: 3,
+                    label: "copper",
+                    probability : 0.1,
+                    share : 3.6
+                },
+                {
+                    id: 2,
+                    label: "water",
+                    probability : 1,
+                    share : 60
                 }
             ]
         },
@@ -77,8 +90,27 @@ var biomes = [
                 g : 102,
                 b : 51,
                 delta: 20
-            }
-
+            },
+            items : [
+                {
+                    id: 5,
+                    label: "lava",
+                    probability : 0.2,
+                    share : 20
+                },
+                {
+                    id: 3,
+                    label: "copper",
+                    probability : 0.5,
+                    share : 5
+                },
+                {
+                    id: 7,
+                    label: "gold",
+                    probability : 0.15,
+                    share : 3.6
+                }
+            ]
         },
         enemies : [
             {   
@@ -120,8 +152,27 @@ var biomes = [
                 g : 80,
                 b : 225,
                 delta: 20
-            }
-
+            },
+            items : [
+                {
+                    id: 2,
+                    label: "water",
+                    probability : 1,
+                    share : 80
+                },
+                {
+                    id: 1,
+                    label: "iron",
+                    probability : 0.2,
+                    share : 3
+                },
+                {
+                    id: 4,
+                    label: "lithium",
+                    probability : 0.15,
+                    share : 3.6
+                }
+            ]
         },
         enemies : [
             {   
@@ -163,7 +214,27 @@ var biomes = [
                 g : 147,
                 b : 20,
                 delta: 20
-            }
+            },
+            items : [
+                {
+                    id: 6,
+                    label: "acid",
+                    probability : 1,
+                    share : 70
+                },
+                {
+                    id : 1,
+                    label: "iron",
+                    probability : 0.2,
+                    share : 3
+                },
+                {
+                    id: 4,
+                    label: "lithium",
+                    probability : 0.15,
+                    share : 3.6
+                }
+            ]
         },
         enemies : [
             {   
