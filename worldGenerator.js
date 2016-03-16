@@ -2,6 +2,9 @@ var seedrandom = require('seedrandom');
 var seeder = require('./seeder');
 var biomes = require('./biomes');
 var scene = require('./scene.js');
+var threehelper = require('./threehelper.js');
+var itemDb = require('./items.js');
+var _ = require('underscore');
 
 
 function _makeEllipsoid(l, h, f) {
@@ -55,7 +58,7 @@ function _createPlanet(radius, position, color, items) {
 	surfacemesh.mid = surfacemesh.position.clone();
   	surfacemesh.mid.x = surfacemesh.mid.x + 7*radius;
   	surfacemesh.mid.y = surfacemesh.mid.y + 7*radius;
-	surfacemesh.items = items;
+	surfacemesh.items = clone(items);
 	return surfacemesh;
 }
 
@@ -232,9 +235,10 @@ _addPlanetToTile = function(position, tileIndex){
 		planet.items = [];
 		if(biomeObj.biome.planets.items){
 			for (b=0; b<biomeObj.biome.planets.items.length; b++){
-				planet.items.push(biomeObj.biome.planets.items[b]);
-				planet.items[b].probability = planet.items[b].probability*biomeObj.biomeIntensity;
-				planet.items[b].share = Math.round(planet.items[b].share*biomeObj.biomeIntensity*100)/100;
+				var item = _.find(itemDb, function(num){ return num.id === biomeObj.biome.planets.items[b].id; });
+				planet.items.push(clone(item));
+				planet.items[b].probability = biomeObj.biome.planets.items[b].probability*biomeObj.biomeIntensity;
+				planet.items[b].share = Math.round(biomeObj.biome.planets.items[b].share*biomeObj.biomeIntensity*100)/100;
 			}
 		}
 		if(biomes[0].planets.items){
@@ -244,14 +248,15 @@ _addPlanetToTile = function(position, tileIndex){
 					if (biomes[0].planets.items[b].id === planet.items[m].id){
 						notInItems = false;
 						planet.items[m].probability = planet.items[m].probability + (biomes[0].planets.items[b].probability * (1-biomeObj.biomeIntensity));
-						planet.items[m].share = Math.round(planet.items[m].share + (biomes[0].planets.items[b].share * (1-biomeObj.biomeIntensity))*100)/100;
+						planet.items[m].share = Math.round((planet.items[m].share + (biomes[0].planets.items[b].share * (1-biomeObj.biomeIntensity)))*100)/100;
 					}
 				}
 				if (notInItems) {
-					planet.items.push(biomes[0].planets.items[b]);
+					var item = _.find(itemDb, function(num){ return num.id === biomes[0].planets.items[b].id; });
+					planet.items.push(clone(item));
 					var index = planet.items.length-1;
-					planet.items[index].probability = planet.items[index].probability*(1-biomeObj.biomeIntensity);
-					planet.items[index].share = Math.round(planet.items[index].share*(1-biomeObj.biomeIntensity)*100)/100;
+					planet.items[index].probability = biomes[0].planets.items[b].probability*(1-biomeObj.biomeIntensity);
+					planet.items[index].share = Math.round(biomes[0].planets.items[b].share*(1-biomeObj.biomeIntensity)*100)/100;
 				}
 			}
 		}
@@ -266,12 +271,10 @@ _addPlanetToTile = function(position, tileIndex){
 			}
 		};
 		if (totalShare > 0){
-			var uselessMass = {
-				label: "junk",
-				probability : 1,
-				share : totalShare
-			};
-			finalItems.push(uselessMass);
+			var junk = 	clone(_.find(itemDb, function(num){ return num.id === 0; }));
+			junk.probability = 1;
+			junk.share = totalShare;
+			finalItems.push(junk);
 		}
 		//add to tile
 		tiles[ tileIndex ].planets.push(_createPlanet (radius, planet.position, planet.color, finalItems));
