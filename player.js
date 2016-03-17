@@ -28,39 +28,39 @@ player.pickUpDroid = function() {
     if(player.miningDroids[i].position && player.miningDroids[i].position.x === player.targetPlanet.mid.x && player.miningDroids[i].position.y === player.targetPlanet.mid.y && player.miningDroids[i].timer <= 0){
       player.miningDroids[i].active = false;
       player.miningDroids[i].position = undefined;
-      player.addItemToInventory(player.miningDroids[i].item.label, player.miningDroids[i].capacity)
+      player.addItemToInventory(player.miningDroids[i].item, player.miningDroids[i].capacity)
     }
   };
 }
-player.checkItemInInventory = function(label, quantity){
+player.checkItemInInventory = function(id, quantity){
   var itemFound = false;
   for (var ii = 0; ii < player.items.length; ii++) {
-    if (player.items[ii].label === label && player.items[ii].quantity >= quantity){
+    if (player.items[ii][0] === id && player.items[ii][1] >= quantity){
       itemFound = true;
     }
   }
   return itemFound;
 };
-player.addItemToInventory = function(label, quantity){
+player.addItemToInventory = function(item, quantity){
   var found = false;
   for (var i = 0; i < player.items.length; i++) {
-    if (player.items[i].label === label){
-      player.items[i].quantity = player.items[i].quantity+quantity;
+    if (player.items[i][0] === item.id){
+      player.items[i][1] = player.items[i][1]+quantity;
       found = true;
     }
   };
-  if (!found) player.items.push({label:label, quantity:quantity});
-  flatLayer.message(quantity + " " + label + " added to inventory");
+  if (!found) player.items.push([item.id, quantity]);
+  flatLayer.message(quantity + " " + item.label + " added to inventory");
   player.updateCraftableBlueprint();
 }
-player.removeItemFromInventory = function(label, quantity){
+player.removeItemFromInventory = function(id, quantity){
   for (var i = 0; i < player.items.length; i++) {
-    if (player.items[i].label === label){
-      player.items[i].quantity = player.items[i].quantity-quantity;
-      if(player.items[i].quantity<=0) player.items.splice(i,1);
+    if (player.items[i][0] === id){
+      player.items[i][1] = player.items[i][1]-quantity;
+      if(player.items[i][1]<=0) player.items.splice(i,1);
     }
   };
-  flatLayer.message(quantity + " " + label + " removed from inventory");
+  flatLayer.message(quantity + " " + id + " removed from inventory");
   player.updateCraftableBlueprint();
 } 
 function droidProgress (){
@@ -77,14 +77,18 @@ function droidProgress (){
 }
 
 player.engine = {
-  label: "basic engine",
+  id: 8,
+  label: "basic engine",  
   acceleration : 0.07,
-  topspeed :7
+  topspeed :7,
+  type: 1
 };
 player.sideEngine = {
+  id: 9,
   label: "basic side engine",
   acceleration : 0.05,
-  topspeed :3
+  topspeed :3,
+  type:2
 };
 player.miningDroids= [
   {
@@ -113,12 +117,7 @@ player.blueprints = [
     }
   }
 ]
-player.items=[
-  {
-    label : "iron",
-    quantity : 5
-  }
-];
+player.items = [[1,5],[8,1],[9,1],[10,1]];
 droidProgress();
 player.moveForward = false;
 player.moveBackward = false;

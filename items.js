@@ -40,15 +40,30 @@ var items = [
         type: 0
     },
     {
-        id: 9,
-        label : "miningdroid schematic",
-        result : {
-            id: 8,
-            label: "miningdroid",
-            type: 2
-        },
-        recipe : [[1,2],[3,1]],
+        id: 7,
+        label: "gold",
+        type: 0
+    },
+    {
+        id: 8,
+        label: "basic engine",
+        acceleration : 0.07,
+        topspeed :7,
         type: 1
+    },
+    {
+        id: 9,
+        label: "basic side engine",
+        acceleration : 0.05,
+        topspeed :3,
+        type: 2
+    },
+    {
+        id: 10,
+        label: "basic mining droid",
+        capacity : 1,
+        searchTime : 1,
+        type: 3
     }
 ];
 

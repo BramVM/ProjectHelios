@@ -8,6 +8,8 @@ mainModule.controller('mainController', ['$scope', function($scope) {
   var scene = require('./scene.js');
   var voxelEffects = require('./voxelEffects.js');
   var lighting = require('./lighting.js');
+  var itemDb = require('./items.js');
+  var _ = require('underscore');
   
   if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
   var mouse = {
@@ -183,7 +185,26 @@ mainModule.controller('mainController', ['$scope', function($scope) {
     //set lighting
     lighting.updateLighting(player.position.x, player.position.y);
   }
-  
+  $scope.unequipEngine = function(){
+    player.engine = {
+      id: false,
+      acceleration : 0,
+      topspeed : 1
+    };
+  }
+  $scope.unequipSideEngine = function(){
+    player.sideEngine = {
+      id: false,
+      acceleration : 0,
+      topspeed : 1
+    };
+  }
+  $scope.equipEngine = function(engine){
+    player.engine = engine;
+  }
+   $scope.equipSideEngine = function(sideEngine){
+    player.sideEngine = sideEngine;
+  }
   function updateInterface (){  
     if(!$scope.$$phase) {
       $scope.$apply(function(){
@@ -212,7 +233,12 @@ mainModule.controller('mainController', ['$scope', function($scope) {
           $scope.listAvailableDroids = player.listAvailableDroids(item);
         }
         $scope.engine = player.engine;
-        $scope.items = player.items;
+        $scope.sideEngine = player.sideEngine;
+        $scope.items = [];
+        for (var i = 0; i < player.items.length; i++) {
+          $scope.items[i] = _.find(itemDb, function(num){ return num.id === player.items[i][0]; });
+          $scope.items[i].quantity = player.items[i][1];
+        };
         $scope.miningDroids = player.miningDroids;
         $scope.blueprints = player.blueprints;
         if(player.targetPlanet && player.targetPlanet.items){

@@ -102,12 +102,21 @@
 				<div class="btn btn-block btn-primary" ng-click="menu = !menu; panel = undefined">Menu</div>
 				<div ng-show="menu" class="panel panel-default">
 				  <div class="panel-heading" ng-click="panel = 'inventory'">inventory</div>
-				  <div class="panel-body" ng-if="panel === 'inventory'" ng-repeat="item in items">
+				  <div class="panel-body" ng-if="panel === 'inventory'" ng-repeat="item in items | filter: { type: 0 }">
 					{{item.quantity + " " + item.label}}
 				  </div>
+				  <div class="panel-body" ng-if="panel === 'inventory'"  ng-repeat="item in items | filter: { type: 1 , id:'!'+engine.id}">
+					{{item.quantity + " " + item.label}} <button ng-if="engine.id!=item.id" ng-click="equipEngine(item)">equip</button>
+				  </div>
+				  <div class="panel-body" ng-if="panel === 'inventory'"  ng-repeat="item in items | filter: { type: 2 , id:'!'+sideEngine.id}">
+					{{item.quantity + " " + item.label}} <button ng-if="sideEngine.id!=item.id" ng-click="equipSideEngine(item)">equip</button>
+				  </div>
 				  <div class="panel-heading" ng-click="panel = 'equipment'">equipment</div>
-				  <div class="panel-body" ng-if="panel === 'equipment'">
-					{{engine.label}}
+				  <div class="panel-body" ng-if="panel === 'equipment' && engine.id ">
+					{{engine.label}} <button ng-click="unequipEngine();">unequip</button>
+				  </div>
+				  <div class="panel-body" ng-if="panel === 'equipment' && sideEngine.id ">
+					{{sideEngine.label}} <button ng-click="unequipSideEngine();">unequip</button>
 				  </div>
 				  <div class="panel-heading" ng-click="panel = 'mining'">mining droids</div>
 				  <div class="panel-body" ng-if="panel === 'mining'" ng-repeat="miningDroid in miningDroids">
