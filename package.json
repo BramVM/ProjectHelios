@@ -18,7 +18,8 @@
     "three-dev": "latest",
     "uglify-js": "^2.5.0",
     "uglifyify": "^3.0.1",
-    "watchify": "latest"
+    "watchify": "latest",
+    "underscore": "latest"
   },
   "description": "helios game project",
   "engines": {
