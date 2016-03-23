@@ -58,7 +58,10 @@
 				max-height: 100%;
 				width: 100%;
 			}
-
+			.panel-heading button.pull-right{
+				margin-right: -5px;
+				margin-top: -3px;
+			}
 		</style>
 		<link rel="stylesheet" type="text/css" href="node_modules/bootstrap/dist/css/bootstrap.css">
 		<script src="node_modules/angular/angular.min.js"></script>
@@ -83,57 +86,93 @@
 		<script src="bundle.js"></script>
 		
 		<div ng-app="mainModule" ng-controller="mainController" class="interface">
-			<div class="planet-info col-xs-6 col-sm-3 col-lg-2">
-				<div ng-show="showPlanet" class="panel panel-default">
-					<div class="panel-heading" ng-if="showPlanet">Planet composition</div>
-					<div class="panel-body"  ng-repeat="item in planetItems">
-						<button ng-click="selectItem(item)">{{item.label}}</button> {{item.share}}%
-					</div>
-					<div class="panel-body" ng-if="showDroidlist && listAvailableDroids.length>0">
-						mine {{wantedItem.label}} with: <button ng-repeat="droid in listAvailableDroids" ng-click="collect(droid);">{{droid.label}}</button>
-					</div>
-					<div class="panel-body" ng-if="showDroidlist && !listAvailableDroids.length>0">
-						no mining droids available to mine {{wantedItem.label}}
+			<div class="container-fluid">
+				<div class="planet-info col-xs-12 col-sm-3 col-lg-2">
+					<div ng-show="showPlanet" class="panel panel-default">
+						<div class="panel-heading" ng-if="showPlanet">Planet composition</div>
+						<div class="panel-body"  ng-repeat="item in planetItems">
+							<button ng-click="selectItem(item)">{{item.label}}</button> {{item.share}}%
+						</div>
+						<div class="panel-body" ng-if="showDroidlist && listAvailableDroids.length>0">
+							mine {{wantedItem.label}} with: <button ng-repeat="droid in listAvailableDroids" ng-click="collect(droid);">{{droid.label}}</button>
+						</div>
+						<div class="panel-body" ng-if="showDroidlist && !listAvailableDroids.length>0">
+							no mining droids available to mine {{wantedItem.label}}
+						</div>
 					</div>
 				</div>
-			</div>
-			<div class="xs-hidden col-sm-6 col-lg-8"></div>
-			<div class="menu col-xs-6 col-sm-3 col-lg-2">
-				<div class="btn btn-block btn-primary" ng-click="menu = !menu; panel = undefined">Menu</div>
-				<div ng-show="menu" class="panel panel-default">
-				  <div class="panel-heading" ng-click="panel = 'inventory'">inventory</div>
-				  <div class="panel-body" ng-if="panel === 'inventory'" ng-repeat="item in items | filter: { type: 0 }">
-					{{item.quantity + " " + item.label}}
-				  </div>
-				  <div class="panel-body" ng-if="panel === 'inventory'"  ng-repeat="item in items | filter: { type: 1 , id:'!'+engine.id}">
-					{{item.quantity + " " + item.label}} <button ng-if="engine.id!=item.id" ng-click="equipEngine(item)">equip</button>
-				  </div>
-				  <div class="panel-body" ng-if="panel === 'inventory'"  ng-repeat="item in items | filter: { type: 2 , id:'!'+sideEngine.id}">
-					{{item.quantity + " " + item.label}} <button ng-if="sideEngine.id!=item.id" ng-click="equipSideEngine(item)">equip</button>
-				  </div>
-				  <div class="panel-heading" ng-click="panel = 'equipment'">equipment</div>
-				  <div class="panel-body" ng-if="panel === 'equipment' && engine.id ">
-					{{engine.label}} <button ng-click="unequipEngine();">unequip</button>
-				  </div>
-				  <div class="panel-body" ng-if="panel === 'equipment' && sideEngine.id ">
-					{{sideEngine.label}} <button ng-click="unequipSideEngine();">unequip</button>
-				  </div>
-				  <div class="panel-heading" ng-click="panel = 'mining'">mining droids</div>
-				  <div class="panel-body" ng-if="panel === 'mining'" ng-repeat="miningDroid in miningDroids">
-					{{miningDroid.label}} <div class="btn btn-primary" ng-click="showDroidInfo(miningDroid)">i</div>
-				  </div>
-				  <div class="panel-heading" ng-click="panel = 'blueprints'">blueprints</div>
-				  <div class="panel-body" ng-if="panel === 'blueprints'" ng-repeat="blueprint in blueprints">
-					{{blueprint.label}} <div ng-show="blueprint.craftable" class="btn btn-default" ng-click="craft(blueprint)">craft</div>
-				  </div>
+				<div class="xs-hidden col-sm-6 col-lg-8"></div>
+				<div class="menu col-xs-12 col-sm-3 col-lg-2" >
+					<div class="btn btn-block btn-primary" ng-click="menu = !menu; panel = undefined">Menu</div>
+					<div ng-show="menu" class="panel panel-default">
+					  <div class="panel-heading" ng-click="panel = 'inventory'">inventory</div>
+					  <div class="panel-body" ng-if="panel === 'inventory'" ng-repeat="item in items | filter: { type: 0 }">
+						{{item.quantity + " " + item.label}}
+					  </div>
+					  <div class="panel-body" ng-if="panel === 'inventory'"  ng-repeat="item in items | filter: { type: 1 , id:'!'+engine.id}">
+						{{item.quantity + " " + item.label}} <button ng-if="engine.id!=item.id" ng-click="equipEngine(item)"><span class="glyphicon glyphicon-open-file"></span></button>
+					  </div>
+					  <div class="panel-body" ng-if="panel === 'inventory'"  ng-repeat="item in items | filter: { type: 2 , id:'!'+sideEngine.id}">
+						{{item.quantity + " " + item.label}} <button ng-if="sideEngine.id!=item.id" ng-click="equipSideEngine(item)"><span class="glyphicon glyphicon-open-file"></span></button>
+					  </div>
+					  <div class="panel-body" ng-if="panel === 'inventory'"  ng-repeat="item in items | filter: { type: 3 }">
+						{{item.quantity + " " + item.label}} <button ng-click="showDroidInfo(item)"><span class="glyphicon glyphicon-info-sign"></span></button><button ng-click="equipDroid(item)"><span class="glyphicon glyphicon-open-file"></span></button>
+					  </div>
+					  <div class="panel-heading" ng-click="panel = 'equipment'">equipment</div>
+					  <div class="panel-body" ng-if="panel === 'equipment' && engine.id ">
+						{{engine.label}} <button ng-click="unequipEngine();"><span class="glyphicon glyphicon-save-file"></span></button>
+					  </div>
+					  <div class="panel-body" ng-if="panel === 'equipment' && sideEngine.id ">
+						{{sideEngine.label}} 
+						<button ng-click="unequipSideEngine();"><span class="glyphicon glyphicon-save-file"></span></button>
+					  </div>
+					  <div class="panel-heading" ng-click="panel = 'mining'">mining droids</div>
+					  <div class="panel-body" ng-if="panel === 'mining'" ng-repeat="miningDroid in miningDroids">
+						{{miningDroid.label}} 
+						<button ng-click="showDroidInfo(miningDroid)"><span class="glyphicon glyphicon-info-sign"></span></button>
+						<button ng-click="unequipDroid(miningDroid);"><span class="glyphicon glyphicon-save-file"></span></button>
+					  </div>
+					  <div class="panel-heading" ng-click="panel = 'blueprints'">blueprints</div>
+					  <div class="panel-body" ng-if="panel === 'blueprints'" ng-repeat="blueprint in blueprints">
+						{{blueprint.label}} <div ng-show="blueprint.craftable" class="btn btn-default" ng-click="craft(blueprint)">craft</div>
+					  </div>
+					</div>
 				</div>
-			</div>
-			<div ng-if="droidInfo && droidInfo.show">
-				<input type="text" class="form-control" id="name" ng-model="droidInfo.droid.label">
-				<div class="btn" ng-click="droidInfo.show = false">X</div>
-				<div class="panel-body" ng-repeat="upgrade in droidInfo.droid.upgrades">
-					{{upgrade.label}} 
-					<div class="btn btn-primary" ng-click="removeUpgrade(droidInfo.droid, $index)">remove</div>
+				<div class="col-xs-12">
+					<div ng-if="droidInfo && droidInfo.show" class=" panel panel-default">
+						<div class="panel-heading contains-buttons">
+							{{droidInfo.droid.label}}
+							<button class="pull-right" ng-click="droidInfo.show = false">X</button>
+						</div>
+						<div class="panel-body">
+							<div ng-if="droidInfo.droid.active">
+								<div class="col-xs-12">
+									Status: searching for {{droidInfo.droid.item.label}}
+								</div>
+								<div class="col-xs-12 col-sm-9">
+									<div class="progress">
+										 <div class="progress-bar" role="progressbar" aria-valuenow="{{droidInfo.droid.timer}}" aria-valuemin="0" aria-valuemax="{{droidInfo.droid.time}}" style="width: {{100-(droidInfo.droid.timer/droidInfo.droid.time*100)}}%;">
+										    <span ng-if="droidInfo.droid.timer>0">{{droidInfo.droid.timer}} sec</span><span ng-if="droidInfo.droid.timer===0">Ready for pickup</span>
+										</div>
+									</div>
+								</div>
+								<button ng-click="cancelCollect(droidInfo.droid);" class="col-xs-12 col-sm-3"> cancel </button>
+							</div>
+							<div ng-if="droidInfo.droid.active == false">
+								Status: idle
+							</div>
+							<div class="col-xs-12">
+								capacity: {{droidInfo.droid.capacity}}
+							</div>
+							<div class="col-xs-12">
+								Search modifier: {{droidInfo.droid.capacity * 100}} %
+							</div>
+							<div class="panel-body" ng-repeat="upgrade in droidInfo.droid.upgrades">
+								{{upgrade.label}} 
+								<div class="btn btn-primary" ng-click="removeUpgrade(droidInfo.droid, $index)">remove</div>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>

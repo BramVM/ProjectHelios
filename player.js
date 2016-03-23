@@ -4,10 +4,18 @@ var seeder = require('./seeder');
 
 var player = new THREE.Object3D();
 var _collect = function (item){
-  this.timer = Math.round(100/item.share*this.searchTime);
+  this.time = Math.round(100/item.share*this.searchTime);
+  this.timer = this.time;
   this.active = true;
   this.position = player.targetPlanet.mid;
   this.item = item;
+}
+var _cancelCollect = function (){
+  this.time = 0;
+  this.timer = 0;
+  this.active = false;
+  this.position = false;
+  this.item = false;
 }
 player.updateCraftableBlueprint = function(){
   for (var b = 0; b < player.blueprints.length; b++) {
@@ -90,14 +98,15 @@ player.sideEngine = {
   topspeed :3,
   type:2
 };
-player.miningDroids= [
+player.miningDroids = [
   {
-    label: "basic mining droid",
+    label: "basic droid",
     capacity : 1,
     searchTime : 1,
     timer : 0,
     active : false,
-    collect : _collect
+    collect : _collect,
+    cancelCollect: _cancelCollect
   }
 ];
 flatLayer.droids = player.miningDroids;

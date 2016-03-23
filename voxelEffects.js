@@ -18,11 +18,18 @@ var _thruster = function (width,length,speed,topspeed){
 }
 var _animateThruster = function(){
 	for (var i = 0; i < thrustArray.length; i++) {
-		var speedMultiplyer = player.speed/player.engine.topspeed;
-		var thrustMultiplyer = - 0.35 + Math.random()*0.35;
-		for (var ii = 0; ii < thrustArray[i].children.length; ii++) {
-			thrustArray[i].children[ii].material.opacity = thrustArray[i].children[ii].opacity * speedMultiplyer + thrustMultiplyer;
-		};
+		if(player.engine.topspeed>0){
+			var speedMultiplyer = player.speed/player.engine.topspeed;
+			var thrustMultiplyer = - 0.35 + Math.random()*0.35;
+			for (var ii = 0; ii < thrustArray[i].children.length; ii++) {
+				thrustArray[i].children[ii].material.opacity = thrustArray[i].children[ii].opacity * speedMultiplyer + thrustMultiplyer;
+			};
+		}
+		else{
+			for (var ii = 0; ii < thrustArray[i].children.length; ii++) {
+				thrustArray[i].children[ii].material.opacity = 0;
+			};
+		}
 	};
 }
 voxelEffects = {

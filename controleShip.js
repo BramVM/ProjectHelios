@@ -116,7 +116,8 @@ var _shipMovement = function(ship,direction){
 
 	//roll animation
 	var maxRollRotation = Math.PI/6;
-	var sideRoll = ship.sideSpeed*maxRollRotation/ship.sideEngine.topspeed;
+	var sideRoll = 0;
+	if (ship.sideEngine.topspeed != 0) sideRoll = ship.sideSpeed*maxRollRotation/ship.sideEngine.topspeed;
 	if ( sideRoll > maxRollRotation ) sideRoll = maxRollRotation;
 	if ( sideRoll < -maxRollRotation ) sideRoll = -maxRollRotation;
 	if(ship.shipModel){

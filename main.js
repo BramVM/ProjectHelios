@@ -185,25 +185,30 @@ mainModule.controller('mainController', ['$scope', function($scope) {
     //set lighting
     lighting.updateLighting(player.position.x, player.position.y);
   }
-  $scope.unequipEngine = function(){
+  $scope.unequipEngine = function(selectedEngine){
     player.engine = {
       id: false,
-      acceleration : 0,
-      topspeed : 1
+      acceleration : 0.01,
+      topspeed : 0
     };
   }
   $scope.unequipSideEngine = function(){
     player.sideEngine = {
       id: false,
-      acceleration : 0,
-      topspeed : 1
+      acceleration : 0.01,
+      topspeed : 0
     };
   }
   $scope.equipEngine = function(engine){
     player.engine = engine;
+    engine.equipped = true;
   }
-   $scope.equipSideEngine = function(sideEngine){
+  $scope.equipSideEngine = function(sideEngine){
     player.sideEngine = sideEngine;
+    sideEngine.equipped = true;
+  }
+  $scope.equipDroid = function(droid){
+    //player.miningDroids.push(droid);
   }
   function updateInterface (){  
     if(!$scope.$$phase) {
@@ -226,6 +231,9 @@ mainModule.controller('mainController', ['$scope', function($scope) {
         $scope.collect = function(droid){
           droid.collect($scope.wantedItem);
           $scope.listAvailableDroids = player.listAvailableDroids($scope.wantedItem);
+        }
+        $scope.cancelCollect = function(droid){
+          droid.cancelCollect();
         }
         $scope.selectItem = function(item) {
           $scope.showDroidlist = true;

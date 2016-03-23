@@ -60,7 +60,7 @@ var items = [
     },
     {
         id: 10,
-        label: "basic mining droid",
+        label: "basic droid",
         capacity : 1,
         searchTime : 1,
         type: 3
