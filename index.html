@@ -147,7 +147,7 @@
 						<div class="panel-body">
 							<div ng-if="droidInfo.droid.active">
 								<div class="col-xs-12">
-									Status: searching for {{droidInfo.droid.item.label}}
+									Status: searching for <b>{{droidInfo.droid.item.label}}</b>
 								</div>
 								<div class="col-xs-12 col-sm-9">
 									<div class="progress">
@@ -158,7 +158,7 @@
 								</div>
 								<button ng-click="cancelCollect(droidInfo.droid);" class="col-xs-12 col-sm-3"> cancel </button>
 							</div>
-							<div ng-if="droidInfo.droid.active == false">
+							<div class="col-xs-12" ng-if="droidInfo.droid.active == false">
 								Status: idle
 							</div>
 							<div class="col-xs-12">

@@ -65,18 +65,14 @@ function _createEnemy(location){
 				enemies[enemyIndex].tag = "ai";
 				enemies[enemyIndex].engine = enemyData[ii].engine;
 				enemies[enemyIndex].sideEngine = enemyData[ii].sideEngine;
-				enemies[enemyIndex].attackSpeed = enemyData[ii].attackSpeed;
-				enemies[enemyIndex].bulletRange = enemyData[ii].bulletRange;
-				enemies[enemyIndex].bulletDamage = enemyData[ii].bulletDamage;
-				enemies[enemyIndex].bulletModelData = enemyData[ii].bulletModel;
-				enemies[enemyIndex].recoil = enemyData[ii].recoil;
+				enemies[enemyIndex].gun = enemyData[ii].gun;
 				enemies[enemyIndex].health = enemyData[ii].health;
 				enemies[enemyIndex].remove = removeAi;
 
 				enemies[enemyIndex].destination = location;
 				enemies[enemyIndex].trajectory=0;
 
-				enemies[enemyIndex].attackDelay = enemies[enemyIndex].attackSpeed;
+				enemies[enemyIndex].attackDelay = enemies[enemyIndex].gun.attackSpeed;
 				enemies[enemyIndex].speed = 0;
 				enemies[enemyIndex].sideSpeed = 0;
 

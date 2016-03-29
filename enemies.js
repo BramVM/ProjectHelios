@@ -1,10 +1,13 @@
 enemies = [
     {
         label : "test1",
-        attackSpeed : 20,
-        bulletRange : 2500,
-        bulletDamage : 4,
-        bulletModel : require('./models/bullet.js'),
+        gun : {
+          accuracy : 100,
+          attackSpeed : 20,
+          bulletRange : 2500,
+          bulletDamage : 4,
+          bulletModelData : require('./models/bullet.js')
+        },
         health : 100,
         engine : {
           label: "bad engine",
@@ -24,10 +27,13 @@ enemies = [
     },
     {
         label : "blueBaron",
-        attackSpeed : 20,
-        bulletRange : 2500,
-        bulletDamage : 1,
-        bulletModel : require('./models/bullet.js'),
+        gun : {
+          accuracy : 100,
+          attackSpeed : 20,
+          bulletRange : 2500,
+          bulletDamage : 1,
+          bulletModelData : require('./models/bullet.js')
+        },
         health : 100,
         engine : {
           label: "bad engine",
@@ -47,11 +53,14 @@ enemies = [
     },
     {
         label : "redBaron",
-        attackSpeed : 60,
-        bulletRange : 2500,
-        recoil : 7,
-        bulletDamage : 20,
-        bulletModel : require('./models/cannon_bullet.js'),
+        gun : {
+          accuracy : 100,
+          attackSpeed : 60,
+          bulletRange : 2500,
+          recoil : 7,
+          bulletDamage : 20,
+          bulletModelData : require('./models/cannon_bullet.js')
+        },
         health : 200,
         engine : {
           label: "bad engine",
@@ -71,10 +80,13 @@ enemies = [
     },
     {
         label : "greenBaron",
-        attackSpeed : 20,
-        bulletRange : 2500,
-        bulletDamage : 1,
-        bulletModel : require('./models/bullet.js'),
+        gun : {
+          accuracy : 100,
+          attackSpeed : 20,
+          bulletRange : 2500,
+          bulletDamage : 1,
+          bulletModelData : require('./models/bullet.js')
+        },
         health : 100,
         engine : {
           label: "bad engine",

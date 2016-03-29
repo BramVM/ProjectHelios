@@ -98,6 +98,14 @@ player.sideEngine = {
   topspeed :3,
   type:2
 };
+player.gun = {
+  label: "basic gun",
+  accuracy: 98.5,
+  attackSpeed : 10,
+  bulletRange : 2500,
+  bulletDamage : 20,
+  bulletModelData : require('./models/bullet.js')
+};
 player.miningDroids = [
   {
     label: "basic droid",
@@ -142,10 +150,6 @@ player.remove = function(){
   this.health = this.maxHealth;
 };
 player.health = player.maxHealth;
-player.attackSpeed = 10;
-player.bulletRange = 2500;
-player.bulletDamage = 20;
-player.bulletModelData = require('./models/bullet.js');
 player.label = "player";
 player.shipModelData = model;
 player.shipModel = spawnMesh(model);

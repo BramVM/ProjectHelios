@@ -28,7 +28,7 @@ mainModule.controller('mainController', ['$scope', function($scope) {
   camera, renderer;
 
   //namespace variables
-  player.attackDelay = player.attackSpeed;
+  player.attackDelay = player.gun.attackSpeed;
   player.speed = 0;
   player.sideSpeed = 0;
   init();
