@@ -109,13 +109,13 @@
 					  <div class="panel-body" ng-if="panel === 'inventory'" ng-repeat="item in items | filter: { type: 0 }">
 						{{item.quantity + " " + item.label}}
 					  </div>
-					  <div class="panel-body" ng-if="panel === 'inventory'"  ng-repeat="item in items | filter: { type: 1 , id:'!'+engine.id}">
-						{{item.quantity + " " + item.label}} <button ng-if="engine.id!=item.id" ng-click="equipEngine(item)"><span class="glyphicon glyphicon-open-file"></span></button>
+					  <div class="panel-body" ng-if="panel === 'inventory'"  ng-repeat="item in items | filter: { type: 1 , quantity:'!'+0 }">
+						{{item.quantity + " " + item.label}} <button ng-click="equipEngine(item)"><span class="glyphicon glyphicon-open-file"></span></button>
 					  </div>
-					  <div class="panel-body" ng-if="panel === 'inventory'"  ng-repeat="item in items | filter: { type: 2 , id:'!'+sideEngine.id}">
-						{{item.quantity + " " + item.label}} <button ng-if="sideEngine.id!=item.id" ng-click="equipSideEngine(item)"><span class="glyphicon glyphicon-open-file"></span></button>
+					  <div class="panel-body" ng-if="panel === 'inventory'"  ng-repeat="item in items | filter: { type: 2 , quantity:'!'+0 }">
+						{{item.quantity + " " + item.label}} <button ng-click="equipSideEngine(item)"><span class="glyphicon glyphicon-open-file"></span></button>
 					  </div>
-					  <div class="panel-body" ng-if="panel === 'inventory'"  ng-repeat="item in items | filter: { type: 3 }">
+					  <div class="panel-body" ng-if="panel === 'inventory'"  ng-repeat="item in items | filter: { type: 3,  quantity:'!'+0 }">
 						{{item.quantity + " " + item.label}} <button ng-click="showDroidInfo(item)"><span class="glyphicon glyphicon-info-sign"></span></button><button ng-click="equipDroid(item)"><span class="glyphicon glyphicon-open-file"></span></button>
 					  </div>
 					  <div class="panel-heading" ng-click="panel = 'equipment'">equipment</div>

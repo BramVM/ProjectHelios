@@ -1,6 +1,8 @@
 var flatLayer = require('./flatLayer.js');
 model = require('./models/mainShip.js');
 var seeder = require('./seeder');
+var _ = require('underscore');
+var itemDb = require('./items.js');
 
 var player = new THREE.Object3D();
 var _collect = function (item){
@@ -42,8 +44,8 @@ player.pickUpDroid = function() {
 }
 player.checkItemInInventory = function(id, quantity){
   var itemFound = false;
-  for (var ii = 0; ii < player.items.length; ii++) {
-    if (player.items[ii][0] === id && player.items[ii][1] >= quantity){
+  for (var ii = 0; ii < playerData.items.length; ii++) {
+    if (playerData.items[ii][0] === id && playerData.items[ii][1] >= quantity){
       itemFound = true;
     }
   }
@@ -51,21 +53,36 @@ player.checkItemInInventory = function(id, quantity){
 };
 player.addItemToInventory = function(item, quantity){
   var found = false;
-  for (var i = 0; i < player.items.length; i++) {
-    if (player.items[i][0] === item.id){
-      player.items[i][1] = player.items[i][1]+quantity;
+  for (var i = 0; i < playerData.items.length; i++) {
+    if (playerData.items[i][0] === item.id){
+      playerData.items[i][1] = playerData.items[i][1]+quantity;
       found = true;
     }
   };
-  if (!found) player.items.push([item.id, quantity]);
+  for (var i = 0; i < player.inventory.length; i++) {
+    if (player.inventory[i].id === item.id){
+      player.inventory[i].quantity = player.inventory[i].quantity+quantity;
+      found = true;
+    }
+  };
+  if (!found){
+    playerData.items.push([item.id, quantity]);
+    player.inventory.push(item);
+    player.inventory.quantity = quantity;
+  }
   flatLayer.message(quantity + " " + item.label + " added to inventory");
   player.updateCraftableBlueprint();
 }
 player.removeItemFromInventory = function(id, quantity){
-  for (var i = 0; i < player.items.length; i++) {
-    if (player.items[i][0] === id){
-      player.items[i][1] = player.items[i][1]-quantity;
-      if(player.items[i][1]<=0) player.items.splice(i,1);
+  for (var i = 0; i < playerData.items.length; i++) {
+    if (playerData.items[i][0] === id){
+      playerData.items[i][1] = playerData.items[i][1]-quantity;
+      if(playerData.items[i][1]<=0) playerData.items.splice(i,1);
+    }
+  };
+  for (var i = 0; i < player.inventory.length; i++) {
+    if (player.inventory[i].id === id){
+      player.inventory[i].quantity = player.inventory[i].quantity-quantity;
     }
   };
   flatLayer.message(quantity + " " + id + " removed from inventory");
@@ -83,40 +100,49 @@ function droidProgress (){
     droidProgress();
   }, 1000);
 }
-
-player.engine = {
-  id: 8,
-  label: "basic engine",  
-  acceleration : 0.07,
-  topspeed :7,
-  type: 1
-};
-player.sideEngine = {
-  id: 9,
-  label: "basic side engine",
-  acceleration : 0.05,
-  topspeed :3,
-  type:2
-};
-player.gun = {
-  label: "basic gun",
-  accuracy: 98.5,
-  attackSpeed : 10,
-  bulletRange : 2500,
-  bulletDamage : 20,
-  bulletModelData : require('./models/bullet.js')
-};
-player.miningDroids = [
-  {
-    label: "basic droid",
-    capacity : 1,
-    searchTime : 1,
-    timer : 0,
-    active : false,
-    collect : _collect,
-    cancelCollect: _cancelCollect
+var playerData = {};
+//player equipment data
+playerData.equiped = {
+  engine : 8,
+  sideEngine: 9,
+  gun: 11,
+  miningDroids: []
+}
+//player item data
+playerData.items = [[1,5],[8,1],[9,1],[10,1],[11,1]];
+// get the items
+player.inventory = [];
+for (var i = 0; i < playerData.items.length; i++) {
+  player.inventory[i] = clone(_.find(itemDb, function(num){ return num.id === playerData.items[i][0]; }));
+  player.inventory[i].quantity = playerData.items[i][1];
+  if (player.inventory[i].type === 3) {
+    player.inventory[i].collect = _collect
+    player.inventory[i].cancelCollect = _cancelCollect
   }
-];
+};
+//equip equipment
+player.miningDroids = [];
+for (var i = 0; i < player.inventory.length; i++) {
+  if (player.inventory[i].id == playerData.equiped.engine && player.inventory[i].quantity>0) {
+    player.engine = player.inventory[i];
+    player.inventory[i].quantity = player.inventory[i].quantity -1;
+  }
+  if (player.inventory[i].id == playerData.equiped.sideEngine && player.inventory[i].quantity>0) {
+    player.sideEngine = player.inventory[i];
+    player.inventory[i].quantity = player.inventory[i].quantity -1;
+  } 
+  if (player.inventory[i].id == playerData.equiped.gun && player.inventory[i].quantity>0) {
+    player.gun = player.inventory[i];
+    player.inventory[i].quantity = player.inventory[i].quantity -1;
+  }
+  for (var j = 0; j < playerData.equiped.miningDroids.length; j++) {
+    if (player.inventory[i].id == playerData.equiped.miningDroids[j] && player.inventory[i].quantity>0) {
+      player.miningDroids.push(player.inventory[i]);
+      player.inventory[i].quantity = player.inventory[i].quantity -1;
+    }
+  };
+};
+
 flatLayer.droids = player.miningDroids;
 flatLayer.origin = player.position;
 player.blueprints = [
@@ -134,7 +160,6 @@ player.blueprints = [
     }
   }
 ]
-player.items = [[1,5],[8,1],[9,1],[10,1]];
 droidProgress();
 player.moveForward = false;
 player.moveBackward = false;

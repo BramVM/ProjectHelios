@@ -185,7 +185,8 @@ mainModule.controller('mainController', ['$scope', function($scope) {
     //set lighting
     lighting.updateLighting(player.position.x, player.position.y);
   }
-  $scope.unequipEngine = function(selectedEngine){
+  $scope.unequipEngine = function(){
+    player.addItemToInventory (player.engine, 1);
     player.engine = {
       id: false,
       acceleration : 0.01,
@@ -193,6 +194,7 @@ mainModule.controller('mainController', ['$scope', function($scope) {
     };
   }
   $scope.unequipSideEngine = function(){
+    player.addItemToInventory (player.sideEngine, 1);
     player.sideEngine = {
       id: false,
       acceleration : 0.01,
@@ -201,14 +203,15 @@ mainModule.controller('mainController', ['$scope', function($scope) {
   }
   $scope.equipEngine = function(engine){
     player.engine = engine;
-    engine.equipped = true;
+    player.removeItemFromInventory (engine.id, 1);
   }
   $scope.equipSideEngine = function(sideEngine){
     player.sideEngine = sideEngine;
-    sideEngine.equipped = true;
+    player.removeItemFromInventory (sideEngine.id, 1);
   }
   $scope.equipDroid = function(droid){
-    //player.miningDroids.push(droid);
+    player.miningDroids.push(droid);
+    player.removeItemFromInventory (droid.id, 1);
   }
   function updateInterface (){  
     if(!$scope.$$phase) {
@@ -242,11 +245,7 @@ mainModule.controller('mainController', ['$scope', function($scope) {
         }
         $scope.engine = player.engine;
         $scope.sideEngine = player.sideEngine;
-        $scope.items = [];
-        for (var i = 0; i < player.items.length; i++) {
-          $scope.items[i] = _.find(itemDb, function(num){ return num.id === player.items[i][0]; });
-          $scope.items[i].quantity = player.items[i][1];
-        };
+        $scope.items = player.inventory;
         $scope.miningDroids = player.miningDroids;
         $scope.blueprints = player.blueprints;
         if(player.targetPlanet && player.targetPlanet.items){

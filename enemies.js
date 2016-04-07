@@ -103,7 +103,33 @@ enemies = [
         approachRange : 500,
         backOffRange : 300,
         shootingRange : 750
-    }
+    },
+    {
+        label : "ufo",
+        gun : {
+          accuracy : 0,
+          attackSpeed : 20,
+          bulletRange : 1000,
+          bulletDamage : 10,
+          bulletModelData : require('./models/small_bullet.js')
+        },
+        health : 400,
+        engine : {
+          label: "bad engine",
+          acceleration : 0.05,
+          topspeed :6
+        },
+        sideEngine : {
+          label: "bad side engine",
+          acceleration : 0.05,
+          topspeed :3
+        },
+        model : require('./models/ufo.js'),
+        detectionRange : 1000,
+        approachRange : 500,
+        backOffRange : 200,
+        shootingRange : 750
+    },
 ];
 
 if (typeof(module) !== 'undefined') module.exports = enemies;

@@ -64,6 +64,15 @@ var items = [
         capacity : 1,
         searchTime : 1,
         type: 3
+    },
+    {
+      id: 11,
+      label: "basic gun",
+      accuracy: 98.5,
+      attackSpeed : 10,
+      bulletRange : 2500,
+      bulletDamage : 20,
+      bulletModelData : require('./models/bullet.js')
     }
 ];
 

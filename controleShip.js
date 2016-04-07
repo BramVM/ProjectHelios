@@ -22,7 +22,7 @@ var _createBullet = function ( ship, direction ){
     bullet.pointLight.position.set( 0, 0, 0 );
     bullet.add( bullet.pointLight );*/
     accAngle = 0;
-    if (ship.gun.accuracy) accAngle = ((100-ship.gun.accuracy)/100)*2*Math.PI;
+    accAngle = ((100-ship.gun.accuracy)/100)*2*Math.PI;
     var _direction = direction - accAngle/2 + Math.random()*accAngle;
 	bullet.rotation.z = Math.PI/2+_direction;
 	bullet.range = ship.gun.bulletRange;

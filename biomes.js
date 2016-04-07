@@ -167,7 +167,7 @@ var biomes = [
         },
         enemies : [
             {   
-                label : "blueBaron",
+                label : "ufo",
                 presence : 1
             }
         ]
