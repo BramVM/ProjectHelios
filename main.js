@@ -9,7 +9,6 @@ mainModule.controller('mainController', ['$scope', function($scope) {
   var voxelEffects = require('./voxelEffects.js');
   var lighting = require('./lighting.js');
   var itemDb = require('./items.js');
-  var _ = require('underscore');
   
   if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
   var mouse = {
@@ -200,6 +199,15 @@ mainModule.controller('mainController', ['$scope', function($scope) {
       acceleration : 0.01,
       topspeed : 0
     };
+  }
+  $scope.unequipDroid = function(item){
+    player.addItemToInventory (item, 1);
+    item.cancelCollect();
+    var spliceIndex = -1;
+    for (var i = 0; i < player.miningDroids.length; i++) {
+      if(player.miningDroids[i].id === item.id && player.miningDroids[i].active === false) spliceIndex = i;
+    };
+    player.miningDroids.splice(spliceIndex,1);
   }
   $scope.equipEngine = function(engine){
     player.engine = engine;

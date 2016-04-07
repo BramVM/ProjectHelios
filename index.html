@@ -130,7 +130,7 @@
 					  <div class="panel-body" ng-if="panel === 'mining'" ng-repeat="miningDroid in miningDroids">
 						{{miningDroid.label}} 
 						<button ng-click="showDroidInfo(miningDroid)"><span class="glyphicon glyphicon-info-sign"></span></button>
-						<button ng-click="unequipDroid(miningDroid);"><span class="glyphicon glyphicon-save-file"></span></button>
+						<button ng-show="!miningDroid.active" ng-click="unequipDroid(miningDroid);"><span class="glyphicon glyphicon-save-file"></span></button>
 					  </div>
 					  <div class="panel-heading" ng-click="panel = 'blueprints'">blueprints</div>
 					  <div class="panel-body" ng-if="panel === 'blueprints'" ng-repeat="blueprint in blueprints">
